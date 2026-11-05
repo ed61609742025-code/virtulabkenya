@@ -247,6 +247,49 @@ const RatesEngine = (function () {
       stageChip.textContent = titles[expName] || 'Active Experiment';
     }
 
+    const sysBadge = document.getElementById('rateSystemBadge');
+    if (sysBadge) {
+      const badges = {
+        cross: 'System: Na₂S₂O₃ + HCl (Disappearing Cross)',
+        syringe: 'System: Gas Syringe Kinetics (CaCO₃ / Mg)',
+        mass: 'System: Mass Loss Balance (CaCO₃ + HCl)',
+        catalyst: 'System: H₂O₂ Catalysis (MnO₂ / CuO)',
+        collision: 'System: 2D Maxwell-Boltzmann & Ea'
+      };
+      sysBadge.textContent = badges[expName] || 'System: Reaction Rates';
+    }
+
+    const taskHead = document.getElementById('taskCardHeading');
+    const taskDesc = document.getElementById('taskCardDesc');
+    if (taskHead && taskDesc) {
+      const descriptions = {
+        cross: {
+          h: 'Disappearing Cross Practical (Na₂S₂O₃ + HCl)',
+          d: 'Vary the concentration of thiosulfate solution with water while maintaining fixed acid volume. Start the stopwatch as acid is tipped in and record time until the cross is completely obscured.'
+        },
+        syringe: {
+          h: 'Gas Syringe Kinetics (CO₂ / H₂ Evolution)',
+          d: 'React solid CaCO₃ or Mg ribbon with dilute HCl. Measure the volume of gas collected in the graduated gas syringe at 10-second intervals to plot a volume-time curve.'
+        },
+        mass: {
+          h: 'Loss in Mass Investigation (CO₂ Escape)',
+          d: 'Monitor the decreasing mass on the digital top-pan balance as carbon dioxide gas escapes through the cotton-wool plug. Evaluate the effect of surface area (chips vs powder).'
+        },
+        catalyst: {
+          h: 'Catalytic Decomposition of Hydrogen Peroxide',
+          d: 'Compare reaction velocities across transition metal oxide catalysts (MnO₂, CuO, Fe₂O₃) versus uncatalysed controls. Measure oxygen gas evolution rates.'
+        },
+        collision: {
+          h: '2D Collision Theory & Activation Energy Sandbox',
+          d: 'Observe molecular collisions in real time. Adjust temperature (kinetic velocity) and activation energy barrier threshold to visualize Maxwell-Boltzmann distribution and catalyst pathways.'
+        }
+      };
+      if (descriptions[expName]) {
+        taskHead.textContent = descriptions[expName].h;
+        taskDesc.textContent = descriptions[expName].d;
+      }
+    }
+
     // Toggle controls sections visibility
     const secCross = document.getElementById('ctrlSecCross');
     const secSyringe = document.getElementById('ctrlSecSyringe');

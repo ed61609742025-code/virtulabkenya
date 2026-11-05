@@ -187,18 +187,38 @@ const RatesEngine = (function () {
       setStudyMode('exam');
     }
 
+    // Use ResizeObserver for responsive canvas updates across any layout or orientation change
+    if (typeof ResizeObserver !== 'undefined') {
+      const ro = new ResizeObserver(() => {
+        updateCanvasDimensions();
+        drawApparatus();
+        drawGraph();
+      });
+      if (canvas && canvas.parentElement) ro.observe(canvas.parentElement);
+      if (gCanvas && gCanvas.parentElement) ro.observe(gCanvas.parentElement);
+    }
+
     window.addEventListener('resize', () => {
       updateCanvasDimensions();
       drawApparatus();
       drawGraph();
-    });
-    window.addEventListener('orientationchange', () => {
-      setTimeout(() => {
-        updateCanvasDimensions();
-        drawApparatus();
-        drawGraph();
-      }, 150);
-    });
+    }, { passive: true });
+
+    // Multi-phase orientation change listener ensures canvas dimensions adapt to final browser layout
+    const onOrientationTransition = () => {
+      [50, 150, 300, 500].forEach(delay => {
+        setTimeout(() => {
+          updateCanvasDimensions();
+          drawApparatus();
+          drawGraph();
+        }, delay);
+      });
+    };
+
+    window.addEventListener('orientationchange', onOrientationTransition, { passive: true });
+    if (window.screen && window.screen.orientation) {
+      window.screen.orientation.addEventListener('change', onOrientationTransition, { passive: true });
+    }
 
     drawApparatus();
     wakeRenderLoop();
@@ -225,6 +245,49 @@ const RatesEngine = (function () {
         collision: '2D Collision Theory Sandbox'
       };
       stageChip.textContent = titles[expName] || 'Active Experiment';
+    }
+
+    const sysBadge = document.getElementById('rateSystemBadge');
+    if (sysBadge) {
+      const badges = {
+        cross: 'System: Na₂S₂O₃ + HCl (Disappearing Cross)',
+        syringe: 'System: Gas Syringe Kinetics (CaCO₃ / Mg)',
+        mass: 'System: Mass Loss Balance (CaCO₃ + HCl)',
+        catalyst: 'System: H₂O₂ Catalysis (MnO₂ / CuO)',
+        collision: 'System: 2D Maxwell-Boltzmann & Ea'
+      };
+      sysBadge.textContent = badges[expName] || 'System: Reaction Rates';
+    }
+
+    const taskHead = document.getElementById('taskCardHeading');
+    const taskDesc = document.getElementById('taskCardDesc');
+    if (taskHead && taskDesc) {
+      const descriptions = {
+        cross: {
+          h: 'Disappearing Cross Practical (Na₂S₂O₃ + HCl)',
+          d: 'Vary the concentration of thiosulfate solution with water while maintaining fixed acid volume. Start the stopwatch as acid is tipped in and record time until the cross is completely obscured.'
+        },
+        syringe: {
+          h: 'Gas Syringe Kinetics (CO₂ / H₂ Evolution)',
+          d: 'React solid CaCO₃ or Mg ribbon with dilute HCl. Measure the volume of gas collected in the graduated gas syringe at 10-second intervals to plot a volume-time curve.'
+        },
+        mass: {
+          h: 'Loss in Mass Investigation (CO₂ Escape)',
+          d: 'Monitor the decreasing mass on the digital top-pan balance as carbon dioxide gas escapes through the cotton-wool plug. Evaluate the effect of surface area (chips vs powder).'
+        },
+        catalyst: {
+          h: 'Catalytic Decomposition of Hydrogen Peroxide',
+          d: 'Compare reaction velocities across transition metal oxide catalysts (MnO₂, CuO, Fe₂O₃) versus uncatalysed controls. Measure oxygen gas evolution rates.'
+        },
+        collision: {
+          h: '2D Collision Theory & Activation Energy Sandbox',
+          d: 'Observe molecular collisions in real time. Adjust temperature (kinetic velocity) and activation energy barrier threshold to visualize Maxwell-Boltzmann distribution and catalyst pathways.'
+        }
+      };
+      if (descriptions[expName]) {
+        taskHead.textContent = descriptions[expName].h;
+        taskDesc.textContent = descriptions[expName].d;
+      }
     }
 
     // Toggle controls sections visibility
@@ -815,17 +878,35 @@ const RatesEngine = (function () {
   let canvas, ctx;
 
   function updateCanvasDimensions() {
+    // 1. Simulation Apparatus Viewport Canvas
     if (canvas && canvas.parentElement) {
-      const cw = canvas.parentElement.clientWidth;
-      const ch = canvas.parentElement.clientHeight;
-      if (cw > 0) canvas.width = cw;
-      if (ch > 0) canvas.height = ch;
+      const containerW = canvas.parentElement.clientWidth;
+      if (containerW > 0) {
+        // Clamp canvas width to container width, capped at 560px design maximum
+        const targetW = Math.round(Math.min(560, Math.max(300, containerW)));
+        // Lock canonical aspect ratio (560:340), with a strict minimum of 280px
+        // to prevent apparatus from collapsing in landscape or on orientation return
+        const targetH = Math.round(Math.max(280, Math.min(360, targetW * (340 / 560))));
+
+        if (canvas.width !== targetW || canvas.height !== targetH) {
+          canvas.width = targetW;
+          canvas.height = targetH;
+        }
+      }
     }
+
+    // 2. KNEC Rate Curve & Tangent Graph Canvas
     if (gCanvas && gCanvas.parentElement) {
-      const gw = gCanvas.parentElement.clientWidth;
-      const gh = gCanvas.parentElement.clientHeight;
-      if (gw > 0) gCanvas.width = gw;
-      if (gh > 0) gCanvas.height = gh;
+      const containerW = gCanvas.parentElement.clientWidth;
+      if (containerW > 0) {
+        const targetW = Math.round(Math.min(560, Math.max(300, containerW)));
+        const targetH = Math.round(Math.max(260, Math.min(360, targetW * (340 / 560))));
+
+        if (gCanvas.width !== targetW || gCanvas.height !== targetH) {
+          gCanvas.width = targetW;
+          gCanvas.height = targetH;
+        }
+      }
     }
   }
 
@@ -1406,7 +1487,7 @@ const RatesEngine = (function () {
     if (!gCtx || !gCanvas) return;
     const w = gCanvas.width;
     const h = gCanvas.height;
-    const margin = 50;
+    const margin = w < 420 ? 38 : 50;
     const plotW = w - margin * 2;
     const plotH = h - margin * 2;
 

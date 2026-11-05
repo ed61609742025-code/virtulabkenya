@@ -456,33 +456,91 @@ html, body {
   color: var(--text-main);
 }
 
-/* KNEC Practical Ledger Sub-Bar */
+/* Official KNEC Examination Sub-Bar */
 .knec-exam-subbar {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 5px 20px;
-  background: var(--card-bg-hover);
-  border-top: 1px solid var(--card-border);
-  font-size: 0.72rem;
-  max-width: 1440px;
-  margin: 0 auto;
-  flex-wrap: wrap;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  white-space: nowrap !important;
+  gap: 12px !important;
+  padding: 6px 18px !important;
+  border-top: 1px solid var(--card-border) !important;
+  background: var(--card-bg) !important;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
 }
-.knec-subbar-item {
-  display: flex;
-  align-items: center;
-  gap: 5px;
+.knec-exam-subbar::-webkit-scrollbar {
+  display: none !important;
 }
-.knec-subbar-label {
-  color: var(--text-muted);
-  font-weight: 600;
-  font-family: var(--font-body);
+
+.knec-candidate-meta {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  flex-wrap: nowrap !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
 }
-.knec-subbar-val {
-  color: var(--heading-color);
-  font-weight: 700;
+
+.knec-tag-pill {
+  background: rgba(6, 182, 212, 0.15);
+  color: var(--cyan-accent);
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 4px;
   font-family: var(--font-mono);
+  font-size: 0.68rem;
+  border: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+.knec-q-badge {
+  background: var(--card-bg-hover);
+  color: var(--text-main);
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid var(--card-border);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+}
+
+.knec-cand-name, .knec-index-num {
+  font-weight: 700;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+
+.knec-live-status-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  flex-shrink: 0 !important;
+  white-space: nowrap !important;
+  margin-left: auto !important;
+}
+
+.knec-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10B981;
+}
+
+.knec-status-dot.pulse {
+  animation: pulse-dot 1.5s infinite;
+}
+
+@keyframes pulse-dot {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
 }
 
 /* ── PRACTICAL WORKFLOW STEPPER & BREADCRUMB NAVIGATION ── */
@@ -490,9 +548,12 @@ html, body {
   background: var(--card-bg);
   border: 1.5px solid var(--card-border);
   border-radius: 14px;
-  padding: 16px 20px;
-  margin-bottom: 20px;
+  padding: 12px 16px;
   box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .workflow-stepper-card:hover {
@@ -503,204 +564,159 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 16px;
   flex-wrap: wrap;
+  gap: 8px;
 }
 
 .workflow-title-wrap {
   display: flex;
   align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .workflow-title-label {
+  font-size: 0.72rem;
   font-weight: 800;
-  font-size: 0.88rem;
-  color: var(--heading-color);
-  font-family: var(--font-academic);
-  letter-spacing: 0.04em;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--cyan-accent);
 }
 
 .workflow-step-badge {
   font-size: 0.74rem;
-  font-weight: 700;
+  font-weight: 800;
   font-family: var(--font-mono);
-  background: rgba(2, 132, 199, 0.12);
-  border: 1px solid var(--blue-border);
-  color: var(--cyan-accent-strong);
-  padding: 4px 12px;
-  border-radius: 100px;
-  letter-spacing: 0.02em;
-}
-
-[data-theme="dark"] .workflow-step-badge {
-  background: rgba(56, 189, 248, 0.16);
-  border-color: rgba(56, 189, 248, 0.35);
-  color: var(--cyan-accent);
+  background: var(--card-bg-hover);
+  border: 1px solid var(--card-border);
+  padding: 2px 8px;
+  border-radius: 6px;
+  color: var(--text-main);
 }
 
 .workflow-jump-hint {
   font-size: 0.72rem;
-  color: var(--text-secondary);
-  font-family: var(--font-body);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
 }
 
 .workflow-stepper-track {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  position: relative;
-  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
   gap: 8px;
 }
 
-.workflow-stepper-track::before {
-  content: '';
-  position: absolute;
-  top: 18px;
-  left: 36px;
-  right: 36px;
-  height: 3px;
-  background: var(--card-border);
-  z-index: 1;
-}
-
-.workflow-stepper-progress-fill {
-  position: absolute;
-  top: 18px;
-  left: 36px;
-  height: 3px;
-  background: linear-gradient(90deg, var(--green-accent), var(--blue-accent));
-  z-index: 2;
-  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
 .workflow-step-item {
-  position: relative;
-  z-index: 3;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  text-align: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--card-bg-hover);
+  border: 1.5px solid var(--card-border);
+  color: var(--text-muted);
   cursor: pointer;
-  background: none;
-  border: none;
-  padding: 0 4px;
-  outline: none;
-  transition: transform 0.15s ease;
-  min-width: 90px;
-  flex: 1;
-  text-decoration: none;
-
-  min-height: 48px;
-  touch-action: manipulation;
+  text-align: left;
+  font-family: var(--font-body);
+  transition: all 0.15s ease;
+  min-height: 44px;
 }
 
-.workflow-step-item:focus-visible .workflow-step-node {
-  outline: 3px solid var(--blue-accent);
-  outline-offset: 3px;
+.workflow-step-item:hover {
+  border-color: var(--cyan-accent);
+  color: var(--text-main);
 }
 
-.workflow-step-node {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
+.workflow-step-item.active {
   background: var(--card-bg);
-  border: 2.5px solid var(--card-border);
+  border-color: var(--cyan-accent);
+  box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+  color: var(--heading-color);
+}
+
+.workflow-step-item.active .step-num {
+  background: var(--cyan-accent);
+  color: #FFFFFF;
+}
+
+.workflow-step-item.completed {
+  border-color: #10B981;
+  color: var(--text-main);
+}
+
+.workflow-step-item.completed .step-num {
+  background: #10B981;
+  color: #FFFFFF;
+}
+
+.step-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--card-border);
   color: var(--text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 0.72rem;
   font-weight: 800;
   font-family: var(--font-mono);
-  font-size: 0.84rem;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
 }
 
-.workflow-step-label {
+.step-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.step-name {
   font-size: 0.76rem;
-  font-weight: 700;
-  color: var(--text-secondary);
-  margin-top: 8px;
-  white-space: nowrap;
-  font-family: var(--font-body);
-  transition: color 0.2s ease;
-}
-
-.workflow-step-sub {
-  font-size: 0.75rem;
-  color: var(--text-tertiary);
-  margin-top: 2px;
-  white-space: nowrap;
-  font-family: var(--font-mono);
-  font-weight: 600;
-}
-
-/* Completed Step */
-.workflow-step-item.completed .workflow-step-node {
-  background: var(--green-accent);
-  border-color: var(--green-accent);
-  color: #FFFFFF;
-  box-shadow: 0 0 12px rgba(4, 120, 87, 0.35);
-}
-.workflow-step-item.completed .workflow-step-label {
-  color: var(--green-accent);
-  font-weight: 700;
-}
-
-/* Active Step */
-.workflow-step-item.active .workflow-step-node {
-  background: var(--card-bg);
-  border-color: var(--cyan-accent);
-  color: var(--cyan-accent-strong);
-  box-shadow: 0 0 14px rgba(2, 132, 199, 0.45);
-  transform: scale(1.12);
-}
-.workflow-step-item.active .workflow-step-label {
-  color: var(--heading-color);
   font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Upcoming Step */
-.workflow-step-item.upcoming {
-  opacity: 0.72;
+.step-sub {
+  font-size: 0.65rem;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.workflow-step-item.upcoming:hover {
-  opacity: 1;
+
+.workflow-stepper-progress {
+  height: 4px;
+  background: var(--card-bg-hover);
+  border-radius: 2px;
+  overflow: hidden;
 }
-.workflow-step-item.upcoming:hover .workflow-step-node {
-  border-color: var(--text-secondary);
+
+.workflow-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--cyan-accent), #3B82F6);
+  transition: width 0.3s ease;
 }
 
 @media (max-width: 900px) {
   .workflow-stepper-track {
-    overflow-x: auto;
-    justify-content: flex-start;
-    padding-bottom: 8px;
-    -webkit-overflow-scrolling: touch;
+    grid-template-columns: repeat(3, 1fr);
   }
-  .workflow-stepper-track::before,
-  .workflow-stepper-progress-fill {
-    display: none;
-  }
-  .workflow-step-item {
-    min-width: 100px;
-    flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .workflow-stepper-track {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 /* ── 4. WORKBENCH CONTAINER & 2-COLUMN GRID ── */
 .workbench-container {
-  max-width: 1440px;
+  max-width: 1240px;
   width: 100%;
   margin: 0 auto;
-  padding: 20px 20px 80px;
+  padding: 20px 16px 80px;
+  box-sizing: border-box;
 }
 
 .workbench-grid {
@@ -1262,16 +1278,10 @@ html, body {
   }
 
   .workbench-container {
-    padding: 10px 8px 40px !important;
+    padding: 10px 8px 60px !important;
     width: 100% !important;
     max-width: 100vw !important;
     overflow-x: hidden !important;
-  }
-
-  /* Hide practical workflow stepper on small screens/phones */
-  .workflow-stepper-card,
-  #practicalWorkflowStepper {
-    display: none !important;
   }
 
   .workbench-grid {
@@ -2846,20 +2856,19 @@ html, body {
     display: none !important;
   }
   .workflow-step-item {
-    min-width: 68px !important;
-    padding: 0 2px !important;
+    padding: 6px 8px !important;
+    min-height: 38px !important;
   }
-  .workflow-step-node {
-    width: 28px !important;
-    height: 28px !important;
+  .step-num {
+    width: 20px !important;
+    height: 20px !important;
+    font-size: 0.68rem !important;
+  }
+  .step-name {
     font-size: 0.72rem !important;
   }
-  .workflow-step-label {
-    font-size: 0.68rem !important;
-    margin-top: 4px !important;
-  }
-  .workflow-step-sub {
-    display: none !important;
+  .step-sub {
+    font-size: 0.62rem !important;
   }
 
   /* ── 3. Container & Card Sizing ── */

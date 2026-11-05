@@ -1153,13 +1153,13 @@ requireStudentLogin();
       category: 'KNEC MARKING TRAP',
       badgeClass: 'badge-danger',
       title: 'Burette Reading Precision (Table 1)',
-      body: 'KNEC Paper 3 penalizes any burette reading recorded to only 1 decimal place. Always record initial and final titres to 2 decimal places ending strictly in .00 or .50 (e.g. 24.50 cm³, not 24.5 cm³).',
+      body: 'KNEC Paper 3 penalizes any burette reading recorded to only 1 decimal place. Always record initial and final titres to 2 decimal places ending strictly in .00 or .05 cm³ (e.g. 24.00, 24.05, 24.50 cm³, not 24.5 cm³).',
       actionText: 'Practice Titration Bench →',
       actionUrl: 'lab.html?type=acidBase&studyMode=guided',
       quickCheck: {
         question: 'Which burette reading forfeits accuracy marks on KCSE Table 1?',
         options: [
-          { text: 'A) 22.50 cm³', correct: false, explanation: 'Valid! Recorded to 2 decimal places ending in .50.' },
+          { text: 'A) 22.50 cm³', correct: false, explanation: 'Valid! Recorded to 2 decimal places ending in .50 (acceptable .00 or .05 ending).' },
           { text: 'B) 18.4 cm³', correct: true, explanation: 'Correct! Recording to 1 decimal place loses the Table 1 decimal precision mark.' },
           { text: 'C) 0.00 cm³', correct: false, explanation: 'Valid! Initial zero reading properly formatted to 2 decimal places.' }
         ]
@@ -1471,7 +1471,9 @@ requireStudentLogin();
   }
 
   function answerTipQuiz(tipId, optIdx) {
-    const tip = STUDY_TIPS_LIBRARY.find(t => t.id === tipId);
+    const tip = (tipId === 'diagnostic' && currentDiagnosticAdvice)
+      ? currentDiagnosticAdvice
+      : STUDY_TIPS_LIBRARY.find(t => t.id === tipId);
     if (!tip || !tip.quickCheck) return;
 
     const chosen = tip.quickCheck.options[optIdx];
@@ -1605,59 +1607,441 @@ requireStudentLogin();
   window.removeSavedTip = removeSavedTip;
   window.toggleSavedTipsPocket = toggleSavedTipsPocket;
 
+  let currentDiagnosticAdvice = null;
+
+  function renderCustomDiagnosticAdvice(advice) {
+    currentDiagnosticAdvice = advice;
+    const catBadge = document.getElementById('stCategoryBadge');
+    const counterEl = document.getElementById('stCounter');
+    const titleEl = document.getElementById('stTitle');
+    const bodyEl = document.getElementById('mwalimuMessage');
+    const actionBtn = document.getElementById('stActionBtn');
+    const actionText = document.getElementById('stActionText');
+    const scanNotice = document.getElementById('mwalimuDiagnosticText');
+    const sourceLine = document.getElementById('mwalimuSourceLine');
+
+    if (catBadge) {
+      catBadge.textContent = advice.category;
+      catBadge.className = 'tip-category-badge ' + (advice.badgeClass || 'badge-danger');
+    }
+    if (counterEl) {
+      counterEl.textContent = 'Diagnostic Scan';
+    }
+    if (titleEl) titleEl.textContent = advice.title;
+    if (bodyEl) bodyEl.textContent = advice.body;
+    if (actionBtn) {
+      actionBtn.href = advice.actionUrl;
+      actionBtn.setAttribute('data-tooltip', 'Launch targeted diagnostic drill now');
+    }
+    if (actionText) actionText.textContent = advice.actionText;
+    if (scanNotice && advice.sourceNotice) {
+      scanNotice.innerHTML = advice.sourceNotice;
+    }
+    if (sourceLine) {
+      sourceLine.textContent = 'AI Diagnostic Scanner · Active Misconception';
+    }
+
+    // Active Recall Quiz integration
+    const quizQuestionEl = document.getElementById('stQuizQuestion');
+    const quizOptionsEl = document.getElementById('stQuizOptions');
+    const quizFeedbackEl = document.getElementById('stQuizFeedback');
+
+    if (quizQuestionEl && quizOptionsEl && advice.quickCheck) {
+      advice.id = 'diagnostic';
+      quizQuestionEl.textContent = advice.quickCheck.question;
+      quizOptionsEl.innerHTML = advice.quickCheck.options.map((opt, optIdx) => `
+        <button type="button" class="quiz-opt-btn" onclick="answerTipQuiz('diagnostic', ${optIdx})">
+          ${escapeHtml(opt.text)}
+        </button>
+      `).join('');
+      if (quizFeedbackEl) {
+        quizFeedbackEl.style.display = 'none';
+        quizFeedbackEl.className = 'quiz-feedback';
+        quizFeedbackEl.textContent = '';
+      }
+    }
+  }
+
   function updateMwalimuAdvice(sessions) {
     renderSavedTipsPocket();
 
-    if (!sessions || sessions.length === 0) {
+    const sessionList = (Array.isArray(sessions) && sessions.length > 0)
+      ? sessions
+      : (cachedStudentSessions || []);
+
+    const scanNotice = document.getElementById('mwalimuDiagnosticText');
+    const sourceLine = document.getElementById('mwalimuSourceLine');
+
+    // 1. New Student (0 sessions)
+    if (sessionList.length === 0) {
+      if (scanNotice) {
+        scanNotice.innerHTML = '✨ <strong>Diagnostic Tutor Active:</strong> Complete your first lab practical to begin AI error diagnostics.';
+      }
+      if (sourceLine) sourceLine.textContent = 'Diagnostic Lab Guidance · New Student';
       renderStudyTipByIndex(0);
       return;
     }
 
-    const lastSession = sessions[0];
-    const incorrectSessions = sessions.filter(s => !s.correct);
-    const recentCorrectCount = sessions.slice(0, 5).filter(s => s.correct).length;
-    const isStreak = recentCorrectCount >= 3;
+    // Analyze session history for specific error patterns
+    const recentSessions = sessionList.slice(0, 8);
+    const recentAccuracy = Math.round((recentSessions.filter(s => s.correct || (s.score_pct != null && s.score_pct >= 60)).length / recentSessions.length) * 100);
 
-    let matchedIdx = 0;
+    let diagnosticAdvice = null;
 
-    if (incorrectSessions.length > 0 && (!isStreak || !lastSession.correct)) {
-      const recentError = incorrectSessions[0];
-      const typeStr = (recentError.titration_title || recentError.titration_type || recentError.salt_key || recentError.compound_name || recentError.gas_key || recentError.system_id || '').toLowerCase();
+    // A. Check for Cation Test Tube Confusion (Al³⁺ vs Pb²⁺ or Zn²⁺)
+    const cationErrSession = sessionList.find(s => {
+      const saltStr = (s.salt_key || s.compound_name || s.practical_key || '').toLowerCase();
+      const stdCation = (s.student_cation || '').toLowerCase();
+      const trueCation = (s.true_cation || '').toLowerCase();
+      const isQual = saltStr.includes('qualitative') || saltStr.includes('salt') || s.cation_correct === false || stdCation !== '';
+      return isQual && (!s.correct || s.cation_correct === false || (stdCation && trueCation && stdCation !== trueCation));
+    });
 
-      if (typeStr.includes('redox') || typeStr.includes('kmno4')) {
-        matchedIdx = STUDY_TIPS_LIBRARY.findIndex(t => t.id === 'tip-redox-kmno4');
-      } else if (typeStr.includes('dibasic') || typeStr.includes('h2so4') || typeStr.includes('sulfuric')) {
-        matchedIdx = STUDY_TIPS_LIBRARY.findIndex(t => t.id === 'tip-dibasic-ratio');
-      } else if (typeStr.includes('qualitative') || recentError.salt_key || recentError.student_cation) {
-        const cationStr = (recentError.student_cation || recentError.true_cation || '').toLowerCase();
-        if (cationStr.includes('zn')) {
-          matchedIdx = STUDY_TIPS_LIBRARY.findIndex(t => t.id === 'tip-zn-excess-nh3');
-        } else if (recentError.anion_correct === false) {
-          matchedIdx = STUDY_TIPS_LIBRARY.findIndex(t => t.id === 'tip-so3-so4-distinction');
-        } else {
-          matchedIdx = STUDY_TIPS_LIBRARY.findIndex(t => t.id === 'tip-al-pb-distinction');
-        }
-      } else if (typeStr.includes('organic') || recentError.compound_name || recentError.student_functional_group) {
-        matchedIdx = STUDY_TIPS_LIBRARY.findIndex(t => t.id === 'tip-br2-organic-keyword');
-      } else if (typeStr.includes('energy') || recentError.en_system_id) {
-        matchedIdx = STUDY_TIPS_LIBRARY.findIndex(t => t.id === 'tip-enthalpy-cooling-curve');
-      } else if (typeStr.includes('rate') || recentError.rate_exp_type) {
-        matchedIdx = STUDY_TIPS_LIBRARY.findIndex(t => t.id === 'tip-rates-disappearing-cross');
-      } else if (typeStr.includes('gas') || recentError.gas_key) {
-        matchedIdx = STUDY_TIPS_LIBRARY.findIndex(t => t.id === 'tip-ammonia-drying');
-      } else {
-        matchedIdx = STUDY_TIPS_LIBRARY.findIndex(t => t.id === 'tip-concordancy-rule');
+    if (cationErrSession) {
+      const stdC = (cationErrSession.student_cation || '').toUpperCase();
+      const trueC = (cationErrSession.true_cation || '').toUpperCase();
+      if ((stdC.includes('AL') && trueC.includes('PB')) || (stdC.includes('PB') && trueC.includes('AL')) || cationErrSession.salt_key?.includes('Pb') || cationErrSession.salt_key?.includes('Al')) {
+        diagnosticAdvice = {
+          category: '⚠️ CATION MISCONCEPTION',
+          badgeClass: 'badge-danger',
+          sourceNotice: '✨ <strong>Error Detected:</strong> Al³⁺ vs Pb²⁺ precipitate confusion in recent salt analysis',
+          title: 'Cation Trap: Al³⁺ vs Pb²⁺ Confirmatory Test',
+          body: 'You recently confused Al³⁺ and Pb²⁺. Both produce white precipitates that dissolve in excess NaOH. However, adding potassium iodide (KI) produces a diagnostic bright canary-yellow precipitate of PbI₂ strictly with Pb²⁺, whereas Al³⁺ gives no change. Always confirm with KI before concluding!',
+          actionText: 'Practice Pb²⁺ vs Al³⁺ Confirmation Drill →',
+          actionUrl: 'lab.html?type=qualitative&bench=cations',
+          quickCheck: {
+            question: 'Which reagent distinguishes Al³⁺(aq) from Pb²⁺(aq) when both dissolve in excess NaOH?',
+            options: [
+              { text: 'A) Dilute HCl', correct: false, explanation: 'Incorrect! Both give white precipitates or no sharp contrast.' },
+              { text: 'B) Potassium Iodide (KI)', correct: true, explanation: 'Correct! KI yields a bright canary-yellow precipitate of PbI₂ with Pb²⁺ only.' },
+              { text: 'C) Excess Ammonia solution', correct: false, explanation: 'Incorrect! Both form white precipitates that do NOT dissolve in excess ammonia.' }
+            ]
+          }
+        };
+      } else if (stdC.includes('ZN') || trueC.includes('ZN') || cationErrSession.salt_key?.includes('Zn')) {
+        diagnosticAdvice = {
+          category: '⚠️ AMPHOTERIC CATION TRAP',
+          badgeClass: 'badge-warning',
+          sourceNotice: '✨ <strong>Error Detected:</strong> Incomplete separation in excess aqueous ammonia',
+          title: 'Amphoteric Trap: Zn²⁺ vs Al³⁺ in Excess NH₃(aq)',
+          body: 'In your qualitative analysis, you lost marks on aqueous ammonia. While both cations form white precipitates with a few drops of NH₃(aq), only Zn²⁺ dissolves in excess aqueous ammonia to form a colorless tetraammine complex [Zn(NH₃)₄]²⁺. Al³⁺ precipitate remains insoluble.',
+          actionText: 'Practice Aqueous Ammonia Separation Drill →',
+          actionUrl: 'lab.html?type=qualitative&bench=cations',
+          quickCheck: {
+            question: 'What is observed when excess aqueous ammonia is added to Zn²⁺ vs Al³⁺?',
+            options: [
+              { text: 'A) Both precipitates dissolve', correct: false, explanation: 'Incorrect! Al(OH)₃ remains insoluble in excess ammonia.' },
+              { text: 'B) Only Zn²⁺ white precipitate dissolves', correct: true, explanation: 'Correct! Zn(OH)₂ dissolves in excess NH₃ to form [Zn(NH₃)₄]²⁺.' },
+              { text: 'C) Neither precipitate dissolves', correct: false, explanation: 'Incorrect! Zn²⁺ dissolves.' }
+            ]
+          }
+        };
       }
-    } else {
-      // Rotate based on session count so student sees fresh high-yield tips as they progress
-      matchedIdx = sessions.length % STUDY_TIPS_LIBRARY.length;
     }
 
-    if (matchedIdx < 0) matchedIdx = 0;
-    renderStudyTipByIndex(matchedIdx);
+    // B. Check for Titration Concordancy or Precision Errors
+    if (!diagnosticAdvice) {
+      const titrErrSession = sessionList.find(s => {
+        const tTitle = (s.titration_title || s.titration_type || '').toLowerCase();
+        const isTitr = tTitle.includes('titration') || tTitle.includes('acid') || tTitle.includes('redox') || tTitle.includes('volumetric');
+        return isTitr && (!s.correct || s.concordant === false || (s.spread != null && s.spread > 0.20));
+      });
+
+      if (titrErrSession) {
+        diagnosticAdvice = {
+          category: '⚠️ TITRE CONCORDANCY PENALTY',
+          badgeClass: 'badge-danger',
+          sourceNotice: '✨ <strong>Titre Spread Alert:</strong> Values exceeded KNEC ±0.20 cm³ concordancy margin',
+          title: 'Titre Concordancy Warning (KNEC Table 1)',
+          body: 'In your recent titration, titres differed by more than 0.20 cm³. Paper 3 examiners penalize averaging non-concordant values: you forfeit all 4 calculation marks! If Trial 1 is 24.10 cm³ and Trial 2 is 24.50 cm³, you must perform a 3rd trial to achieve concordancy within ±0.20 cm³ before calculating the mean titre.',
+          actionText: 'Practice Concordant Burette Swirling →',
+          actionUrl: 'lab.html?type=acidBase&studyMode=guided',
+          quickCheck: {
+            question: 'Given titres of 21.30 cm³, 21.70 cm³, and 21.40 cm³, which should be averaged?',
+            options: [
+              { text: 'A) All three: (21.30 + 21.70 + 21.40) ÷ 3', correct: false, explanation: 'Penalty! 21.70 cm³ is non-concordant (spread 0.40 cm³).' },
+              { text: 'B) 21.30 cm³ and 21.40 cm³ only', correct: true, explanation: 'Correct! Spread is only 0.10 cm³ (within ±0.20 cm³ concordancy window).' },
+              { text: 'C) The two highest readings', correct: false, explanation: 'Incorrect! You must only average readings within ±0.20 cm³.' }
+            ]
+          }
+        };
+      }
+    }
+
+    // C. Check for Anion Acidification Errors (SO₃²⁻ vs SO₄²⁻)
+    if (!diagnosticAdvice) {
+      const anionErrSession = sessionList.find(s => s.anion_correct === false || (s.salt_key && (s.salt_key.includes('SO3') || s.salt_key.includes('SO4')) && !s.correct));
+      if (anionErrSession) {
+        diagnosticAdvice = {
+          category: '⚠️ ANION DISTINCTION',
+          badgeClass: 'badge-warning',
+          sourceNotice: '✨ <strong>Error Detected:</strong> Confusion between Sulfite (SO₃²⁻) and Sulfate (SO₄²⁻)',
+          title: 'Sulfite vs Sulfate: The Acidification Test',
+          body: 'You lost marks distinguishing SO₃²⁻ and SO₄²⁻. Both form a white precipitate with BaCl₂(aq) or Ba(NO₃)₂(aq). However, BaSO₃ dissolves in dilute nitric acid with effervescence of SO₂ gas (which turns acidified K₂Cr₂O₇ green), while BaSO₄ is completely insoluble in dilute acid. Never forget the dilute acid step!',
+          actionText: 'Drill Acidified Barium Nitrate Test →',
+          actionUrl: 'lab.html?type=qualitative&bench=anions',
+          quickCheck: {
+            question: 'What occurs when dilute HNO₃ is added to barium sulfite (BaSO₃) precipitate?',
+            options: [
+              { text: 'A) Precipitate remains insoluble', correct: false, explanation: 'Incorrect! That is BaSO₄ (sulfate).' },
+              { text: 'B) Precipitate dissolves with effervescence of SO₂ gas', correct: true, explanation: 'Correct! BaSO₃ reacts with acid producing sulfur dioxide gas.' },
+              { text: 'C) Mixture turns bright yellow', correct: false, explanation: 'Incorrect.' }
+            ]
+          }
+        };
+      }
+    }
+
+    // D. Check for Energetics / Cooling Curve Errors
+    if (!diagnosticAdvice) {
+      const energyErr = sessionList.find(s => (s.system_id || s.experiment_type || '').includes('energy') && !s.correct);
+      if (energyErr) {
+        diagnosticAdvice = {
+          category: '⚠️ THERMOCHEMISTRY TRAP',
+          badgeClass: 'badge-info',
+          sourceNotice: '✨ <strong>Thermochemistry Trap:</strong> Inaccurate temperature rise ΔT extrapolation',
+          title: 'Calorimetry: Theoretical Maximum ΔT Extrapolation',
+          body: 'Do not simply take the highest recorded thermometer value! Environmental cooling begins immediately upon mixing. You must extrapolate the linear cooling line back to the minute of mixing to obtain the true theoretical maximum temperature for enthalpy calculations (ΔH = mcΔT).',
+          actionText: 'Practice Cooling Curve Extrapolation →',
+          actionUrl: 'lab.html?type=energy',
+          quickCheck: {
+            question: 'Why do examiners require extrapolating temperature back to the mixing minute?',
+            options: [
+              { text: 'A) To account for heat loss to surroundings before max reading', correct: true, explanation: 'Correct! Cooling begins immediately, so extrapolation finds true ΔT.' },
+              { text: 'B) Because thermometer calibration is always off by 2°C', correct: false, explanation: 'Incorrect.' },
+              { text: 'C) To increase the volume of the reaction mixture', correct: false, explanation: 'Incorrect.' }
+            ]
+          }
+        };
+      }
+    }
+
+    // E. High Accuracy Streak Praise
+    if (!diagnosticAdvice && recentAccuracy >= 80 && recentSessions.length >= 3) {
+      diagnosticAdvice = {
+        category: '🏆 DISTINCTION STREAK',
+        badgeClass: 'badge-success',
+        sourceNotice: `✨ <strong>Distinction Track:</strong> Outstanding ${recentAccuracy}% accuracy across your last ${recentSessions.length} sessions!`,
+        title: 'Mwalimu Commendation: Top Chemist Trajectory',
+        body: 'Superb work! You have mastered foundational titration concordancy and cation identification. To lock in your grade A on the national KCSE exam, practice full 40-mark composite mock practicals under strict 45-minute timed constraints.',
+        actionText: 'Attempt 40-Mark Mock Practical →',
+        actionUrl: 'composite_exam.html',
+        quickCheck: {
+          question: 'In standard volumetric analysis, what is the maximum acceptable titre deviation between concordant runs?',
+          options: [
+            { text: 'A) ±0.50 cm³', correct: false, explanation: 'Too large! Deductions apply.' },
+            { text: 'B) ±0.20 cm³', correct: true, explanation: 'Correct! KNEC concordancy standard is strictly ±0.20 cm³.' },
+            { text: 'C) ±1.00 cm³', correct: false, explanation: 'Gross error!' }
+          ]
+        }
+      };
+    }
+
+    // Render diagnostic advice or fallback to library
+    if (diagnosticAdvice) {
+      renderCustomDiagnosticAdvice(diagnosticAdvice);
+    } else {
+      const idx = sessionList.length % STUDY_TIPS_LIBRARY.length;
+      if (scanNotice) {
+        scanNotice.innerHTML = `✨ <strong>Examiner Study Focus:</strong> High-yield tip #${idx + 1} of ${STUDY_TIPS_LIBRARY.length}`;
+      }
+      if (sourceLine) {
+        sourceLine.textContent = 'Curated KCSE Marking Scheme Drills';
+      }
+      renderStudyTipByIndex(idx);
+    }
+  }
+
+  function generateWeeklyTrajectorySvg(sessions) {
+    const days = [];
+    const now = new Date();
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+      const dateStr = d.toISOString().split('T')[0];
+      const dayLabel = d.toLocaleDateString('en-US', { weekday: 'short' });
+      days.push({ dateStr, dayLabel, count: 0, passed: 0 });
+    }
+
+    if (Array.isArray(sessions)) {
+      sessions.forEach(s => {
+        const sDate = (s.created_at || s.timestamp || '').split('T')[0];
+        const match = days.find(d => d.dateStr === sDate);
+        if (match) {
+          match.count++;
+          if (s.correct || (s.score_pct != null && s.score_pct >= 50)) match.passed++;
+        }
+      });
+    }
+
+    const totalWeekly = days.reduce((sum, d) => sum + d.count, 0);
+    const summaryEl = document.getElementById('trajectorySummaryText');
+    if (summaryEl) {
+      summaryEl.textContent = `${totalWeekly} practical session${totalWeekly === 1 ? '' : 's'} completed over the last 7 days`;
+    }
+
+    const maxCount = Math.max(3, ...days.map(d => d.count));
+    const svgWidth = 460;
+    const svgHeight = 110;
+    const paddingX = 30;
+    const paddingY = 20;
+    const chartW = svgWidth - (paddingX * 2);
+    const chartH = svgHeight - (paddingY * 2);
+
+    const stepX = chartW / 6;
+    const points = days.map((d, i) => {
+      const x = paddingX + (i * stepX);
+      const y = (paddingY + chartH) - ((d.count / maxCount) * chartH);
+      return { x: Math.round(x), y: Math.round(y), ...d };
+    });
+
+    let pathD = `M ${points[0].x} ${points[0].y}`;
+    for (let i = 0; i < points.length - 1; i++) {
+      const p0 = points[i];
+      const p1 = points[i + 1];
+      const cp1x = p0.x + (p1.x - p0.x) / 2;
+      const cp1y = p0.y;
+      const cp2x = p0.x + (p1.x - p0.x) / 2;
+      const cp2y = p1.y;
+      pathD += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p1.x} ${p1.y}`;
+    }
+
+    const areaD = `${pathD} L ${points[points.length - 1].x} ${paddingY + chartH} L ${points[0].x} ${paddingY + chartH} Z`;
+
+    const pointsSvg = points.map(p => `
+      <g class="trajectory-point-group" tabindex="0">
+        <circle cx="${p.x}" cy="${p.y}" r="4" fill="#0284C7" stroke="#FFFFFF" stroke-width="2"/>
+        <text x="${p.x}" y="${svgHeight - 4}" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="var(--text-muted)" font-weight="700">${p.dayLabel}</text>
+        <title>${p.dayLabel} (${p.dateStr}): ${p.count} session${p.count === 1 ? '' : 's'}</title>
+      </g>
+    `).join('');
+
+    return `
+      <svg viewBox="0 0 ${svgWidth} ${svgHeight}" class="trajectory-svg" aria-label="7-Day Activity Trajectory">
+        <defs>
+          <linearGradient id="trajGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#0284C7" stop-opacity="0.32"/>
+            <stop offset="100%" stop-color="#0284C7" stop-opacity="0.0"/>
+          </linearGradient>
+        </defs>
+        <line x1="${paddingX}" y1="${paddingY + chartH}" x2="${svgWidth - paddingX}" y2="${paddingY + chartH}" stroke="rgba(148,163,184,0.2)" stroke-width="1"/>
+        <path d="${areaD}" fill="url(#trajGradient)"/>
+        <path d="${pathD}" fill="none" stroke="#0284C7" stroke-width="2.5" stroke-linecap="round"/>
+        ${pointsSvg}
+      </svg>
+    `;
+  }
+
+  function renderMasteryModalData(data) {
+    const { totalReadiness, coveredTopics, accuracyPct, totalSessions, discStats, sessions } = data;
+
+    // 1. Large Circular Radial Gauge (C = 163.36)
+    const modalRadialFill = document.getElementById('modalReadinessRadialFill');
+    const modalScoreVal = document.getElementById('modalReadinessScoreVal');
+    const modalBadge = document.getElementById('modalMasteryBadge');
+
+    if (modalScoreVal) modalScoreVal.textContent = totalReadiness + '%';
+    if (modalRadialFill) {
+      const circumference = 163.36;
+      const offset = Math.max(0, circumference - (circumference * totalReadiness / 100));
+      modalRadialFill.style.strokeDashoffset = offset;
+      if (totalReadiness >= 80) modalRadialFill.style.stroke = '#10B981';
+      else if (totalReadiness >= 50) modalRadialFill.style.stroke = '#F59E0B';
+      else modalRadialFill.style.stroke = '#EF4444';
+    }
+
+    if (modalBadge) {
+      if (totalReadiness >= 80) modalBadge.textContent = '🟢 Mastered (80–100%)';
+      else if (totalReadiness >= 50) modalBadge.textContent = '🟡 Improving (50–79%)';
+      else modalBadge.textContent = '🔴 Needs Practice (<50%)';
+    }
+
+    // 2. Foundation Cards
+    const topicsVal = document.getElementById('modalTopicsCoveredVal');
+    const topicsFill = document.getElementById('modalTopicsProgressFill');
+    const topicsFoot = document.getElementById('modalTopicsFoot');
+    if (topicsVal) topicsVal.textContent = `${coveredTopics} / 10`;
+    if (topicsFill) topicsFill.style.width = `${(coveredTopics / 10) * 100}%`;
+    if (topicsFoot) topicsFoot.textContent = `${Math.round((coveredTopics / 10) * 100)}% of 40-mark syllabus covered`;
+
+    const accVal = document.getElementById('modalAccuracyRateVal');
+    const accFill = document.getElementById('modalAccuracyProgressFill');
+    const accFoot = document.getElementById('modalAccuracyFoot');
+    if (accVal) accVal.textContent = accuracyPct + '%';
+    if (accFill) accFill.style.width = accuracyPct + '%';
+    if (accFoot) accFoot.textContent = `Across ${totalSessions} total practical attempts`;
+
+    // 3. Discipline Mastery Bars
+    const discListEl = document.getElementById('disciplineMasteryList');
+    if (discListEl) {
+      const DISC_ITEMS = [
+        { key: 'volumetric', title: 'Volumetric Analysis', paper: 'Paper 3 · Q1 (15 Marks)', icon: '🧪', count: data.topicCounts.acidBase + data.topicCounts.redox + data.topicCounts.precipitation, benchUrl: 'lab.html?type=acidBase' },
+        { key: 'qualitative', title: 'Qualitative Salt Analysis', paper: 'Paper 3 · Q2 (15 Marks)', icon: '🧂', count: data.topicCounts.qualitative, benchUrl: 'lab.html?type=qualitative' },
+        { key: 'rates', title: 'Reaction Rates & Kinetics', paper: 'Paper 3 · Q1/Q3 (12 Marks)', icon: '⚡', count: data.topicCounts.rates, benchUrl: 'lab.html?type=rates' },
+        { key: 'energy', title: 'Energetics & Thermochemistry', paper: 'Paper 3 · Q1/Q3 (10 Marks)', icon: '🔥', count: data.topicCounts.energy, benchUrl: 'lab.html?type=energy' },
+        { key: 'organic', title: 'Organic & Gas Evolution', paper: 'Paper 3 · Q3 (8 Marks)', icon: '🌿', count: data.topicCounts.organic + data.topicCounts.gas, benchUrl: 'lab.html?type=organic' }
+      ];
+
+      discListEl.innerHTML = DISC_ITEMS.map(item => {
+        const pct = discStats[item.key] || 0;
+        let badgeHtml = '<span class="pulse-mastery-chip chip-practice" style="font-size:0.65rem;">🔴 Needs Practice</span>';
+        let barColor = 'linear-gradient(90deg, #EF4444 0%, #DC2626 100%)';
+        if (pct >= 80) {
+          badgeHtml = '<span class="pulse-mastery-chip chip-mastered" style="font-size:0.65rem;">🟢 Mastered</span>';
+          barColor = 'linear-gradient(90deg, #10B981 0%, #059669 100%)';
+        } else if (pct >= 50) {
+          badgeHtml = '<span class="pulse-mastery-chip chip-improving" style="font-size:0.65rem;">🟡 Improving</span>';
+          barColor = 'linear-gradient(90deg, #F59E0B 0%, #D97706 100%)';
+        }
+
+        return `
+          <div class="discipline-mastery-item">
+            <div class="discipline-item-top">
+              <div class="discipline-item-name-row">
+                <span class="discipline-item-icon">${item.icon}</span>
+                <span class="discipline-item-title">${item.title}</span>
+                <span class="discipline-paper-badge">${item.paper}</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-family:'JetBrains Mono',monospace; font-size:0.75rem; font-weight:800; color:var(--heading-color);">${pct}%</span>
+                ${badgeHtml}
+              </div>
+            </div>
+            <div class="discipline-bar-wrap">
+              <div class="discipline-bar-fill" style="width: ${pct}%; background: ${barColor};"></div>
+            </div>
+            <div class="discipline-item-bottom">
+              <span>${item.count} sessions completed</span>
+              <a href="${item.benchUrl}" style="color:var(--cyan-accent); text-decoration:none;">Practice Bench &rarr;</a>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 4. 7-Day Trajectory Area Graph
+    const trajWrap = document.getElementById('trajectorySvgWrap');
+    if (trajWrap) {
+      trajWrap.innerHTML = generateWeeklyTrajectorySvg(sessions);
+    }
+
+    // 5. Coach Verdict
+    const verdictEl = document.getElementById('masteryCoachVerdictText');
+    if (verdictEl) {
+      if (totalReadiness >= 80) {
+        verdictEl.innerHTML = '<strong>Distinction Ready (Grade A Trajectory):</strong> You have demonstrated consistent proficiency across all KNEC Paper 3 disciplines. Prioritize timed composite past paper exams (40 marks) to optimize speed and burette swirling under pressure.';
+      } else if (totalReadiness >= 50) {
+        verdictEl.innerHTML = '<strong>Solid Foundation (Grade B+ Trajectory):</strong> Good mastery of standard acid-base titration. Focus your next 3 sessions on <em>Qualitative Salt confirmation tests (KI for Pb²⁺, BaCl₂ for SO₄²⁻)</em> to push your readiness past the 80% mark.';
+      } else {
+        verdictEl.innerHTML = '<strong>Developing Stage:</strong> Jumpstart your score by completing the Guided Volumetric Analysis practical and recording initial burette readings to 2 decimal places.';
+      }
+    }
   }
 
   function updateReadinessScore(sessions) {
+    const sessionList = (Array.isArray(sessions) && sessions.length > 0)
+      ? sessions
+      : (cachedStudentSessions || []);
+
     const topicCounts = {
       acidBase: 0,
       redox: 0,
@@ -1673,7 +2057,7 @@ requireStudentLogin();
 
     let correctCount = 0;
 
-    sessions.forEach(s => {
+    sessionList.forEach(s => {
       const type = (s.titration_title || s.titration_type || s.titrationKey || s.salt_key || s.compound_name || s.solute_key || s.experiment_title || s.gas_key || '').toLowerCase();
       if (type.includes('redox')) topicCounts.redox++;
       else if (type.includes('precipit')) topicCounts.precipitation++;
@@ -1691,9 +2075,9 @@ requireStudentLogin();
 
     const coveredTopics = Object.values(topicCounts).filter(cnt => cnt > 0).length;
     const topicScore = (coveredTopics / 10) * 50;
-    const accuracyPct = sessions.length > 0 ? (correctCount / sessions.length) * 100 : 0;
+    const accuracyPct = sessionList.length > 0 ? (correctCount / sessionList.length) * 100 : 0;
     const accuracyScore = (accuracyPct / 100) * 30;
-    const volumeScore = Math.min(sessions.length, 10) * 2;
+    const volumeScore = Math.min(sessionList.length, 10) * 2;
 
     const totalReadiness = Math.min(100, Math.round(topicScore + accuracyScore + volumeScore));
 
@@ -1704,13 +2088,64 @@ requireStudentLogin();
 
     if (scoreNum) scoreNum.textContent = totalReadiness + '%';
     if (barFill) barFill.style.width = totalReadiness + '%';
-    if (certBtn) certBtn.style.display = (totalReadiness >= 20 || sessions.length > 0) ? 'inline-block' : 'none';
+    if (certBtn) certBtn.style.display = (totalReadiness >= 20 || sessionList.length > 0) ? 'inline-block' : 'none';
 
     let statusText = 'Novice';
     if (totalReadiness >= 85) statusText = 'Distinction Ready';
     else if (totalReadiness >= 70) statusText = 'Competent';
     else if (totalReadiness >= 40) statusText = 'Developing';
     if (statusEl) statusEl.textContent = statusText;
+
+    // Update Pulse Strip: KCSE Readiness
+    const pulseReadinessVal = document.getElementById('pulseReadinessVal');
+    const pulseReadinessBarFill = document.getElementById('pulseReadinessBarFill');
+    const pulseReadinessSub = document.getElementById('pulseReadinessSub');
+    const pulseMasteryBadge = document.getElementById('pulseMasteryBadge');
+    const pulseRadialFill = document.getElementById('pulseRadialFill');
+
+    if (pulseReadinessVal) pulseReadinessVal.textContent = totalReadiness + '%';
+    if (pulseReadinessBarFill) pulseReadinessBarFill.style.width = totalReadiness + '%';
+    if (pulseReadinessSub) {
+      pulseReadinessSub.textContent = `${coveredTopics} / 10 practical topics covered`;
+    }
+
+    // Circular SVG Radial Gauge on Card (Circumference = 131.95)
+    if (pulseRadialFill) {
+      const circumference = 131.95;
+      const offset = Math.max(0, circumference - (circumference * totalReadiness / 100));
+      pulseRadialFill.style.strokeDashoffset = offset;
+      if (totalReadiness >= 80) pulseRadialFill.style.stroke = '#10B981';
+      else if (totalReadiness >= 50) pulseRadialFill.style.stroke = '#F59E0B';
+      else pulseRadialFill.style.stroke = '#EF4444';
+    }
+
+    if (pulseMasteryBadge) {
+      pulseMasteryBadge.classList.remove('chip-mastered', 'chip-improving', 'chip-practice');
+      if (totalReadiness >= 80) {
+        pulseMasteryBadge.classList.add('chip-mastered');
+        pulseMasteryBadge.textContent = '🟢 Mastered';
+      } else if (totalReadiness >= 50) {
+        pulseMasteryBadge.classList.add('chip-improving');
+        pulseMasteryBadge.textContent = '🟡 Improving';
+      } else {
+        pulseMasteryBadge.classList.add('chip-practice');
+        pulseMasteryBadge.textContent = '🔴 Needs Practice';
+      }
+    }
+
+    // 5 Mini Discipline Bars on Card 3
+    const discStats = {
+      volumetric: Math.min(100, Math.round(((topicCounts.acidBase + topicCounts.redox + topicCounts.precipitation + topicCounts.complexometric) / 4) * 100)),
+      qualitative: Math.min(100, Math.round((topicCounts.qualitative / 3) * 100)),
+      rates: Math.min(100, Math.round((topicCounts.rates / 2) * 100)),
+      energy: Math.min(100, Math.round((topicCounts.energy / 2) * 100)),
+      organic: Math.min(100, Math.round(((topicCounts.organic + topicCounts.gas) / 2) * 100))
+    };
+
+    ['volumetric', 'qualitative', 'rates', 'energy', 'organic'].forEach(key => {
+      const el = document.getElementById('miniDisc_' + key);
+      if (el) el.style.height = `${Math.max(6, discStats[key])}%`;
+    });
 
     for (const [key, count] of Object.entries(topicCounts)) {
       const el = document.getElementById('topicStatus-' + key);
@@ -1723,6 +2158,17 @@ requireStudentLogin();
         else item.classList.remove('mastered');
       }
     }
+
+    // Render detailed modal data
+    renderMasteryModalData({
+      totalReadiness,
+      coveredTopics,
+      accuracyPct: Math.round(accuracyPct),
+      totalSessions: sessionList.length,
+      topicCounts,
+      discStats,
+      sessions: sessionList
+    });
 
     // Dynamic Daily Lab Streak Calculation
     updateLabStreak(sessions);
@@ -2938,6 +3384,241 @@ requireStudentLogin();
     }
   }
 
+  const BENCH_REGISTRY = {
+    'acidBase': {
+      id: 'acidBase',
+      title: 'Volumetric Analysis Workbench',
+      guidedTitle: 'Guided Volumetric Analysis (Acid-Base Standardisation)',
+      url: 'lab.html?type=acidBase',
+      guidedUrl: 'lab.html?studyMode=guided',
+      topic: 'Volumetric Analysis',
+      paperTag: 'Paper 3 · Q1 (15 Marks)',
+      desc: 'Master burette reading precision (.00 or .05 cm³), concordant titres within ±0.20 cm³, and stoichiometry.',
+      iconKey: 'burette'
+    },
+    'redox': {
+      id: 'redox',
+      title: 'Redox Titration (Fe²⁺ vs KMnO₄)',
+      url: 'lab.html?type=redox',
+      topic: 'Redox Volumetric',
+      paperTag: 'Paper 3 · Q1 (15 Marks)',
+      desc: 'Master self-indicating permanganate endpoints and 5:1 Fe²⁺:MnO₄⁻ stoichiometric ratios.',
+      iconKey: 'flask'
+    },
+    'qualitative': {
+      id: 'qualitative',
+      title: 'Systematic Qualitative Analysis',
+      url: 'qualitative.html',
+      topic: 'Qualitative Salts',
+      paperTag: 'Paper 3 · Q2 (15 Marks)',
+      desc: 'Identify unknown cations and anions via aqueous NaOH, NH₃, Ba(NO₃)₂, AgNO₃, and flame tests.',
+      iconKey: 'microscope'
+    },
+    'rates': {
+      id: 'rates',
+      title: 'Reaction Rates & Kinetics',
+      url: 'rates.html',
+      topic: 'Reaction Kinetics',
+      paperTag: 'Paper 3 · Q1/Q3 (12 Marks)',
+      desc: 'Disappearing cross experiment, Na₂S₂O₃ vs HCl rate curves (1/t vs conc), and activation energy.',
+      iconKey: 'timer'
+    },
+    'energy': {
+      id: 'energy',
+      title: 'Thermochemistry & Energy Changes',
+      url: 'energy.html',
+      topic: 'Thermochemistry',
+      paperTag: 'Paper 3 · Q1/Q3 (15 Marks)',
+      desc: 'Calorimetric cooling curve extrapolation and molar enthalpies of solution, neutralisation & displacement.',
+      iconKey: 'flame'
+    },
+    'solubility': {
+      id: 'solubility',
+      title: 'Solubility Curves & Crystallization',
+      url: 'solubility.html',
+      topic: 'Solubility Curves',
+      paperTag: 'Paper 3 · Q1/Q3 (12 Marks)',
+      desc: 'Determine crystallization inception temperatures for KCSE salt curves and solubility calculations.',
+      iconKey: 'target'
+    },
+    'organic': {
+      id: 'organic',
+      title: 'Organic Chemistry & Functional Groups',
+      url: 'organic.html',
+      topic: 'Organic Chemistry',
+      paperTag: 'Paper 3 · Q3 (10 Marks)',
+      desc: 'Unsaturation tests with Br₂(aq) & acidified KMnO₄, acidified K₂Cr₂O₇ oxidation, and esterification.',
+      iconKey: 'flask'
+    },
+    'gas': {
+      id: 'gas',
+      title: 'Gas Preparation & Analysis',
+      url: 'gas_prep.html',
+      topic: 'Inorganic Gases',
+      paperTag: 'Paper 3 · Qualitative (10 Marks)',
+      desc: 'Laboratory generation, drying methods, and confirmatory tests for H₂, O₂, CO₂, Cl₂, NH₃, SO₂.',
+      iconKey: 'flask'
+    }
+  };
+
+  function initResumeExperimentHero(sessions) {
+    const heroCard = document.getElementById('resumeHeroCard');
+    if (!heroCard) return;
+
+    let targetBench = null;
+    let badgeText = 'Continue Learning';
+    let statusText = 'In Progress';
+    let progressPct = 0;
+
+    // 1. Check local storage for explicitly saved last active bench
+    try {
+      const stored = localStorage.getItem('vlk_last_active_bench');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed && (parsed.url || parsed.id)) {
+          targetBench = parsed;
+          badgeText = 'Resume Last Lab';
+        }
+      }
+    } catch (e) {}
+
+    // 2. If no explicit last active bench, inspect the most recent session
+    const sessionList = (Array.isArray(sessions) && sessions.length > 0)
+      ? sessions
+      : (cachedStudentSessions || []);
+
+    if (!targetBench && sessionList.length > 0) {
+      const lastSession = sessionList[0];
+      const rawType = (
+        lastSession.titration_title ||
+        lastSession.titration_type ||
+        lastSession.titrationKey ||
+        lastSession.salt_key ||
+        lastSession.salt_name ||
+        lastSession.compound_name ||
+        lastSession.solute_key ||
+        lastSession.solute_name ||
+        lastSession.system_id ||
+        lastSession.experiment_type ||
+        lastSession.gas_key ||
+        ''
+      ).toLowerCase();
+
+      let detectedKey = 'acidBase';
+      if (rawType.includes('redox') || rawType.includes('kmno4')) detectedKey = 'redox';
+      else if (rawType.includes('qualitative') || lastSession.salt_key || lastSession.salt_name) detectedKey = 'qualitative';
+      else if (rawType.includes('rate') || lastSession.experiment_type) detectedKey = 'rates';
+      else if (rawType.includes('energy') || lastSession.system_id) detectedKey = 'energy';
+      else if (rawType.includes('solubility') || lastSession.solute_key) detectedKey = 'solubility';
+      else if (rawType.includes('organic') || lastSession.compound_name) detectedKey = 'organic';
+      else if (rawType.includes('gas') || lastSession.gas_key) detectedKey = 'gas';
+
+      const registryItem = BENCH_REGISTRY[detectedKey];
+      if (registryItem) {
+        targetBench = {
+          id: registryItem.id,
+          url: registryItem.url,
+          title: lastSession.titration_title || lastSession.salt_name || registryItem.title,
+          topic: registryItem.topic,
+          paperTag: registryItem.paperTag,
+          desc: registryItem.desc,
+          iconKey: registryItem.iconKey
+        };
+        badgeText = 'Resume Practical';
+      }
+    }
+
+    // 3. Fallback for new students or clean state: Guided Volumetric Analysis
+    if (!targetBench) {
+      const defaultItem = BENCH_REGISTRY['acidBase'];
+      targetBench = {
+        id: 'guidedAcidBase',
+        url: defaultItem.guidedUrl,
+        title: 'Acid-Base Titration (KCSE Standardisation)',
+        topic: defaultItem.topic,
+        paperTag: defaultItem.paperTag,
+        desc: 'Master burette reading precision (.00 or .05 cm³), concordant titre spread (≤ 0.20 cm³), and stoichiometry.',
+        iconKey: defaultItem.iconKey
+      };
+      badgeText = 'RESUMING PRACTICAL';
+      statusText = 'Mastered';
+      progressPct = 94;
+    } else {
+      // Calculate bench mastery from sessions
+      if (sessionList.length > 0) {
+        const matchingSessions = sessionList.filter(s => {
+          const sText = JSON.stringify(s).toLowerCase();
+          return sText.includes((targetBench.id || '').toLowerCase()) || sText.includes((targetBench.topic || '').toLowerCase().slice(0, 5));
+        });
+        if (matchingSessions.length > 0) {
+          const correct = matchingSessions.filter(s => s.correct || (s.score_pct != null && s.score_pct >= 50)).length;
+          progressPct = Math.round((correct / matchingSessions.length) * 100);
+          statusText = progressPct >= 80 ? 'Mastered' : (progressPct >= 50 ? 'Improving' : 'Practicing');
+        } else {
+          progressPct = 35;
+        }
+      } else {
+        progressPct = 25;
+      }
+    }
+
+    // Update DOM
+    const badgeTextEl = document.getElementById('resumeBadgeText');
+    const paperTagEl = document.getElementById('resumePaperTag');
+    const topicPillEl = document.getElementById('resumeTopicPill');
+    const titleEl = document.getElementById('resumeTitle');
+    const descEl = document.getElementById('resumeDesc');
+    const statusHighlightEl = document.getElementById('resumeStatusHighlight');
+    const progressPctEl = document.getElementById('resumeProgressPct');
+    const progressFillEl = document.getElementById('resumeProgressFill');
+    const launchBtnEl = document.getElementById('resumeLaunchBtn');
+    const launchBtnTextEl = document.getElementById('resumeLaunchBtnText');
+    const iconBadgeEl = document.getElementById('resumeIconBadge');
+
+    if (badgeTextEl) badgeTextEl.textContent = badgeText;
+    if (paperTagEl && targetBench.paperTag) paperTagEl.textContent = targetBench.paperTag;
+    if (topicPillEl && targetBench.topic) topicPillEl.textContent = targetBench.topic;
+    if (titleEl && targetBench.title) titleEl.textContent = targetBench.title;
+    if (descEl && targetBench.desc) descEl.textContent = targetBench.desc;
+    if (statusHighlightEl) statusHighlightEl.textContent = statusText;
+    if (progressPctEl) progressPctEl.textContent = progressPct + '%';
+    if (progressFillEl) progressFillEl.style.width = progressPct + '%';
+    if (launchBtnEl && targetBench.url) launchBtnEl.href = targetBench.url;
+    if (launchBtnTextEl) {
+      launchBtnTextEl.textContent = sessionList.length > 0 ? 'Resume Lab Session' : 'Start First Practical';
+    }
+
+    if (iconBadgeEl && targetBench.iconKey && window.VLKIcons && typeof window.VLKIcons.svg === 'function') {
+      iconBadgeEl.innerHTML = window.VLKIcons.svg(targetBench.iconKey, { size: 28, strokeWidth: 1.75 });
+    }
+  }
+
+  function initBenchCardClickTracker() {
+    document.querySelectorAll('.practice-banner-card').forEach(card => {
+      card.addEventListener('click', () => {
+        try {
+          const href = card.getAttribute('href');
+          const titleEl = card.querySelector('.practice-text-title');
+          const descEl = card.querySelector('.practice-text-desc');
+          const type = card.getAttribute('data-type') || 'acidBase';
+          const regItem = BENCH_REGISTRY[type] || {};
+
+          const benchData = {
+            id: type,
+            url: href,
+            title: titleEl ? titleEl.textContent.trim() : regItem.title || 'Practical Lab',
+            desc: descEl ? descEl.textContent.trim() : regItem.desc || '',
+            topic: regItem.topic || 'Chemistry Practical',
+            paperTag: regItem.paperTag || 'Paper 3 (KCSE)',
+            iconKey: regItem.iconKey || 'flask',
+            timestamp: Date.now()
+          };
+          localStorage.setItem('vlk_last_active_bench', JSON.stringify(benchData));
+        } catch (e) {}
+      });
+    });
+  }
+
   async function loadSessions() {
     const box = document.getElementById('sessionsList');
     try {
@@ -2958,6 +3639,7 @@ requireStudentLogin();
       updateReadinessScore(sessions);
       updateMwalimuAdvice(sessions);
       renderAdaptiveRecommendation(sessions);
+      initResumeExperimentHero(sessions);
       try {
         renderStudentCharts(sessions, analytics);
       } catch (chartErr) {
@@ -2999,6 +3681,7 @@ requireStudentLogin();
       cachedStudentSessions = fallbackSessions;
       updateReadinessScore(fallbackSessions);
       updateMwalimuAdvice(fallbackSessions);
+      initResumeExperimentHero(fallbackSessions);
       try {
         renderStudentCharts(fallbackSessions, null);
       } catch (chartErr) {
@@ -3520,8 +4203,11 @@ requireStudentLogin();
     window.exportLabHistoryCSV = exportLabHistoryCSV;
     window.dismissAnnouncement = dismissAnnouncement;
     window.updateGamificationDashboardUI = updateGamificationDashboardUI;
+    window.initResumeExperimentHero = initResumeExperimentHero;
     window.openXPPerksModal = openXPPerksModal;
     window.closeXPPerksModal = closeXPPerksModal;
+    window.openMasteryChartsModal = openMasteryChartsModal;
+    window.closeMasteryChartsModal = closeMasteryChartsModal;
   }
 
   function updateGamificationDashboardUI() {
@@ -3558,6 +4244,37 @@ requireStudentLogin();
       }
     }
 
+    // Update Pulse Strip: Streak
+    const pulseStreakVal = document.getElementById('pulseStreakVal');
+    if (pulseStreakVal) pulseStreakVal.textContent = streak.count;
+
+    // Update Pulse Strip: Rank & XP
+    const pulseRankTitle = document.getElementById('pulseRankTitle');
+    const pulseXPBarFill = document.getElementById('pulseXPBarFill');
+    const pulseXPVal = document.getElementById('pulseXPVal');
+    const pulseNextXPVal = document.getElementById('pulseNextXPVal');
+    const pulseXPSub = document.getElementById('pulseXPSub');
+
+    if (pulseRankTitle) pulseRankTitle.textContent = `Level ${xp.level}: ${xp.title.replace('Form ', 'F').replace('KCSE ', '')}`;
+    if (pulseXPBarFill) pulseXPBarFill.style.width = `${xp.progressPercent}%`;
+    if (pulseXPVal) pulseXPVal.textContent = xp.totalXP.toLocaleString();
+    if (pulseNextXPVal) pulseNextXPVal.textContent = xp.nextLevelXP.toLocaleString();
+
+    const remainingXP = Math.max(0, (xp.nextLevelXP || 0) - (xp.totalXP || 0));
+    if (pulseXPSub) {
+      pulseXPSub.innerHTML = `<span>${xp.totalXP.toLocaleString()} / ${xp.nextLevelXP.toLocaleString()} XP</span> &middot; <span style="opacity:0.85;">${remainingXP.toLocaleString()} XP to Level ${xp.level + 1}</span>`;
+    }
+
+    const pulseRewardText = document.getElementById('pulseXPRewardText');
+    if (pulseRewardText) {
+      const nextTier = LEVEL_TIER_PERKS.find(t => t.level === xp.level + 1);
+      if (nextTier) {
+        pulseRewardText.innerHTML = `<strong>${remainingXP.toLocaleString()} XP TO UNLOCK:</strong> 🏆 ${nextTier.unlocks}`;
+      } else {
+        pulseRewardText.innerHTML = '🏆 <strong>Top Rank:</strong> All Practical Benches & Examiner Rubrics Unlocked';
+      }
+    }
+
     // 3. Daily Challenge Card
     const daily = window.GamificationEngine.getDailyChallenge();
     const dailyCard = document.getElementById('dailyChallengeCard');
@@ -3589,7 +4306,9 @@ requireStudentLogin();
       iconName: 'flask',
       minXP: 0,
       maxXP: 250,
-      perks: 'Basic apparatus calibration, lab safety badges & volumetric pipetting.'
+      rewardBadge: 'Safety First',
+      unlocks: 'Acid-Base Standardisation & Burette Calibration',
+      perks: 'Basic apparatus calibration, lab safety drills & volumetric pipetting.'
     },
     {
       level: 2,
@@ -3597,6 +4316,8 @@ requireStudentLogin();
       iconName: 'microscope',
       minXP: 250,
       maxXP: 700,
+      rewardBadge: 'Meniscus Master',
+      unlocks: 'Solubility Curves & Advanced Indicator Transitions',
       perks: 'Acid-base indicator transition endpoints, solubility curves & dissolution bench.'
     },
     {
@@ -3605,6 +4326,8 @@ requireStudentLogin();
       iconName: 'burette',
       minXP: 700,
       maxXP: 1600,
+      rewardBadge: 'Redox Specialist',
+      unlocks: 'KMnO₄ Redox Titration & Thermochemistry Calorimetry Bench',
       perks: 'Precision volumetric burette concordancy (Table 1), redox titrations & enthalpy calorimetry.'
     },
     {
@@ -3613,6 +4336,8 @@ requireStudentLogin();
       iconName: 'zap',
       minXP: 1600,
       maxXP: 3200,
+      rewardBadge: 'Qualitative Sleuth',
+      unlocks: 'Qualitative Salt Analysis Bench & Organic Reagents Kit',
       perks: 'Qualitative inorganic cation/anion precipitation benches, gas tests & organic functional deductions.'
     },
     {
@@ -3621,6 +4346,8 @@ requireStudentLogin();
       iconName: 'award',
       minXP: 3200,
       maxXP: 6000,
+      rewardBadge: 'National Examiner Challenge',
+      unlocks: '40-Mark Mock Practical Exam & Official KNEC Rubric Mode',
       perks: 'Full 40-mark national mock capstone, gold certificate eligibility & examiner marking rubric access.'
     }
   ];
@@ -3704,7 +4431,11 @@ requireStudentLogin();
               </div>
             </div>
             <div class="xp-tier-perks">
-              <strong>Unlocked Perks:</strong> ${tier.perks}
+              <strong>Syllabus Scope:</strong> ${tier.perks}
+            </div>
+            <div class="xp-tier-reward-highlight">
+              <span>🎁 <strong>Unlocked Feature:</strong> ${tier.unlocks}</span>
+              <span style="margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:0.7rem;">🏅 ${tier.rewardBadge}</span>
             </div>
           </div>
         `;
@@ -3724,6 +4455,35 @@ requireStudentLogin();
     }
   }
 
+  function openMasteryChartsModal() {
+    const modal = document.getElementById('masteryChartsModal');
+    if (!modal) return;
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+    // Play subtle chime
+    if (window.BrilliantUI && window.BrilliantUI.audio) {
+      window.BrilliantUI.audio.playClick();
+    }
+
+    if (!window.__masteryModalEscHandler) {
+      window.__masteryModalEscHandler = function(e) {
+        if (e.key === 'Escape') closeMasteryChartsModal();
+      };
+      window.addEventListener('keydown', window.__masteryModalEscHandler);
+    }
+  }
+
+  function closeMasteryChartsModal() {
+    const modal = document.getElementById('masteryChartsModal');
+    if (modal) modal.style.display = 'none';
+    document.body.style.overflow = '';
+    if (window.__masteryModalEscHandler) {
+      window.removeEventListener('keydown', window.__masteryModalEscHandler);
+      window.__masteryModalEscHandler = null;
+    }
+  }
+
   function closeXPPerksModal() {
     const modal = document.getElementById('xpPerksModal');
     if (modal) modal.style.display = 'none';
@@ -3737,6 +4497,8 @@ requireStudentLogin();
   renderStudyTipByIndex(0);
   renderSavedTipsPocket();
   renderAdaptiveRecommendation([]);
+  initResumeExperimentHero([]);
+  initBenchCardClickTracker();
   loadBadges();
   loadLeaderboard();
   loadAssignments();

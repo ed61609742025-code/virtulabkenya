@@ -4259,8 +4259,9 @@ requireStudentLogin();
     if (pulseXPBarFill) pulseXPBarFill.style.width = `${xp.progressPercent}%`;
     if (pulseXPVal) pulseXPVal.textContent = xp.totalXP.toLocaleString();
     if (pulseNextXPVal) pulseNextXPVal.textContent = xp.nextLevelXP.toLocaleString();
+
+    const remainingXP = Math.max(0, (xp.nextLevelXP || 0) - (xp.totalXP || 0));
     if (pulseXPSub) {
-      const remainingXP = Math.max(0, xp.nextLevelXP - xp.totalXP);
       pulseXPSub.innerHTML = `<span>${xp.totalXP.toLocaleString()} / ${xp.nextLevelXP.toLocaleString()} XP</span> &middot; <span style="opacity:0.85;">${remainingXP.toLocaleString()} XP to Level ${xp.level + 1}</span>`;
     }
 

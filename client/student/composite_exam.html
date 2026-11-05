@@ -256,9 +256,14 @@
       </button>
     </div>
 
-    <button onclick="submitCompositeExam()" class="btn-submit-exam">
-      🚀 Submit KCSE Exam Booklet
-    </button>
+    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <button type="button" onclick="loadEntireExamSampleData()" class="btn-bench btn-bench-amber" style="padding:7px 14px; font-size:0.78rem; font-weight:800;" title="Populate full 40-mark KCSE mock examination with authentic sample practical data">
+        📥 Load Full Exam Sample Data (40 Mks)
+      </button>
+      <button onclick="submitCompositeExam()" class="btn-submit-exam">
+        🚀 Submit KCSE Exam Booklet
+      </button>
+    </div>
   </div>
 
   <!-- ══════════════════════════════════════════════════════════════
@@ -599,21 +604,54 @@
               </div>
             </div>
 
-            <!-- Live Flask Status HUD -->
-            <div class="q1-flask-status-hud">
-              <span id="flaskContentsLabel" style="color:var(--heading-color);">Flask: Empty</span>
-              <span style="font-size:0.68rem; color:var(--text-muted); font-family:var(--font-mono);">250 cm³ Conical Flask</span>
+            <!-- Live Flask Status HUD & Reagents Row -->
+            <div style="width:100%; display:flex; gap:8px; align-items:center; justify-content:space-between; flex-wrap:wrap; margin-top:4px;">
+              <div class="q1-flask-status-hud" style="flex:1; margin:0;">
+                <span id="flaskContentsLabel" style="color:var(--heading-color);">Flask: Empty</span>
+                <span style="font-size:0.68rem; color:var(--text-muted); font-family:var(--font-mono);">250 cm³ Conical Flask</span>
+              </div>
+              <div class="bench-reagents-shelf" style="margin:0;">
+                <div class="bench-bottle-chip">
+                  <span>🫙</span>
+                  <span id="q1TitrantChip">Solution A (Burette)</span>
+                </div>
+                <div class="bench-bottle-chip">
+                  <span>💧</span>
+                  <span id="q1IndicatorChip">Indicator Dropper</span>
+                </div>
+              </div>
             </div>
 
-            <!-- Authentic Chemistry Laboratory Reagent Bottles Shelf -->
-            <div class="bench-reagents-shelf">
-              <div class="bench-bottle-chip">
-                <span>🫙</span>
-                <span id="q1TitrantChip">Solution A (Burette)</span>
+            <!-- Tactile Burette Delivery & Stopcock Controls Directly Adjacent/Below Apparatus -->
+            <div class="q1-rig-delivery-cluster">
+              <div class="q1-delivery-cluster-header">
+                <span style="font-size:0.75rem; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; color:var(--cyan-accent); display:flex; align-items:center; gap:5px;">
+                  <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:14px;height:14px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Burette Delivery &amp; Stopcock Controls
+                </span>
+                <span class="delivery-telemetry-badge" id="titrantTelemetryBadge">
+                  Delivered: <strong id="telemetryDeliveredVol" style="color:var(--cyan-accent); font-family:var(--font-mono);">0.00 cm³</strong>
+                </span>
               </div>
-              <div class="bench-bottle-chip">
-                <span>💧</span>
-                <span id="q1IndicatorChip">Indicator Dropper</span>
+
+              <!-- Incremental Volume Addition Buttons -->
+              <div class="q1-vol-buttons-row">
+                <button type="button" class="btn-bench btn-bench-vol btn-bench-cyan" onclick="addTitrantDirect(1.0)">+1.0 cm³</button>
+                <button type="button" class="btn-bench btn-bench-vol btn-bench-cyan" onclick="addTitrantDirect(0.5)">+0.5 cm³</button>
+                <button type="button" class="btn-bench btn-bench-vol btn-bench-teal" onclick="addTitrantDirect(0.1)">+0.10 cm³</button>
+                <button type="button" class="btn-bench btn-bench-vol btn-bench-teal" onclick="addTitrantDirect(0.05)">💧 +0.05</button>
+              </div>
+
+              <!-- Flow Control Actions -->
+              <div class="q1-flow-buttons-row">
+                <button type="button" class="btn-bench btn-bench-blue" onclick="startContinuousTitration()" id="btnContinuous">
+                  ⚡ Continuous Run
+                </button>
+                <button type="button" class="btn-bench btn-bench-crimson" onclick="stopTitrate()">
+                  🔴 Stop Tap
+                </button>
+                <button type="button" class="btn-bench btn-bench-amber" onclick="swirlFlask()" title="Swirl conical flask to distribute indicator and titrant">
+                  🌀 Swirl Flask
+                </button>
               </div>
             </div>
           </div>
@@ -632,76 +670,52 @@
 
               <div class="q1-prep-grid">
                 <div class="q1-prep-action-card">
-                  <button class="btn-bench btn-bench-cyan" id="btnPipette" onclick="pipetteSolutionB()">
+                  <button type="button" class="btn-bench btn-bench-cyan" id="btnPipette" onclick="pipetteSolutionB()">
                     🧪 Pipette 25.0 cm³
                   </button>
                   <div id="pipetteStatus" class="prep-status-pill">Not Pipetted</div>
                 </div>
                 <div class="q1-prep-action-card">
-                  <button class="btn-bench btn-bench-blue" id="btnAddIndicator" onclick="addIndicatorDrop()">
+                  <button type="button" class="btn-bench btn-bench-blue" id="btnAddIndicator" onclick="addIndicatorDrop()">
                     💧 Add Indicator (0/3)
                   </button>
                   <div id="indicatorStatus" class="prep-status-pill">0 Drops Added</div>
                 </div>
               </div>
-
-              <button class="btn-bench btn-bench-amber btn-bench-swirl" onclick="swirlFlask()">
-                🌀 Swirl Conical Flask
-              </button>
             </div>
 
-            <!-- Console Section 2: Burette Dispenser & Flow Controls -->
+            <!-- Console Section 2: Active Trial & Quick Data Transfer -->
             <div class="q1-console-section">
               <div class="q1-console-header">
                 <span class="q1-console-title-wrap">
                   <span class="q1-console-step-badge step-amber">2</span>
-                  <span class="q1-console-title">Titrant Delivery</span>
-                </span>
-                <span class="q1-console-sub">Burette Stopcock Controls</span>
-              </div>
-
-              <div class="q1-delivery-controls">
-                <div class="q1-vol-buttons-row">
-                  <button class="btn-bench btn-bench-vol btn-bench-cyan" onclick="addTitrantDirect(1.0)">+1.0 cm³</button>
-                  <button class="btn-bench btn-bench-vol btn-bench-cyan" onclick="addTitrantDirect(0.5)">+0.5 cm³</button>
-                  <button class="btn-bench btn-bench-vol btn-bench-teal" onclick="addTitrantDirect(0.1)">+0.10 cm³</button>
-                  <button class="btn-bench btn-bench-vol btn-bench-teal" onclick="addTitrantDirect(0.05)">💧 +0.05</button>
-                </div>
-
-                <div class="q1-flow-buttons-row">
-                  <button class="btn-bench btn-bench-blue" onclick="startContinuousTitration()" id="btnContinuous">
-                    ⚡ Continuous Run
-                  </button>
-                  <button class="btn-bench btn-bench-crimson" onclick="stopTitrate()">
-                    🔴 Stop Tap
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Console Section 3: Data Logging & Operations -->
-            <div class="q1-console-section">
-              <div class="q1-console-header">
-                <span class="q1-console-title-wrap">
-                  <span class="q1-console-step-badge step-emerald">3</span>
-                  <span class="q1-console-title">Trial Data Logging &amp; Bench Operations</span>
+                  <span class="q1-console-title">Trial Logging &amp; Bench Operations</span>
                 </span>
                 <span class="q1-console-sub">Table 1 Transfer</span>
               </div>
 
-              <!-- Manual Data Logging Instructions & Wash Flask -->
-              <div class="q1-trial-target-bar">
-                <span class="q1-trial-target-label">Recording Instruction:</span>
-                <span class="q1-trial-target-badge" style="background:var(--card-bg-hover); color:var(--heading-color);">Manual Entry in Table 1</span>
-              </div>
-              <div style="font-size:0.78rem; color:var(--text-muted); margin-bottom:12px; line-height:1.45;">
-                Read the initial and final burette levels using the magnified meniscus viewfinder above and enter your readings directly into Table 1 below.
+              <div class="q1-trial-pill-group">
+                <button type="button" class="btn-trial-pill active" id="btnTrial1Pill" onclick="setActiveTrial(1)">Trial I (Rough)</button>
+                <button type="button" class="btn-trial-pill" id="btnTrial2Pill" onclick="setActiveTrial(2)">Trial II</button>
+                <button type="button" class="btn-trial-pill" id="btnTrial3Pill" onclick="setActiveTrial(3)">Trial III</button>
               </div>
 
-              <div class="q1-ops-buttons-row">
-                <button type="button" class="btn-bench btn-bench-slate" style="width:100%; justify-content:center;" onclick="resetTitrationApparatus()">
-                  🔄 Wash Flask &amp; Refill Burette for Next Trial
-                </button>
+              <button type="button" class="btn-bench btn-bench-emerald" style="width:100%; justify-content:center; padding:8px 12px; margin-top:2px;" onclick="logCurrentBuretteToActiveTrial()">
+                📝 Log Burette Reading to Table 1 (Trial <span id="lblActiveTrial">1</span>)
+              </button>
+
+              <button type="button" class="btn-bench btn-bench-slate" style="width:100%; justify-content:center; padding:8px 12px;" onclick="resetTitrationApparatus()">
+                🔄 Wash Flask &amp; Refill Burette for Next Trial
+              </button>
+            </div>
+
+            <!-- Console Section 3: KNEC Practical Guidance Card -->
+            <div class="q1-console-section" style="background:rgba(217,119,6,0.06); border-color:rgba(217,119,6,0.25);">
+              <div style="font-size:0.74rem; font-weight:800; color:var(--amber-accent); display:flex; align-items:center; gap:5px;">
+                <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:14px;height:14px;"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg> KNEC EXAMINER VOLUMETRIC TIP
+              </div>
+              <div style="font-size:0.72rem; line-height:1.45; color:var(--text-muted); margin-top:2px;">
+                Always read the initial and final burette levels at the bottom of the meniscus at eye level. Near the endpoint, add titrant dropwise with continuous swirling until the first permanent faint pink colour appears.
               </div>
             </div>
           </div>
@@ -730,9 +744,14 @@
               <div id="q1ConcordantStatusText" style="font-size:0.80rem; font-weight:700; color:var(--text-muted);">Check 2 or 3 concordant trials in Table 1 below.</div>
             </div>
           </div>
-          <button type="button" class="btn-bench btn-bench-teal" style="width:auto; padding:5px 12px; font-size:0.74rem;" onclick="autoSelectConcordantTrials()">
-            ⚡ Auto-Select Concordant Titres
-          </button>
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+            <button type="button" class="btn-bench btn-bench-amber" id="btnLoadExamSampleDataQ1" style="width:auto; padding:5px 12px; font-size:0.74rem;" onclick="loadExamSampleDataQ1()" title="Populate realistic concordant KCSE volumetric practical data">
+              📥 Load Sample Data
+            </button>
+            <button type="button" class="btn-bench btn-bench-teal" style="width:auto; padding:5px 12px; font-size:0.74rem;" onclick="autoSelectConcordantTrials()">
+              ⚡ Auto-Select Concordant Titres
+            </button>
+          </div>
         </div>
 
         <div class="knec-table-scroll-wrap">
@@ -873,7 +892,12 @@
       <h2 id="q2HeadingTitle" style="font-size:1.2rem;font-weight:800;color:var(--heading-color);margin:0;font-family:var(--font-heading);">
         🧂 QUESTION 2: Qualitative Inorganic Analysis
       </h2>
-      <span class="timer-chip" id="q2MarksBadge" style="font-size:0.78rem;padding:3px 10px;background:var(--amber-bg);color:var(--amber-accent);border:1px solid var(--amber-border);">15.0 MARKS</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button type="button" class="btn-bench btn-bench-amber" id="btnLoadExamSampleDataQ2" style="width:auto; padding:5px 12px; font-size:0.74rem;" onclick="loadExamSampleDataQ2()" title="Populate realistic KCSE observations and inferences for Question 2">
+          📥 Load Sample Observations (Q2)
+        </button>
+        <span class="timer-chip" id="q2MarksBadge" style="font-size:0.78rem;padding:3px 10px;background:var(--amber-bg);color:var(--amber-accent);border:1px solid var(--amber-border);">15.0 MARKS</span>
+      </div>
     </div>
 
     <div class="exam-prompt-box" style="display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
@@ -953,7 +977,12 @@
       <h2 id="q3HeadingTitle" style="font-size:1.2rem;font-weight:800;color:var(--heading-color);margin:0;font-family:var(--font-heading);">
         🧫 QUESTION 3: Organic Functional Group Analysis
       </h2>
-      <span class="timer-chip" id="q3MarksBadge" style="font-size:0.78rem;padding:3px 10px;background:var(--amber-bg);color:var(--amber-accent);border:1px solid var(--amber-border);">10.0 MARKS</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button type="button" class="btn-bench btn-bench-amber" id="btnLoadExamSampleDataQ3" style="width:auto; padding:5px 12px; font-size:0.74rem;" onclick="loadExamSampleDataQ3()" title="Populate realistic KCSE observations and inferences for Question 3">
+          📥 Load Sample Observations (Q3)
+        </button>
+        <span class="timer-chip" id="q3MarksBadge" style="font-size:0.78rem;padding:3px 10px;background:var(--amber-bg);color:var(--amber-accent);border:1px solid var(--amber-border);">10.0 MARKS</span>
+      </div>
     </div>
 
     <div class="exam-prompt-box">

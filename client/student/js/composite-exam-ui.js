@@ -1853,6 +1853,8 @@ requireStudentLogin();
 
     updateFlaskAppearance();
     drawLens();
+    const telemVol = document.getElementById('telemetryDeliveredVol');
+    if (telemVol) telemVol.textContent = reading.toFixed(2) + ' cm³';
   }
 
   function swirlFlask() {
@@ -1866,6 +1868,8 @@ requireStudentLogin();
   function resetTitrationApparatus() {
     stopTitrate();
     engine.q1BuretteReading = 0.00;
+    const telemVolReset = document.getElementById('telemetryDeliveredVol');
+    if (telemVolReset) telemVolReset.textContent = '0.00 cm³';
     isPipetted = false;
     indicatorDrops = 0;
     const pipEl = document.getElementById('pipetteStatus');
@@ -4702,5 +4706,242 @@ requireStudentLogin();
       dd.style.display = 'none';
     }
   });
+
+  
+  // ═══════════════════════════════════════════════════════════════
+  //  Active Trial Logging & Sample Practical Data Loaders
+  // ═══════════════════════════════════════════════════════════════
+
+  function logCurrentBuretteToActiveTrial() {
+    const trial = activeTrial || 1;
+    const reading = parseFloat(engine.q1BuretteReading) || 0;
+    const initEl = document.getElementById('t' + trial + 'Init');
+    const finalEl = document.getElementById('t' + trial + 'Final');
+
+    if (initEl && (!initEl.value || parseFloat(initEl.value) === 0)) {
+      initEl.value = '0.00';
+    }
+    if (finalEl) {
+      finalEl.value = reading.toFixed(2);
+    }
+    onTableInputChanged();
+
+    if (typeof VirtuLabToast !== 'undefined' && VirtuLabToast.show) {
+      VirtuLabToast.show('Trial ' + trial + ' burette reading (' + reading.toFixed(2) + ' cm³) logged to Table 1', 'success');
+    }
+  }
+  window.logCurrentBuretteToActiveTrial = logCurrentBuretteToActiveTrial;
+
+  function loadExamSampleDataQ1() {
+    const expected = parseFloat(engine?.preset?.q1?.expectedTitre) || 20.35;
+    const t1 = (expected + 0.40).toFixed(2);
+    const t2 = (expected - 0.05).toFixed(2);
+    const t3 = (expected + 0.05).toFixed(2);
+
+    const setInput = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.value = val;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    };
+
+    setInput('t1Init', '0.00');
+    setInput('t1Final', t1);
+    setInput('t2Init', '0.00');
+    setInput('t2Final', t2);
+    setInput('t3Init', '0.00');
+    setInput('t3Final', t3);
+
+    const c1 = document.getElementById('t1Concordant');
+    const c2 = document.getElementById('t2Concordant');
+    const c3 = document.getElementById('t3Concordant');
+    if (c1) c1.checked = false;
+    if (c2) c2.checked = true;
+    if (c3) c3.checked = true;
+
+    onTableInputChanged();
+
+    const avgTitreVal = expected.toFixed(2);
+    const avgInputs = ['ansAvgTitre', 'ans_avgTitre', 'ans_proc_' + activeProcedureIndex + '_avgTitre', 'ans_proc_' + activeProcedureIndex + '_step_1a', 'ans_proc_' + activeProcedureIndex + '_step_2a', 'ans_proc_' + activeProcedureIndex + '_step_a'];
+    avgInputs.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) setInput(id, avgTitreVal);
+    });
+
+    const questions = typeof getQ1CalculationQuestions === 'function' ? getQ1CalculationQuestions() : [];
+    if (Array.isArray(questions)) {
+      questions.forEach(q => {
+        const fieldId = q.field || q.id;
+        let sampleVal = q.expected || q.sampleAnswer || q.answer;
+        if (!sampleVal) {
+          if (fieldId === 'avgTitre' || fieldId === 'step_a') {
+            sampleVal = avgTitreVal;
+          } else if (fieldId === 'molesB' || fieldId === 'molesBase') {
+            const pipVol = parseFloat(engine.preset?.q1?.pipetteVolume) || 25.0;
+            const molB = parseFloat(engine.preset?.q1?.analyteMolarity) || 0.1;
+            sampleVal = ((pipVol * molB) / 1000).toPrecision(3);
+          } else if (fieldId === 'molesA' || fieldId === 'molesAcid') {
+            const pipVol = parseFloat(engine.preset?.q1?.pipetteVolume) || 25.0;
+            const molB = parseFloat(engine.preset?.q1?.analyteMolarity) || 0.1;
+            const moleRatio = parseFloat(engine.preset?.q1?.moleRatio) || 1.0;
+            sampleVal = (((pipVol * molB) / 1000) * moleRatio).toPrecision(3);
+          } else if (fieldId === 'molarityA' || fieldId === 'concM') {
+            const pipVol = parseFloat(engine.preset?.q1?.pipetteVolume) || 25.0;
+            const molB = parseFloat(engine.preset?.q1?.analyteMolarity) || 0.1;
+            const moleRatio = parseFloat(engine.preset?.q1?.moleRatio) || 1.0;
+            const molesA = ((pipVol * molB) / 1000) * moleRatio;
+            sampleVal = ((molesA * 1000) / expected).toPrecision(3);
+          } else if (fieldId === 'concGrams' || fieldId === 'concG') {
+            const rmm = parseFloat(engine.preset?.q1?.titrantRMM) || 36.5;
+            const molA = parseFloat(engine.preset?.q1?.titrantMolarity) || 0.1;
+            sampleVal = (molA * rmm).toFixed(2);
+          }
+        }
+
+        if (sampleVal) {
+          const inputId = engine?.preset?.q1?.hasMultipleProcedures
+            ? 'ans_proc_' + activeProcedureIndex + '_' + fieldId
+            : (fieldId === 'avgTitre' ? 'ansAvgTitre' : (fieldId === 'molesB' ? 'ansMolesB' : (fieldId === 'molesA' ? 'ansMolesA' : (fieldId === 'molarityA' ? 'ansMolarityA' : (fieldId === 'concGrams' ? 'ansConcGrams' : 'ans_' + fieldId)))));
+          setInput(inputId, sampleVal);
+          if (engine?.q1Answers) {
+            engine.q1Answers[fieldId] = sampleVal;
+            engine.q1Answers[q.id] = sampleVal;
+          }
+        }
+      });
+    }
+
+    updateLiveScoreDisplay();
+    saveExamDraft();
+
+    if (typeof VirtuLabToast !== 'undefined' && VirtuLabToast.show) {
+      VirtuLabToast.show('Realistic concordant Table 1 titres and stoichiometric data loaded for Question 1', 'success');
+    }
+  }
+  window.loadExamSampleDataQ1 = loadExamSampleDataQ1;
+
+  function loadExamSampleDataQ2() {
+    const p = engine?.preset?.q2 || {};
+    const tests = Array.isArray(p.tests) ? p.tests : [];
+
+    tests.forEach(t => {
+      const obs = t.expectedObservation || t.correctObs || t.observation || 'White precipitate insoluble in excess';
+      const inf = t.expectedInference || t.correctInf || t.inference || 'Ba²⁺, Ca²⁺, or Pb²⁺ present';
+
+      const obsEl = document.getElementById('q2Obs_' + t.id);
+      const infEl = document.getElementById('q2Inf_' + t.id);
+      if (obsEl) obsEl.value = obs;
+      if (infEl) infEl.value = inf;
+
+      engine.setQ2Response(t.id, obs, inf);
+
+      if (!q2TestStates[t.id]) q2TestStates[t.id] = {};
+      const finalStage = (t.stages && t.stages.length > 0) ? t.stages[t.stages.length - 1].stage : 'done';
+      q2TestStates[t.id] = { performed: true, stage: finalStage, isAdding: false };
+    });
+
+    if (p.trueCation) {
+      const catSelect = document.getElementById('q2CationSelect');
+      if (catSelect) {
+        catSelect.value = p.trueCation;
+        engine.q2CationChoice = p.trueCation;
+      }
+    }
+    if (p.trueAnion) {
+      const aniSelect = document.getElementById('q2AnionSelect');
+      if (aniSelect) {
+        aniSelect.value = p.trueAnion;
+        engine.q2AnionChoice = p.trueAnion;
+      }
+    }
+    if (p.trueFunctionalGroup || p.functionalGroup) {
+      const fgVal = p.trueFunctionalGroup || p.functionalGroup;
+      const fgSelect = document.getElementById('q2FGSelect');
+      if (fgSelect) {
+        fgSelect.value = fgVal;
+        engine.q2FunctionalGroupChoice = fgVal;
+      }
+    }
+
+    onQ2DeductionsChanged();
+    renderQ2TestsGrid();
+    updateLiveScoreDisplay();
+    saveExamDraft();
+
+    if (typeof VirtuLabToast !== 'undefined' && VirtuLabToast.show) {
+      VirtuLabToast.show('Authentic KNEC observations, inferences, and deductions loaded for Question 2', 'success');
+    }
+  }
+  window.loadExamSampleDataQ2 = loadExamSampleDataQ2;
+
+  function loadExamSampleDataQ3() {
+    const p = engine?.preset?.q3 || {};
+    const tests = Array.isArray(p.tests) ? p.tests : [];
+
+    tests.forEach(t => {
+      const obs = t.expectedObservation || t.correctObs || t.observation || 'Effervescence / purple colour is decolourised';
+      const inf = t.expectedInference || t.correctInf || t.inference || 'R-COOH or unsaturated organic compound present';
+
+      const obsEl = document.getElementById('q3Obs_' + t.id);
+      const infEl = document.getElementById('q3Inf_' + t.id);
+      if (obsEl) obsEl.value = obs;
+      if (infEl) infEl.value = inf;
+
+      engine.setQ3Response(t.id, obs, inf);
+
+      if (!q3TestStates[t.id]) q3TestStates[t.id] = {};
+      const finalStage = (t.stages && t.stages.length > 0) ? t.stages[t.stages.length - 1].stage : 'done';
+      q3TestStates[t.id] = { performed: true, stage: finalStage, isAdding: false };
+    });
+
+    if (p.trueFunctionalGroup || p.functionalGroup) {
+      const fgVal = p.trueFunctionalGroup || p.functionalGroup;
+      const fgSelect = document.getElementById('q3FGSelect');
+      if (fgSelect) {
+        fgSelect.value = fgVal;
+        engine.q3FunctionalGroupChoice = fgVal;
+      }
+    }
+    if (p.trueCation) {
+      const catSelect = document.getElementById('q3CationSelect');
+      if (catSelect) {
+        catSelect.value = p.trueCation;
+        engine.q3CationChoice = p.trueCation;
+      }
+    }
+    if (p.trueAnion) {
+      const aniSelect = document.getElementById('q3AnionSelect');
+      if (aniSelect) {
+        aniSelect.value = p.trueAnion;
+        engine.q3AnionChoice = p.trueAnion;
+      }
+    }
+
+    onQ3DeductionChanged();
+    renderQ3TestsGrid();
+    updateLiveScoreDisplay();
+    saveExamDraft();
+
+    if (typeof VirtuLabToast !== 'undefined' && VirtuLabToast.show) {
+      VirtuLabToast.show('Authentic KNEC observations, inferences, and deductions loaded for Question 3', 'success');
+    }
+  }
+  window.loadExamSampleDataQ3 = loadExamSampleDataQ3;
+
+  function loadEntireExamSampleData() {
+    loadExamSampleDataQ1();
+    loadExamSampleDataQ2();
+    loadExamSampleDataQ3();
+    updateLiveScoreDisplay();
+    saveExamDraft();
+
+    if (typeof VirtuLabToast !== 'undefined' && VirtuLabToast.show) {
+      VirtuLabToast.show('Full 40-Mark KCSE Mock Practical Exam sample data populated across all 3 questions!', 'success');
+    } else {
+      alert('Full 40-Mark KCSE Mock Practical Exam sample data loaded successfully!');
+    }
+  }
+  window.loadEntireExamSampleData = loadEntireExamSampleData;
 
   initExamUI();

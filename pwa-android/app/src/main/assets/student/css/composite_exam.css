@@ -1663,8 +1663,8 @@ iframe.lab-frame {
     border-radius: 8px !important;
   }
   .top-navbar .nav-actions {
-    flex-wrap: wrap;
-    gap: 6px;
+    flex-wrap: nowrap !important;
+    gap: 4px;
   }
   .exam-timer-chip {
     font-size: 1.1rem;
@@ -2399,7 +2399,7 @@ iframe.lab-frame {
 }
 
 .briefing-title {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-heading);
   font-size: 1.45rem;
   font-weight: 900;
   color: var(--heading-color);
@@ -2953,3 +2953,145 @@ iframe.lab-frame {
 }
 
 
+
+
+/* Academic Sticky Header & Module Pills */
+.academic-top-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--topbar-bg);
+  backdrop-filter: blur(12px);
+  border-bottom: 1.5px solid var(--card-border);
+  box-shadow: var(--shadow-sm);
+}
+.nav-modules-pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--card-bg-hover, rgba(255,255,255,0.06));
+  padding: 3px 5px;
+  border-radius: 20px;
+  border: 1px solid var(--card-border);
+}
+.nav-modules-pill a {
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 14px;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s ease;
+}
+.nav-modules-pill a.active,
+.nav-modules-pill a:hover {
+  background: var(--card-bg);
+  color: var(--gold-accent, #D97706);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+@media (max-width: 820px) {
+  .nav-modules-pill { display: none !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Q1 Tactile Delivery Cluster & Trial Logging Styles
+   ═══════════════════════════════════════════════════════════════ */
+.q1-rig-delivery-cluster {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--card-bg, #ffffff);
+  border: 1px solid var(--card-border, #e2e8f0);
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-top: 6px;
+  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.05));
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.q1-delivery-cluster-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.delivery-telemetry-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(8, 145, 178, 0.08);
+  border: 1px solid rgba(8, 145, 178, 0.25);
+  color: var(--text-color, #1e293b);
+}
+
+.q1-vol-buttons-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.btn-bench-vol {
+  padding: 6px 8px !important;
+  font-size: 0.76rem !important;
+  font-weight: 700 !important;
+  justify-content: center !important;
+  text-align: center;
+}
+
+.q1-flow-buttons-row {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr;
+  gap: 6px;
+}
+
+.q1-trial-pill-group {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.btn-trial-pill {
+  padding: 6px 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border-radius: 6px;
+  background: var(--bg-surface, #f8fafc);
+  border: 1px solid var(--card-border, #cbd5e1);
+  color: var(--text-muted, #64748b);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.btn-trial-pill:hover {
+  background: rgba(8, 145, 178, 0.08);
+  border-color: var(--cyan-accent, #0891b2);
+  color: var(--cyan-accent, #0891b2);
+}
+
+.btn-trial-pill.active {
+  background: var(--cyan-accent, #0891b2);
+  border-color: var(--cyan-accent, #0891b2);
+  color: #ffffff;
+  box-shadow: 0 2px 4px rgba(8, 145, 178, 0.25);
+}
+
+@media (max-width: 640px) {
+  .q1-vol-buttons-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .q1-flow-buttons-row {
+    grid-template-columns: 1fr;
+  }
+}

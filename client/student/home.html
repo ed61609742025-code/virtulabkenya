@@ -136,6 +136,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha384-bs/nf9FbdNouRbMiFcrcZfLXYPKiPaGVGplVbv7dLGECccEXDW+S3zjqSKR5ZEaD" crossorigin="anonymous"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="../shared/vlk-icons.js"></script>
 
@@ -319,6 +320,526 @@
       padding: 16px;
     }
   }
+  /* ── STUDENT WORKSTATION TOP NAVIGATION BAR ── */
+  .top-nav {
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 10000;
+    background: var(--topbar-bg, rgba(255, 255, 255, 0.96));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1.5px solid var(--card-border);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+  [data-theme="dark"] .top-nav {
+    background: rgba(11, 19, 34, 0.94);
+    border-bottom-color: rgba(56, 189, 248, 0.18);
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.4);
+  }
+  [data-theme="green"] .top-nav {
+    background: rgba(9, 28, 16, 0.94);
+    border-bottom-color: rgba(52, 211, 153, 0.22);
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.4);
+  }
+
+  .top-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    padding-top: calc(10px + var(--vlk-status-bar-inset, 0px)) !important;
+    max-width: 1360px;
+    margin: 0 auto;
+    gap: 14px;
+    width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+  }
+
+  /* Desktop Nav Links Container */
+  .vlk-nav-bar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--card-bg-hover, rgba(2, 132, 199, 0.04));
+    border: 1.5px solid var(--card-border);
+    padding: 4px;
+    border-radius: 12px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+  }
+  [data-theme="dark"] .vlk-nav-bar {
+    background: rgba(15, 26, 46, 0.7);
+    border-color: rgba(56, 189, 248, 0.2);
+  }
+  [data-theme="green"] .vlk-nav-bar {
+    background: rgba(12, 33, 20, 0.7);
+    border-color: rgba(52, 211, 153, 0.2);
+  }
+
+  .vlk-nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-decoration: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.16s ease;
+    line-height: 1;
+    position: relative;
+  }
+  .vlk-nav-link .vlk-icon {
+    width: 15px;
+    height: 15px;
+    stroke-width: 2;
+    transition: transform 0.16s ease;
+  }
+  .vlk-nav-link:hover {
+    color: var(--heading-color);
+    background: var(--card-bg);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  }
+  .vlk-nav-link:hover .vlk-icon {
+    transform: translateY(-1px);
+  }
+  .vlk-nav-link.active {
+    background: var(--acad-oxford, #0B2545);
+    color: #FFFFFF !important;
+    box-shadow: 0 2px 8px rgba(11, 37, 69, 0.22);
+  }
+  .vlk-nav-link.active .vlk-icon {
+    stroke: #FFFFFF !important;
+  }
+  [data-theme="dark"] .vlk-nav-link.active {
+    background: #0284C7;
+    color: #FFFFFF !important;
+    box-shadow: 0 2px 10px rgba(2, 132, 199, 0.4);
+  }
+  [data-theme="green"] .vlk-nav-link.active {
+    background: #059669;
+    color: #FFFFFF !important;
+    box-shadow: 0 2px 10px rgba(5, 150, 105, 0.4);
+  }
+
+  .vlk-nav-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(217, 119, 6, 0.14);
+    color: #D97706;
+    border: 1px solid rgba(217, 119, 6, 0.35);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin-left: 2px;
+  }
+  [data-theme="dark"] .vlk-nav-badge {
+    background: rgba(245, 158, 11, 0.2);
+    color: #FBBF24;
+    border-color: rgba(245, 158, 11, 0.4);
+  }
+  [data-theme="green"] .vlk-nav-badge {
+    background: rgba(251, 191, 36, 0.2);
+    color: #FBBF24;
+    border-color: rgba(251, 191, 36, 0.45);
+  }
+
+  /* Lab Benches Dropdown */
+  .vlk-nav-dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  .vlk-nav-dropdown-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.16s ease;
+    line-height: 1;
+  }
+  .vlk-nav-dropdown-trigger .vlk-icon {
+    width: 15px;
+    height: 15px;
+    stroke-width: 2;
+  }
+  .vlk-nav-dropdown-trigger .chevron {
+    width: 11px;
+    height: 11px;
+    stroke-width: 2.2;
+    transition: transform 0.2s ease;
+    margin-left: -2px;
+  }
+  .vlk-nav-dropdown-trigger:hover,
+  .vlk-nav-dropdown.open .vlk-nav-dropdown-trigger {
+    color: var(--heading-color);
+    background: var(--card-bg);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  }
+  .vlk-nav-dropdown.open .chevron {
+    transform: rotate(180deg);
+  }
+
+  .vlk-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    min-width: 295px;
+    background: var(--card-bg, #FFFFFF);
+    border: 1.5px solid var(--card-border);
+    border-radius: 14px;
+    box-shadow: var(--shadow-lg, 0 12px 36px rgba(0, 0, 0, 0.14));
+    padding: 8px;
+    z-index: 10001;
+    display: none;
+    animation: vlkDropdownFade 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .vlk-nav-dropdown.open .vlk-dropdown-menu {
+    display: block;
+  }
+  @keyframes vlkDropdownFade {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .vlk-dropdown-header {
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    padding: 6px 10px 6px;
+    border-bottom: 1px solid var(--card-border);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .vlk-dropdown-header-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.64rem;
+    color: var(--cyan-accent);
+    background: rgba(2, 132, 199, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  .vlk-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text-main);
+    transition: all 0.14s ease;
+  }
+  .vlk-dropdown-item:hover {
+    background: var(--card-bg-hover);
+    transform: translateX(2px);
+  }
+  .vlk-dd-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 0.95rem;
+  }
+  .vlk-dd-text {
+    flex: 1;
+    min-width: 0;
+  }
+  .vlk-dd-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--heading-color);
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .vlk-dd-sub {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    line-height: 1.2;
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .vlk-dd-qtag {
+    margin-left: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.66rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--card-bg-hover);
+    border: 1px solid var(--card-border);
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+  .vlk-dropdown-footer {
+    border-top: 1px solid var(--card-border);
+    margin-top: 6px;
+    padding-top: 6px;
+    text-align: center;
+  }
+  .vlk-dd-all-link {
+    font-size: 0.74rem;
+    font-weight: 800;
+    color: var(--cyan-accent);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.15s ease;
+  }
+  .vlk-dd-all-link:hover {
+    background: rgba(2, 132, 199, 0.08);
+  }
+
+  /* Hamburger Menu Toggle Button (Mobile/Tablet) */
+  .vlk-mobile-toggle-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    color: var(--heading-color);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    padding: 0;
+    flex-shrink: 0;
+  }
+  .vlk-mobile-toggle-btn:hover {
+    border-color: var(--cyan-accent);
+    color: var(--cyan-accent);
+  }
+
+  /* Mobile Slide-Out Drawer & Backdrop */
+  .vlk-mobile-drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 99998;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+  }
+  .vlk-mobile-drawer-backdrop.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .vlk-mobile-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 310px;
+    max-width: 86vw;
+    background: var(--card-bg);
+    border-right: 1.5px solid var(--card-border);
+    box-shadow: 0 0 32px rgba(0, 0, 0, 0.25);
+    z-index: 99999;
+    transform: translateX(-100%);
+    transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .vlk-mobile-drawer.active {
+    transform: translateX(0);
+  }
+
+  .vlk-drawer-header {
+    padding: 18px 16px 14px;
+    border-bottom: 1.5px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: var(--card-bg-hover);
+  }
+  .vlk-drawer-user-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+  .vlk-drawer-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, #0284C7, #2563EB);
+    color: #FFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+  .vlk-drawer-name {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: var(--heading-color);
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .vlk-drawer-syllabus {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--cyan-accent);
+    margin-top: 1px;
+  }
+  .vlk-drawer-close-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.6rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 2px 8px;
+    line-height: 1;
+    border-radius: 6px;
+    transition: color 0.15s ease;
+  }
+  .vlk-drawer-close-btn:hover {
+    color: var(--heading-color);
+  }
+
+  .vlk-drawer-body {
+    padding: 14px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+  }
+  .vlk-drawer-section-title {
+    font-size: 0.66rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    padding: 10px 10px 4px;
+    margin-top: 4px;
+  }
+  .vlk-drawer-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 9px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.86rem;
+    color: var(--text-main);
+    transition: all 0.15s ease;
+  }
+  .vlk-drawer-link:hover {
+    background: var(--card-bg-hover);
+    color: var(--heading-color);
+  }
+  .vlk-drawer-link.active {
+    background: var(--acad-oxford, #0B2545);
+    color: #FFFFFF !important;
+  }
+  .vlk-drawer-link.active .vlk-icon {
+    stroke: #FFFFFF !important;
+  }
+  [data-theme="dark"] .vlk-drawer-link.active {
+    background: #0284C7;
+  }
+  [data-theme="green"] .vlk-drawer-link.active {
+    background: #059669;
+  }
+  .vlk-drawer-link .vlk-icon {
+    width: 17px;
+    height: 17px;
+    stroke-width: 2;
+  }
+
+  .vlk-drawer-sublink {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 12px 7px 18px;
+    border-radius: 7px;
+    text-decoration: none;
+    font-size: 0.80rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    transition: all 0.15s ease;
+  }
+  .vlk-drawer-sublink:hover {
+    background: var(--card-bg-hover);
+    color: var(--heading-color);
+  }
+  .vlk-drawer-bullet {
+    font-size: 0.85rem;
+  }
+
+  .vlk-drawer-footer {
+    padding: 14px 16px;
+    border-top: 1px solid var(--card-border);
+    background: var(--card-bg-hover);
+  }
+
+  /* Responsive Breakpoints */
+  @media (max-width: 1024px) {
+    .vlk-nav-link {
+      padding: 6px 10px;
+      font-size: 0.78rem;
+      gap: 5px;
+    }
+    .vlk-nav-badge {
+      display: none;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .vlk-nav-bar {
+      display: none !important;
+    }
+    .vlk-mobile-toggle-btn {
+      display: inline-flex !important;
+    }
+  }
 </style>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
@@ -344,8 +865,157 @@
         </div>
       </a>
 
+            <!-- Desktop & Tablet Navigation Bar -->
+      <nav class="vlk-nav-bar" aria-label="Student Main Navigation">
+        <!-- 1. Home / Workstation -->
+        <a href="home.html" class="vlk-nav-link active" aria-current="page" data-tooltip="Student Workstation &amp; Dashboard" data-tooltip-pos="bottom">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          <span>Home</span>
+        </a>
+
+        <!-- 2. Lab Benches with Interactive Dropdown -->
+        <div class="vlk-nav-dropdown" id="labBenchesDropdown">
+          <button type="button" class="vlk-nav-dropdown-trigger" id="labBenchesTrigger" onclick="toggleLabBenchesDropdown(event)" aria-haspopup="true" aria-expanded="false" data-tooltip="KCSE Practical Laboratory Benches" data-tooltip-pos="bottom">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"></path>
+              <path d="M8.5 2h7"></path>
+              <path d="M7 16h10"></path>
+            </svg>
+            <span>Lab Benches</span>
+            <svg class="vlk-icon chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+
+          <div class="vlk-dropdown-menu" id="labBenchesMenu" role="menu" aria-label="Practical Laboratory Benches">
+            <div class="vlk-dropdown-header">
+              <span>KCSE Paper 3 Practicals</span>
+              <span class="vlk-dropdown-header-tag">40 Marks</span>
+            </div>
+
+            <a href="lab.html?studyMode=guided" class="vlk-dropdown-item" role="menuitem">
+              <div class="vlk-dd-icon" style="background:rgba(217,119,6,0.12); color:#D97706;">⚗️</div>
+              <div class="vlk-dd-text">
+                <div class="vlk-dd-title">Volumetric Titration</div>
+                <div class="vlk-dd-sub">Acid-Base, Redox &amp; Back-titration</div>
+              </div>
+              <span class="vlk-dd-qtag">Q1 · 15M</span>
+            </a>
+
+            <a href="qualitative.html" class="vlk-dropdown-item" role="menuitem">
+              <div class="vlk-dd-icon" style="background:rgba(5,150,105,0.12); color:#059669;">🧪</div>
+              <div class="vlk-dd-text">
+                <div class="vlk-dd-title">Qualitative Salt Analysis</div>
+                <div class="vlk-dd-sub">Cations, Anions &amp; Flame Tests</div>
+              </div>
+              <span class="vlk-dd-qtag">Q2 · 15M</span>
+            </a>
+
+            <a href="organic.html" class="vlk-dropdown-item" role="menuitem">
+              <div class="vlk-dd-icon" style="background:rgba(16,185,129,0.12); color:#10B981;">🌿</div>
+              <div class="vlk-dd-text">
+                <div class="vlk-dd-title">Organic Chemistry</div>
+                <div class="vlk-dd-sub">Unsaturation, Esters &amp; Functional Groups</div>
+              </div>
+              <span class="vlk-dd-qtag">Q3 · 10M</span>
+            </a>
+
+            <a href="energy.html" class="vlk-dropdown-item" role="menuitem">
+              <div class="vlk-dd-icon" style="background:rgba(239,68,68,0.12); color:#EF4444;">🔥</div>
+              <div class="vlk-dd-text">
+                <div class="vlk-dd-title">Thermochemistry &amp; Enthalpy</div>
+                <div class="vlk-dd-sub">ΔH Neutralization &amp; Displacement</div>
+              </div>
+              <span class="vlk-dd-qtag">Q1/2</span>
+            </a>
+
+            <a href="rates.html" class="vlk-dropdown-item" role="menuitem">
+              <div class="vlk-dd-icon" style="background:rgba(245,158,11,0.12); color:#F59E0B;">⏱️</div>
+              <div class="vlk-dd-text">
+                <div class="vlk-dd-title">Reaction Rates &amp; Kinetics</div>
+                <div class="vlk-dd-sub">Disappearing Cross, Gas Syringe &amp; Rates</div>
+              </div>
+              <span class="vlk-dd-qtag">Q1/2</span>
+            </a>
+
+            <a href="solubility.html" class="vlk-dropdown-item" role="menuitem">
+              <div class="vlk-dd-icon" style="background:rgba(2,132,199,0.12); color:#0284C7;">📈</div>
+              <div class="vlk-dd-text">
+                <div class="vlk-dd-title">Solubility &amp; Crystallization</div>
+                <div class="vlk-dd-sub">Saturation curves &amp; crystal temp</div>
+              </div>
+              <span class="vlk-dd-qtag">Q1/2</span>
+            </a>
+
+            <a href="gas_prep.html" class="vlk-dropdown-item" role="menuitem">
+              <div class="vlk-dd-icon" style="background:rgba(139,92,246,0.12); color:#8B5CF6;">💨</div>
+              <div class="vlk-dd-text">
+                <div class="vlk-dd-title">Gas Preparation &amp; Tests</div>
+                <div class="vlk-dd-sub">CO₂, SO₂, Cl₂, O₂, H₂ &amp; NH₃</div>
+              </div>
+              <span class="vlk-dd-qtag">Lab</span>
+            </a>
+
+            <div class="vlk-dropdown-footer">
+              <a href="lab.html" class="vlk-dd-all-link">Enter Virtual Lab Workbench &rarr;</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Mock Exams Hub -->
+        <a href="mock_exams.html" class="vlk-nav-link" data-tooltip="KCSE Paper 3 National Mock Examination Center" data-tooltip-pos="bottom">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"></path>
+            <path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"></path>
+            <path d="M4 22h16"></path>
+            <path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"></path>
+            <path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path>
+          </svg>
+          <span>Mock Exams</span>
+          <span class="vlk-nav-badge">40M</span>
+        </a>
+
+        <!-- 4. Revision Handbook -->
+        <a href="reference.html" class="vlk-nav-link" data-tooltip="KCSE Observational Criteria, Flame Tests &amp; Formulas" data-tooltip-pos="bottom">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+          <span>Revision</span>
+        </a>
+
+        <!-- 5. Performance History -->
+        <a href="history.html" class="vlk-nav-link" data-tooltip="Performance Analytics, KCSE Readiness &amp; Session History" data-tooltip-pos="bottom">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+            <polyline points="17 6 23 6 23 12"></polyline>
+          </svg>
+          <span>History</span>
+        </a>
+
+        <!-- 6. Speed Drill -->
+        <a href="speed_battle.html" class="vlk-nav-link" data-tooltip="Diagnostic Speed Drill &amp; Rapid Recall" data-tooltip-pos="bottom">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+          <span>Drills</span>
+        </a>
+      </nav>
+
       <div class="nav-actions">
         <!-- Single Language Toggle Button -->
+                <!-- Mobile Drawer Hamburger Toggle Button -->
+        <button type="button" class="vlk-mobile-toggle-btn" id="mobileNavToggleBtn" onclick="toggleMobileNavDrawer(event)" aria-label="Toggle Navigation Menu" aria-expanded="false" data-tooltip="Navigation Menu" data-tooltip-pos="bottom">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+
         <button type="button" class="user-avatar-btn lang-single-toggle-btn" id="langToggleSingleBtn" onclick="toggleLanguage()" data-tooltip="Language: English (Switch to Kiswahili)" data-tooltip-pos="bottom" aria-label="Toggle language: currently English">
           <svg class="lang-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="12" cy="12" r="10"></circle>
@@ -444,6 +1114,79 @@
     </div>
   </nav>
 
+  <!-- Mobile Navigation Drawer & Backdrop -->
+  <div id="vlkMobileDrawerBackdrop" class="vlk-mobile-drawer-backdrop" onclick="toggleMobileNavDrawer(event)" aria-hidden="true"></div>
+  <aside id="vlkMobileDrawer" class="vlk-mobile-drawer" aria-label="Mobile Navigation Drawer" aria-hidden="true">
+    <div class="vlk-drawer-header">
+      <div class="vlk-drawer-user-meta">
+        <div class="vlk-drawer-avatar" id="drawerStudentAvatar">ST</div>
+        <div>
+          <div class="vlk-drawer-name" id="drawerStudentName">Candidate</div>
+          <div class="vlk-drawer-syllabus">KCSE Chemistry Paper 3</div>
+        </div>
+      </div>
+      <button type="button" class="vlk-drawer-close-btn" onclick="toggleMobileNavDrawer(event)" aria-label="Close navigation drawer">&times;</button>
+    </div>
+
+    <div class="vlk-drawer-body">
+      <div class="vlk-drawer-section-title">Navigation</div>
+      <a href="home.html" class="vlk-drawer-link active">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Workstation (Home)</span>
+      </a>
+      <a href="mock_exams.html" class="vlk-drawer-link">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/><path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+        <span>Mock Examinations (40M)</span>
+      </a>
+      <a href="reference.html" class="vlk-drawer-link">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span>Revision Handbook</span>
+      </a>
+      <a href="history.html" class="vlk-drawer-link">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        <span>Performance &amp; History</span>
+      </a>
+      <a href="speed_battle.html" class="vlk-drawer-link">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span>Speed Battle Drills</span>
+      </a>
+      <a href="profile.html" class="vlk-drawer-link">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Candidate Profile</span>
+      </a>
+
+      <div class="vlk-drawer-section-title">Practical Benches</div>
+      <a href="lab.html?studyMode=guided" class="vlk-drawer-sublink">
+        <span class="vlk-drawer-bullet">⚗️</span> Volumetric Analysis (Q1)
+      </a>
+      <a href="qualitative.html" class="vlk-drawer-sublink">
+        <span class="vlk-drawer-bullet">🧪</span> Qualitative Salt Analysis (Q2)
+      </a>
+      <a href="organic.html" class="vlk-drawer-sublink">
+        <span class="vlk-drawer-bullet">🌿</span> Organic Chemistry (Q3)
+      </a>
+      <a href="energy.html" class="vlk-drawer-sublink">
+        <span class="vlk-drawer-bullet">🔥</span> Thermochemistry &amp; Enthalpy
+      </a>
+      <a href="rates.html" class="vlk-drawer-sublink">
+        <span class="vlk-drawer-bullet">⏱️</span> Reaction Rates &amp; Kinetics
+      </a>
+      <a href="solubility.html" class="vlk-drawer-sublink">
+        <span class="vlk-drawer-bullet">📈</span> Solubility Curves
+      </a>
+      <a href="gas_prep.html" class="vlk-drawer-sublink">
+        <span class="vlk-drawer-bullet">💨</span> Gas Preparation &amp; Identification
+      </a>
+    </div>
+
+    <div class="vlk-drawer-footer">
+      <button type="button" class="btn btn-outline" style="width:100%; justify-content:center; display:inline-flex; align-items:center; gap:8px;" onclick="if(window.Auth && typeof window.Auth.logout === 'function'){ window.Auth.logout(); } else { localStorage.clear(); window.location.href='/student/login.html'; }">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span>Log Out</span>
+      </button>
+    </div>
+  </aside>
+
   <!-- Main Dashboard Workspace -->
   <main class="dashboard-container">
 
@@ -454,7 +1197,12 @@
           <span class="mini-hero-tag">Virtual Chemistry Lab</span>
           <span class="mini-hero-syllabus">KCSE Paper 3 (40 Marks)</span>
         </div>
-        <h1 class="mini-hero-title">Analytical Chemistry Workstation</h1>
+        <h1 class="mini-hero-title"><span class="greeting-prefix" data-i18n="greeting_prefix">Habari,</span> <span id="studentGreetingName">Student</span>! 👋</h1>
+        <div class="mini-hero-sub-row">
+          <span class="mini-hero-candidate-chip" id="candidateFormBadge">Form 4 Candidate</span>
+          <span class="mini-hero-school-chip" id="candidateSchoolBadge">Makunda Secondary</span>
+          <span class="mini-hero-net-pill" id="heroNetPill"><span class="net-dot online" id="netDot"></span> <span id="heroNetText">Online</span></span>
+        </div>
       </div>
 
       <div class="mini-hero-right">
@@ -536,6 +1284,63 @@
 
       <!-- Upgrade / Pass Status Banner (shown/hidden by subscription-ui.js based on entitlement) -->
       <div id="vlkUpgradeBanner" style="display:none;"></div>
+
+      <!-- ── Mobile "Big 4" Thumb-Zone Quick Action Hub ── -->
+      <section class="mobile-quick-actions" aria-label="Mobile Quick Access Hub">
+        <div class="mqa-header">
+          <span class="mqa-knec-pill">KCSE PAPER 3</span>
+          <span class="mqa-heading">Quick Actions</span>
+        </div>
+        <div class="mqa-grid">
+          <!-- 1. Resume Lab Action -->
+          <a href="lab.html?studyMode=guided" class="mqa-card mqa-resume" id="mqaResumeCard">
+            <div class="mqa-icon mqa-icon-resume" aria-hidden="true">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </div>
+            <div class="mqa-info">
+              <span class="mqa-tag" id="mqaResumeTag">RESUME LAB</span>
+              <div class="mqa-title" id="mqaResumeTitle">Volumetric Titration</div>
+              <div class="mqa-sub" id="mqaResumeSub">Acid-Base Standardisation &rarr;</div>
+            </div>
+          </a>
+
+          <!-- 2. Daily Diagnostic Blitz -->
+          <a href="speed_battle.html?mode=daily_bite" class="mqa-card mqa-blitz">
+            <div class="mqa-icon mqa-icon-blitz" aria-hidden="true">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <div class="mqa-info">
+              <span class="mqa-tag tag-gold">+100 XP</span>
+              <div class="mqa-title">Daily Blitz</div>
+              <div class="mqa-sub">3-Min Diagnostic Drill</div>
+            </div>
+          </a>
+
+          <!-- 3. KCSE 40-Mark Mock -->
+          <a href="mock_exams.html" class="mqa-card mqa-mock">
+            <div class="mqa-icon mqa-icon-mock" aria-hidden="true">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15l-2 5l4-2l4 2l-2-5"/><circle cx="12" cy="8" r="7"/></svg>
+            </div>
+            <div class="mqa-info">
+              <span class="mqa-tag tag-emerald">KNEC 40M</span>
+              <div class="mqa-title">Mock Exam</div>
+              <div class="mqa-sub">Timed Full Paper 3</div>
+            </div>
+          </a>
+
+          <!-- 4. Teacher Assignments -->
+          <a href="#zone_assignments" class="mqa-card mqa-tasks" onclick="focusAssignmentsSection(event)">
+            <div class="mqa-icon mqa-icon-tasks" aria-hidden="true">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg>
+            </div>
+            <div class="mqa-info">
+              <span class="mqa-tag tag-purple" id="mqaTasksBadge">TASKS</span>
+              <div class="mqa-title">Assignments</div>
+              <div class="mqa-sub" id="mqaTasksSub">Continuous Assessment</div>
+            </div>
+          </a>
+        </div>
+      </section>
 
       <!-- Modern 2-Column Responsive Dashboard Workspace Grid -->
       <div class="dashboard-workspace-grid">
@@ -1447,6 +2252,10 @@
     <a href="lab.html" class="vlk-bottom-nav-item" aria-label="Lab" id="bnav-lab">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31M14 2v7.31M8.5 2h7M14 9.3a6.5 6.5 0 1 1-4 0"/><line x1="6" y1="16" x2="18" y2="16"/></svg>
       <span>Lab</span>
+    </a>
+        <a href="mock_exams.html" class="vlk-bottom-nav-item" aria-label="Mocks" id="bnav-exams">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/><path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+      <span>Mocks</span>
     </a>
     <a href="reference.html" class="vlk-bottom-nav-item" aria-label="Revision" id="bnav-reference">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>

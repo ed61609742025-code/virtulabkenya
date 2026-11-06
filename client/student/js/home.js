@@ -191,3 +191,176 @@ if (document.readyState === 'loading') {
     if (el) el.classList.add('active');
   }
 })();
+
+
+// Dropdown and Mobile Navigation Drawer controls
+function toggleLabBenchesDropdown(e) {
+  if (e) {
+    e.stopPropagation();
+    e.preventDefault();
+  }
+  const dd = document.getElementById('labBenchesDropdown');
+  const trigger = document.getElementById('labBenchesTrigger');
+  if (!dd) return;
+  const isOpen = dd.classList.toggle('open');
+  if (trigger) trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+}
+
+function closeLabBenchesDropdown() {
+  const dd = document.getElementById('labBenchesDropdown');
+  const trigger = document.getElementById('labBenchesTrigger');
+  if (dd) dd.classList.remove('open');
+  if (trigger) trigger.setAttribute('aria-expanded', 'false');
+}
+
+function toggleMobileNavDrawer(e) {
+  if (e) {
+    e.stopPropagation();
+    e.preventDefault();
+  }
+  const drawer = document.getElementById('vlkMobileDrawer');
+  const backdrop = document.getElementById('vlkMobileDrawerBackdrop');
+  const toggleBtn = document.getElementById('mobileNavToggleBtn');
+  if (!drawer) return;
+
+  const isActive = drawer.classList.toggle('active');
+  if (backdrop) backdrop.classList.toggle('active', isActive);
+  if (toggleBtn) toggleBtn.setAttribute('aria-expanded', isActive ? 'true' : 'false');
+  drawer.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+
+  if (isActive) {
+    document.body.style.overflow = 'hidden';
+    try {
+      const rawUser = localStorage.getItem('vlk_user');
+      if (rawUser) {
+        const u = JSON.parse(rawUser);
+        const nameEl = document.getElementById('drawerStudentName');
+        const avatarEl = document.getElementById('drawerStudentAvatar');
+        if (nameEl && u.name) nameEl.textContent = u.name;
+        if (avatarEl && window.__studentInitials) avatarEl.textContent = window.__studentInitials;
+      }
+    } catch (err) {}
+  } else {
+    document.body.style.overflow = '';
+  }
+}
+
+function closeMobileNavDrawer() {
+  const drawer = document.getElementById('vlkMobileDrawer');
+  const backdrop = document.getElementById('vlkMobileDrawerBackdrop');
+  const toggleBtn = document.getElementById('mobileNavToggleBtn');
+  if (drawer) {
+    drawer.classList.remove('active');
+    drawer.setAttribute('aria-hidden', 'true');
+  }
+  if (backdrop) backdrop.classList.remove('active');
+  if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'false');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('click', (e) => {
+  const dd = document.getElementById('labBenchesDropdown');
+  if (dd && !dd.contains(e.target)) {
+    closeLabBenchesDropdown();
+  }
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeLabBenchesDropdown();
+    closeMobileNavDrawer();
+  }
+});
+
+window.toggleLabBenchesDropdown = toggleLabBenchesDropdown;
+window.closeLabBenchesDropdown = closeLabBenchesDropdown;
+window.toggleMobileNavDrawer = toggleMobileNavDrawer;
+window.closeMobileNavDrawer = closeMobileNavDrawer;
+if (window.VLK) {
+  window.VLK.toggleLabBenchesDropdown = toggleLabBenchesDropdown;
+  window.VLK.toggleMobileNavDrawer = toggleMobileNavDrawer;
+}
+
+// ── Mobile Student Home Workstation Enhancements ──
+function initMobileStudentWorkstation() {
+  // 1. Personalized Greeting & School Identity
+  try {
+    const rawUser = localStorage.getItem('vlk_user') || sessionStorage.getItem('vlk_user');
+    if (rawUser) {
+      const u = JSON.parse(rawUser);
+      if (u) {
+        const greetingEl = document.getElementById('studentGreetingName');
+        if (greetingEl && u.name) {
+          const firstName = u.name.trim().split(/\s+/)[0];
+          greetingEl.textContent = firstName || u.name;
+        }
+
+        const schoolEl = document.getElementById('candidateSchoolBadge');
+        if (schoolEl) {
+          const schoolName = u.school_name || u.school_code || (u.admission_number ? `Adm: ${u.admission_number}` : 'VirtuLab KCSE Candidate');
+          schoolEl.textContent = schoolName;
+        }
+
+        const formEl = document.getElementById('candidateFormBadge');
+        if (formEl) {
+          const formName = u.grade || u.form || 'Form 4 Candidate';
+          formEl.textContent = formName.toString().toLowerCase().includes('form') ? formName : `Form ${formName} Candidate`;
+        }
+      }
+    }
+  } catch (err) {}
+
+  // 2. Real-time Online / Offline PWA Connectivity Watcher
+  function updateNetworkState() {
+    const isOnline = navigator.onLine;
+    const netPill = document.getElementById('heroNetPill');
+    const netDot = document.getElementById('netDot');
+    const netText = document.getElementById('heroNetText');
+
+    if (netPill && netDot && netText) {
+      if (isOnline) {
+        netPill.classList.remove('offline');
+        netDot.className = 'net-dot online';
+        netText.textContent = 'Online';
+      } else {
+        netPill.classList.add('offline');
+        netDot.className = 'net-dot offline';
+        netText.textContent = 'Offline Ready';
+      }
+    }
+  }
+
+  window.addEventListener('online', updateNetworkState);
+  window.addEventListener('offline', updateNetworkState);
+  updateNetworkState();
+
+  // 3. Synchronize Big 4 "Resume Lab" Action with Active Bench Registry
+  function syncResumeActionCard() {
+    try {
+      const resumeCard = document.getElementById('mqaResumeCard');
+      const resumeTitle = document.getElementById('mqaResumeTitle');
+      const resumeSub = document.getElementById('mqaResumeSub');
+      const mainResumeTitle = document.getElementById('resumeTitle');
+      const mainResumeLaunchBtn = document.getElementById('resumeLaunchBtn');
+
+      if (mainResumeTitle && resumeTitle && mainResumeTitle.textContent.trim()) {
+        const t = mainResumeTitle.textContent.trim();
+        resumeTitle.textContent = t.length > 28 ? t.substring(0, 26) + '…' : t;
+      }
+      if (mainResumeLaunchBtn && resumeCard && mainResumeLaunchBtn.getAttribute('href')) {
+        resumeCard.setAttribute('href', mainResumeLaunchBtn.getAttribute('href'));
+      }
+    } catch (e) {}
+  }
+
+  // Poll once shortly after dashboard data loads
+  setTimeout(syncResumeActionCard, 800);
+  setTimeout(syncResumeActionCard, 2400);
+}
+
+if (document.readyState === 'loading') {
+  window.addEventListener('DOMContentLoaded', initMobileStudentWorkstation);
+} else {
+  initMobileStudentWorkstation();
+}
+}

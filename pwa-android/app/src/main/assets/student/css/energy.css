@@ -420,9 +420,10 @@ html, body {
 /* ── 5. PAGE WRAPPER & SCENARIOS ── */
 .energy-page-wrap {
   width: 100%;
-  max-width: 1360px;
+  max-width: 1240px;
   margin: 0 auto;
-  padding: 16px 18px 80px;
+  padding: 20px 16px 80px;
+  box-sizing: border-box;
 }
 
 .energy-scenario-strip {

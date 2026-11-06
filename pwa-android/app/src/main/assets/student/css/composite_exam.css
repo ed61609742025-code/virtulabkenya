@@ -248,10 +248,11 @@ html, body {
 /* ── 4. PAGE WRAP & EXAM HEADER BANNER ── */
 .wrap {
   width: 100%;
-  max-width: 1400px;
+  max-width: 1240px;
   margin: 0 auto;
-  padding: 20px 20px 80px;
+  padding: 20px 16px 80px;
   padding-bottom: max(80px, env(safe-area-inset-bottom, 80px));
+  box-sizing: border-box;
 }
 
 .exam-header {
@@ -492,9 +493,14 @@ iframe.lab-frame {
   border: 1.5px solid var(--card-border);
   border-radius: 14px;
   padding: 18px 20px;
+  margin-bottom: 20px;
   box-shadow: var(--shadow-sm);
   box-sizing: border-box;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.q1-part-card .titration-rig-workbench {
+  margin-bottom: 0;
 }
 
 .q1-part-card:hover {
@@ -1994,11 +2000,12 @@ iframe.lab-frame {
   justify-content: space-between;
   background: var(--bg-dark);
   border: 1px solid var(--card-border);
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 10px 16px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   gap: 12px;
   flex-wrap: wrap;
+  box-sizing: border-box;
 }
 .pacing-milestone {
   display: flex;
@@ -3094,4 +3101,54 @@ iframe.lab-frame {
   .q1-flow-buttons-row {
     grid-template-columns: 1fr;
   }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   UNIFIED BENCH CARD & GRID MARGIN STANDARDS
+   ═══════════════════════════════════════════════════════════════ */
+.exam-section-card {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 24px;
+}
+
+.exam-prompt-box {
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+}
+
+.tests-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+}
+
+.kcse-question-block {
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.15s ease;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+}
+
+#q2DeductionCard,
+#q2OrganicDeductionCard,
+#q3DeductionCard {
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 14px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+  box-sizing: border-box;
 }

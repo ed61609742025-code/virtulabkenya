@@ -4705,6 +4705,28 @@ requireStudentLogin();
     window.print();
   }
 
+  function toggleWorkbenchDropdown(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('workbenchDropdownMenu');
+    const btn = document.getElementById('workbenchDropdownTrigger');
+    if (!menu) return;
+    const isHidden = menu.style.display === 'none' || !menu.style.display;
+    menu.style.display = isHidden ? 'flex' : 'none';
+    if (btn) btn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+  }
+  window.toggleWorkbenchDropdown = toggleWorkbenchDropdown;
+
+  document.addEventListener('click', function(e) {
+    const menu = document.getElementById('workbenchDropdownMenu');
+    const btn = document.getElementById('workbenchDropdownTrigger');
+    if (menu && menu.style.display === 'flex') {
+      if (!menu.contains(e.target) && (!btn || !btn.contains(e.target))) {
+        menu.style.display = 'none';
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+      }
+    }
+  });
+
   function toggleBenchSettings(e) {
     if (e) e.stopPropagation();
     const dd = document.getElementById('benchSettingsDropdown');

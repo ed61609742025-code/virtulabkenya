@@ -256,26 +256,60 @@ html, body {
 }
 
 .exam-header {
+  position: relative;
   background: var(--card-bg);
   border: 1px solid var(--card-border);
-  border-radius: 14px;
-  padding: 20px 24px;
-  margin-bottom: 20px;
+  border-radius: 16px;
+  padding: 20px 24px 22px;
+  margin-bottom: 22px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 20px;
   flex-wrap: wrap;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+}
+
+.exam-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3.5px;
+  background: linear-gradient(90deg, #10B981 0%, #06B6D4 35%, #F59E0B 70%, #8B5CF6 100%);
+}
+
+.exam-header-main-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 500px;
+  min-width: 280px;
+}
+
+.exam-header-knec-badge {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cyan-accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
 }
 
 .exam-header-title {
   font-family: var(--font-heading);
-  font-size: 1.15rem;
-  font-weight: 800;
+  font-size: 1.22rem;
+  font-weight: 900;
   color: var(--heading-color);
-  letter-spacing: -0.01em;
-  margin: 0 0 4px 0;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  margin: 0;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -285,25 +319,69 @@ html, body {
   font-size: 0.88rem;
   font-weight: 700;
   color: var(--amber-accent);
+  line-height: 1.35;
+  margin-top: 2px;
 }
 
 .exam-header-meta {
-  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.exam-meta-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--card-bg-hover, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 0.76rem;
+  font-family: var(--font-mono, monospace);
   color: var(--text-muted);
-  margin-top: 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.exam-meta-pill b {
+  font-weight: 700;
+  color: var(--heading-color);
+}
+
+.exam-header-timer-block {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.exam-timer-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-family: var(--font-mono, monospace);
 }
 
 .exam-timer-chip {
   font-family: var(--font-mono);
-  font-size: 1.3rem;
+  font-size: 1.38rem;
   font-weight: 800;
   color: var(--amber-accent);
-  background: var(--bg-dark);
-  padding: 6px 16px;
-  border-radius: 8px;
-  border: 1px solid var(--amber-border);
-  display: inline-block;
-  margin-bottom: 4px;
+  background: var(--bg-dark, #090E17);
+  padding: 8px 18px;
+  border-radius: 10px;
+  border: 1.5px solid var(--amber-border, rgba(245, 158, 11, 0.35));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.04em;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.05);
 }
 
 .live-score-chip {

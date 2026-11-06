@@ -64,7 +64,7 @@ function switchStudentSubTab(tabId, isUserGesture = true) {
   }
 
   // Update URL hash without jumping
-  history.replaceState(null, null, #);
+  history.replaceState(null, null, "#" + tabId);
 }
 
 // Redirect helpers for Profile & Settings

@@ -1916,11 +1916,23 @@ requireStudentLogin();
     const minVol = Math.max(0, Math.floor((volume - 1.4) * 10) / 10);
     const maxVol = Math.min(50, Math.ceil((volume + 1.4) * 10) / 10);
 
-    const solAStr = (engine?.preset?.q1?.solutionA || '').toLowerCase();
-    const titrantColor = engine?.preset?.q1?.titrantColor || '';
-    const isKmno4 = solAStr.includes('kmno') || titrantColor === '#7C3AED' || titrantColor === '#A855F7';
+    const q1 = engine?.preset?.q1 || {};
+    const examTitle = (engine?.preset?.title || '').toLowerCase();
+    const q1Text = [
+      q1.solutionA, q1.solutionB, q1.titrant, q1.titrantName,
+      q1.acidFormula, q1.baseFormula, q1.title, q1.indicator,
+      examTitle
+    ].filter(Boolean).join(' ').toLowerCase();
+
+    const titrantColor = (q1.titrantColor || '').toLowerCase();
+    const isKmno4 = q1Text.includes('kmno') ||
+                    q1Text.includes('manganate') ||
+                    q1Text.includes('permanganate') ||
+                    titrantColor === '#7c3aed' ||
+                    titrantColor === '#a855f7' ||
+                    titrantColor === '#581c87';
     const isDark = isKmno4;
-    const isAmber = titrantColor === '#F59E0B' || titrantColor === '#D97706' || solAStr.includes('dichromate') || solAStr.includes('iodine');
+    const isAmber = !isKmno4 && (titrantColor === '#f59e0b' || titrantColor === '#d97706' || q1Text.includes('dichromate') || q1Text.includes('iodine'));
 
     let liquidColor0, liquidColor1, liquidColor2, liquidColor3;
     if (isKmno4) {
@@ -1933,9 +1945,9 @@ requireStudentLogin();
       liquidColor1 = '#F59E0B';
       liquidColor2 = '#D97706';
       liquidColor3 = '#B45309';
-    } else if (titrantColor && titrantColor !== '#38BDF8' && titrantColor !== '#7DD3FC') {
-      liquidColor0 = titrantColor;
-      liquidColor1 = titrantColor;
+    } else if (titrantColor && titrantColor !== '#38bdf8' && titrantColor !== '#7dd3fc') {
+      liquidColor0 = q1.titrantColor;
+      liquidColor1 = q1.titrantColor;
       liquidColor2 = '#0284C7';
       liquidColor3 = '#0369A1';
     } else {
@@ -1962,6 +1974,11 @@ requireStudentLogin();
           <stop offset="55%" stop-color="${liquidColor2}" stop-opacity="${isKmno4 ? '0.98' : '0.80'}"/>
           <stop offset="100%" stop-color="${liquidColor3}" stop-opacity="${isKmno4 ? '1.0' : '0.90'}"/>
         </linearGradient>
+
+        <!-- Optical Reticle Bead Glow Filter -->
+        <filter id="lensBeadGlowExam" x="-30%" y="-30%" width="160%" height="160%">
+          <feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="#EF4444" flood-opacity="0.6"/>
+        </filter>
 
         <!-- Glass Cylinder Outer Wall Shadow (Left) -->
         <linearGradient id="glassWallLeftExam" x1="0" y1="0" x2="1" y2="0">
@@ -1996,12 +2013,12 @@ requireStudentLogin();
 
       <!-- Authentic Schellbach Backing Band (White Enamel) -->
       <rect x="86" y="0" width="28" height="180" fill="#F8FAFC" opacity="0.9"/>
-      <!-- Schellbach Central Cobalt Blue Guide Line -->
-      <rect x="97" y="0" width="6" height="${isKmno4 ? 180 : Math.max(0, centerY - 12)}" fill="#0284C7" opacity="${isKmno4 ? '0.2' : '0.85'}"/>
+      <!-- Schellbach Central Cobalt Blue Guide Line (stops at liquid surface for opaque KMnO4) -->
+      <rect x="97" y="0" width="6" height="${isKmno4 ? Math.max(0, centerY) : Math.max(0, centerY - 10)}" fill="#0284C7" opacity="0.85"/>
 
       ${!isKmno4 ? `
         <!-- Schellbach Optical Pointer Convergence at Meniscus -->
-        <path d="M 97 ${Math.max(0, centerY - 12)} L 103 ${Math.max(0, centerY - 12)} L 100 ${centerY} Z" fill="#0284C7"/>
+        <path d="M 97 ${Math.max(0, centerY - 10)} L 103 ${Math.max(0, centerY - 10)} L 100 ${centerY} Z" fill="#0284C7"/>
         <path d="M 100 ${centerY} L 103 ${centerY + 14} L 97 ${centerY + 14} Z" fill="#0369A1"/>
         <rect x="97" y="${centerY + 14}" width="6" height="${Math.max(0, 180 - (centerY + 14))}" fill="#0369A1" opacity="0.7"/>
       ` : ''}
@@ -2015,22 +2032,24 @@ requireStudentLogin();
     let meniscusArc = '';
 
     if (isKmno4) {
+      // Opaque aqueous KMnO4: Adheres naturally to glass walls (concave surface dipping subtly in the center).
+      // Per KNEC & IUPAC rules, the reading is taken at the TOP edge where the liquid touches the scale.
       liquidBody = `
-        <path d="M 38 ${centerY + 10} Q 100 ${centerY - 10} 162 ${centerY + 10} L 162 180 L 38 180 Z" fill="url(#luminousLiquidFillExam)"/>
+        <path d="M 38 ${centerY} Q 100 ${centerY + 4} 162 ${centerY} L 162 180 L 38 180 Z" fill="url(#luminousLiquidFillExam)"/>
       `;
       meniscusArc = `
-        <path d="M 38 ${centerY + 10} Q 100 ${centerY - 10} 162 ${centerY + 10}" stroke="#C084FC" stroke-width="2.4" fill="none" opacity="0.95"/>
-        <path d="M 38 ${centerY + 9} Q 100 ${centerY - 9} 162 ${centerY + 9}" stroke="#FFFFFF" stroke-width="1.4" fill="none" opacity="0.8" stroke-dasharray="4,6"/>
-        <circle cx="100" cy="${centerY}" r="3.5" fill="#FDE047" stroke="#000000" stroke-width="1.2" pointer-events="none"/>
+        <path d="M 38 ${centerY} Q 100 ${centerY + 4} 162 ${centerY}" stroke="#C084FC" stroke-width="2.2" fill="none" opacity="0.95"/>
+        <path d="M 38 ${centerY - 0.5} Q 100 ${centerY + 3} 162 ${centerY - 0.5}" stroke="#FFFFFF" stroke-width="1.2" fill="none" opacity="0.75" stroke-dasharray="4,6"/>
       `;
     } else {
+      // Clear aqueous solutions: Concave meniscus with lowest dip tangent to the red reticle mark at centerY
       liquidBody = `
-        <path d="M 38 ${centerY - 10} Q 100 ${centerY + 10} 162 ${centerY - 10} L 162 180 L 38 180 Z" fill="url(#luminousLiquidFillExam)"/>
+        <path d="M 38 ${centerY - 8} Q 100 ${centerY} 162 ${centerY - 8} L 162 180 L 38 180 Z" fill="url(#luminousLiquidFillExam)"/>
       `;
       meniscusArc = `
-        <path d="M 38 ${centerY - 11} Q 100 ${centerY + 9} 162 ${centerY - 11}" stroke="#0F172A" stroke-width="3.2" fill="none" opacity="0.85"/>
-        <path d="M 38 ${centerY - 10} Q 100 ${centerY + 10} 162 ${centerY - 10}" stroke="#FFFFFF" stroke-width="2.6" fill="none" stroke-linecap="round" opacity="0.95"/>
-        <path d="M 52 ${centerY - 5} Q 100 ${centerY + 5} 148 ${centerY - 5}" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/>
+        <path d="M 38 ${centerY - 9} Q 100 ${centerY - 1} 162 ${centerY - 9}" stroke="#0F172A" stroke-width="3.2" fill="none" opacity="0.85"/>
+        <path d="M 38 ${centerY - 8} Q 100 ${centerY} 162 ${centerY - 8}" stroke="#FFFFFF" stroke-width="2.6" fill="none" stroke-linecap="round" opacity="0.95"/>
+        <path d="M 52 ${centerY - 4} Q 100 ${centerY + 4} 148 ${centerY - 4}" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/>
         <circle cx="100" cy="${centerY}" r="3.5" fill="#EF4444" stroke="#FFFFFF" stroke-width="1.5" filter="url(#lensBeadGlowExam)" pointer-events="none"/>
       `;
     }
@@ -2087,7 +2106,7 @@ requireStudentLogin();
 
     const subText = document.getElementById('lensReadoutSubText');
     if (subText) {
-      subText.innerHTML = isKmno4 ? 'Read at <b>top of meniscus</b> (opaque KMnO₄).' : 'Read at <b>bottom of meniscus</b>.';
+      subText.innerHTML = isKmno4 ? '<span style="color:#C084FC; font-weight:800;">Top of Meniscus:</span> Read upper surface level for opaque KMnO₄.' : '<span style="color:var(--cyan-accent); font-weight:800;">Bottom of Meniscus:</span> Read lowest point of curve.';
     }
   }
 

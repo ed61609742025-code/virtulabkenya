@@ -1743,7 +1743,7 @@ requireStudentLogin();
     const minVol = Math.max(0, Math.floor((apparentVolume - 1.3) * 10) / 10);
     const maxVol = Math.min(50, Math.ceil((apparentVolume + 1.3) * 10) / 10);
 
-    const isKmno4 = (current && current.titrantName && (current.titrantName.includes('KMnO4') || current.titrantName.includes('KMnO₄'))) || (current && current.id && current.id.includes('kmno4'));
+    const isKmno4 = Boolean((current?.titrantName && (current.titrantName.toLowerCase().includes('kmno') || current.titrantName.includes('KMnO₄') || current.titrantName.toLowerCase().includes('manganate'))) || (current?.id && current.id.toLowerCase().includes('kmno4')) || (current?.titrantFormula && current.titrantFormula.toLowerCase().includes('kmno')));
 
     // Color definitions for solution:
     // KMnO4 = rich deep purple; Standard acids/bases = realistic clear aqueous tint
@@ -1805,7 +1805,7 @@ requireStudentLogin();
       <!-- Authentic Schellbach Backing Band (White Enamel) -->
       <rect x="68" y="0" width="24" height="160" fill="#F8FAFC" opacity="0.9"/>
       <!-- Schellbach Central Cobalt Blue Guide Line -->
-      <rect x="77" y="0" width="6" height="${isKmno4 ? 160 : Math.max(0, centerY - 12)}" fill="#0284C7" opacity="${isKmno4 ? '0.2' : '0.85'}"/>
+      <rect x="77" y="0" width="6" height="${isKmno4 ? Math.max(0, centerY) : Math.max(0, centerY - 12)}" fill="#0284C7" opacity="0.85"/>
 
       ${!isKmno4 ? `
         <!-- Schellbach Optical Pointer Convergence at Meniscus -->
@@ -1909,7 +1909,7 @@ requireStudentLogin();
     const lensSubtitle = document.getElementById('lensGuidanceSub') || document.querySelector('.lens-readout-sub');
     if (lensSubtitle) {
       if (currentParallaxAngle === 0) {
-        lensSubtitle.innerHTML = isKmno4 ? 'Read at <b>top edge</b>.' : 'Read at <b>bottom of meniscus</b>.';
+        lensSubtitle.innerHTML = isKmno4 ? '<span style="color:#C084FC; font-weight:800;">Top of Meniscus:</span> Read upper surface level for opaque KMnO₄.' : '<span style="color:var(--cyan-accent); font-weight:800;">Bottom of Meniscus:</span> Read lowest point of curve.';
       } else {
         lensSubtitle.innerHTML = `<span style="color:#F59E0B;font-weight:700;">⚠️ Parallax Error:</span> Front &amp; rear lines split! Align to 0° eye level.`;
       }
@@ -1922,7 +1922,7 @@ requireStudentLogin();
     const fillHeight = buretteInnerHeight * (1 - usedFraction);
     const fill = document.getElementById('buretteFill');
     const cap = document.getElementById('buretteMeniscusCap');
-    const isKmno4 = current && current.titrantName && (current.titrantName.includes('KMnO4') || current.titrantName.includes('KMnO₄'));
+    const isKmno4 = Boolean((current?.titrantName && (current.titrantName.toLowerCase().includes('kmno') || current.titrantName.includes('KMnO₄') || current.titrantName.toLowerCase().includes('manganate'))) || (current?.id && current.id.toLowerCase().includes('kmno4')));
     if (fill) {
       fill.setAttribute('height', Math.max(0, fillHeight));
       fill.setAttribute('y', 10 + (buretteInnerHeight - fillHeight));

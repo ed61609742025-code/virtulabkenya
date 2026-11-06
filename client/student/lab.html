@@ -821,12 +821,12 @@
                 <!-- Stopcock Volume Addition Buttons -->
                 <div id="titrationControls" class="is-locked">
                   <div class="titration-btn-grid">
-                    <button type="button" class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(1.0)" title="Add 1.00 cm³ titrant (Coarse delivery)" aria-label="Add 1.00 cm³ titrant">+1 cm³</button>
-                    <button type="button" class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(0.5)" title="Add 0.50 cm³ titrant" aria-label="Add 0.50 cm³ titrant">+0.5 cm³</button>
-                    <button type="button" class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(0.1)" title="Add 0.10 cm³ titrant" aria-label="Add 0.10 cm³ titrant">+0.1 cm³</button>
-                    <button type="button" class="btn-tactile btn-tactile-cyan btn-tactile-sm btn-pill-action" onclick="addVolume(0.05)" title="Add single drop (0.05 cm³)" aria-label="Add single drop of 0.05 cm³"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg> <span>+0.05 cm³</span></button>
+                    <button type="button" class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(1.0)" style="min-height:44px;touch-action:manipulation;" title="Add 1.00 cm³ titrant (Coarse delivery)" aria-label="Add 1.00 cm³ titrant">+1 cm³</button>
+                    <button type="button" class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(0.5)" style="min-height:44px;touch-action:manipulation;" title="Add 0.50 cm³ titrant" aria-label="Add 0.50 cm³ titrant">+0.5 cm³</button>
+                    <button type="button" class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(0.1)" style="min-height:44px;touch-action:manipulation;" title="Add 0.10 cm³ titrant" aria-label="Add 0.10 cm³ titrant">+0.1 cm³</button>
+                    <button type="button" class="btn-tactile btn-tactile-cyan btn-tactile-sm btn-pill-action" onclick="addVolume(0.05)" style="min-height:44px;touch-action:manipulation;" title="Add single drop (0.05 cm³)" aria-label="Add single drop of 0.05 cm³"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg> <span>+0.05 cm³</span></button>
                   </div>
-                  <button type="button" class="btn-tactile btn-tactile-cyan btn-tactile-sm btn-action-halfdrop" id="btnHalfDrop" onclick="addHalfDrop()" title="Split a half-drop on burette tip and touch inner flask wall (+0.025 cm³)" aria-label="Add half-drop (+0.025 cm³) touching tip to flask">
+                  <button type="button" class="btn-tactile btn-tactile-cyan btn-tactile-sm btn-action-halfdrop" id="btnHalfDrop" onclick="addHalfDrop()" style="min-height:44px;touch-action:manipulation;" title="Split a half-drop on burette tip and touch inner flask wall (+0.025 cm³)" aria-label="Add half-drop (+0.025 cm³) touching tip to flask">
                     <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8" stroke-dasharray="3 3"/></svg>
                     <span>Half-Drop (+0.025 cm³ · Touch Tip)</span>
                   </button>
@@ -834,11 +834,11 @@
 
                 <!-- Trial Actions: Record & Reset -->
                 <div class="control-pod-actions">
-                  <button type="button" class="btn-tactile btn-tactile-success btn-action-record" onclick="recordTrial()" data-i18n="record_endpoint" title="Record the current burette volume in the KCSE Results Table once permanent endpoint is reached" aria-label="Record titration endpoint">
+                  <button type="button" class="btn-tactile btn-tactile-success btn-action-record" onclick="recordTrial()" style="min-height:44px;touch-action:manipulation;" data-i18n="record_endpoint" title="Record the current burette volume in the KCSE Results Table once permanent endpoint is reached" aria-label="Record titration endpoint">
                     <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                     <span>Record Endpoint</span>
                   </button>
-                  <button type="button" class="btn-tactile btn-tactile-surface btn-action-reset" onclick="resetBurette()" data-i18n="reset_burette" title="Refill burette to 0.00 cm³ and prepare a fresh conical flask aliquot for the next trial" aria-label="Reset burette and flask">
+                  <button type="button" class="btn-tactile btn-tactile-surface btn-action-reset" onclick="resetBurette()" style="min-height:44px;touch-action:manipulation;" data-i18n="reset_burette" title="Refill burette to 0.00 cm³ and prepare a fresh conical flask aliquot for the next trial" aria-label="Reset burette and flask">
                     <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
                     <span>Reset Burette</span>
                   </button>
@@ -1231,6 +1231,18 @@
     }
   });
 </script>
+  <!-- Mobile Thumb-Zone Sticky Workbench Dock -->
+  <div id="mobileWorkbenchDock" class="mobile-workbench-dock" role="toolbar" aria-label="Quick Workbench Controls">
+    <div class="dock-telemetry">
+      <span class="dock-flask-swatch" id="dockSwatch" title="Indicator color"></span>
+      <span class="dock-volume" id="dockLiveVol">0.00 cm³</span>
+    </div>
+    <div class="dock-actions">
+      <button type="button" class="dock-btn dock-btn-drop" id="dockDropBtn" onclick="addVolume(0.05)" title="Dispense drop">+0.05</button>
+      <button type="button" class="dock-btn dock-btn-swirl" id="dockSwirlBtn" onclick="swirlFlask()" title="Swirl flask">Swirl</button>
+      <button type="button" class="dock-btn dock-btn-record" id="dockRecordBtn" onclick="recordTrial()" title="Record endpoint">Record</button>
+    </div>
+  </div>
 </body>
 </html>
 

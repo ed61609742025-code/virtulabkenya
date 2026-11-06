@@ -363,4 +363,3 @@ if (document.readyState === 'loading') {
 } else {
   initMobileStudentWorkstation();
 }
-}

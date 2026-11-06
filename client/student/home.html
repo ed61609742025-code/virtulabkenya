@@ -218,7 +218,7 @@
     overflow-x: hidden;
     margin: 0;
     padding: 0;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
     padding-left: env(safe-area-inset-left, 0px);
     padding-right: env(safe-area-inset-right, 0px);
   }
@@ -1370,19 +1370,7 @@
           <span class="mqa-heading">Quick Actions</span>
         </div>
         <div class="mqa-grid">
-          <!-- 1. Resume Lab Action -->
-          <a href="lab.html?studyMode=guided" class="mqa-card mqa-resume" id="mqaResumeCard">
-            <div class="mqa-icon mqa-icon-resume" aria-hidden="true">
-              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            </div>
-            <div class="mqa-info">
-              <span class="mqa-tag" id="mqaResumeTag">RESUME LAB</span>
-              <div class="mqa-title" id="mqaResumeTitle">Volumetric Titration</div>
-              <div class="mqa-sub" id="mqaResumeSub">Acid-Base Standardisation &rarr;</div>
-            </div>
-          </a>
-
-          <!-- 2. Daily Diagnostic Blitz -->
+          <!-- 1. Daily Diagnostic Blitz -->
           <a href="speed_battle.html?mode=daily_bite" class="mqa-card mqa-blitz">
             <div class="mqa-icon mqa-icon-blitz" aria-hidden="true">
               <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
@@ -1394,7 +1382,7 @@
             </div>
           </a>
 
-          <!-- 3. KCSE 40-Mark Mock -->
+          <!-- 2. KCSE 40-Mark Mock -->
           <a href="mock_exams.html" class="mqa-card mqa-mock">
             <div class="mqa-icon mqa-icon-mock" aria-hidden="true">
               <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15l-2 5l4-2l4 2l-2-5"/><circle cx="12" cy="8" r="7"/></svg>
@@ -1406,7 +1394,7 @@
             </div>
           </a>
 
-          <!-- 4. Teacher Assignments -->
+          <!-- 3. Teacher Assignments -->
           <a href="#zone_assignments" class="mqa-card mqa-tasks" onclick="focusAssignmentsSection(event)">
             <div class="mqa-icon mqa-icon-tasks" aria-hidden="true">
               <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg>
@@ -1415,6 +1403,18 @@
               <span class="mqa-tag tag-purple" id="mqaTasksBadge">TASKS</span>
               <div class="mqa-title">Assignments</div>
               <div class="mqa-sub" id="mqaTasksSub">Continuous Assessment</div>
+            </div>
+          </a>
+
+          <!-- 4. Revision Handbook -->
+          <a href="reference.html" class="mqa-card mqa-handbook">
+            <div class="mqa-icon mqa-icon-handbook" aria-hidden="true">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </div>
+            <div class="mqa-info">
+              <span class="mqa-tag tag-cyan">HANDBOOK</span>
+              <div class="mqa-title">Revision</div>
+              <div class="mqa-sub">Criteria &amp; Salt Tables</div>
             </div>
           </a>
         </div>
@@ -2330,10 +2330,6 @@
     <a href="lab.html" class="vlk-bottom-nav-item" aria-label="Lab" id="bnav-lab">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31M14 2v7.31M8.5 2h7M14 9.3a6.5 6.5 0 1 1-4 0"/><line x1="6" y1="16" x2="18" y2="16"/></svg>
       <span>Lab</span>
-    </a>
-        <a href="mock_exams.html" class="vlk-bottom-nav-item" aria-label="Mocks" id="bnav-exams">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/><path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
-      <span>Mocks</span>
     </a>
     <a href="reference.html" class="vlk-bottom-nav-item" aria-label="Revision" id="bnav-reference">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>

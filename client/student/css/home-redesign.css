@@ -2237,13 +2237,6 @@
     transform: scale(0.96) !important;
   }
 
-  .mqa-card.mqa-resume {
-    grid-column: 1 / -1 !important;
-    background: linear-gradient(135deg, rgba(2, 132, 199, 0.08) 0%, rgba(37, 99, 235, 0.05) 100%) !important;
-    border-color: rgba(2, 132, 199, 0.35) !important;
-    padding: 12px 14px !important;
-  }
-
   .mqa-icon {
     width: 34px !important;
     height: 34px !important;
@@ -2273,6 +2266,13 @@
     background: rgba(16, 185, 129, 0.14) !important;
     color: #059669 !important;
   }
+
+    .mqa-icon-handbook {
+    background: rgba(2, 132, 199, 0.14) !important;
+    color: var(--cyan-accent, #0284C7) !important;
+  }
+
+  .mqa-tag.tag-cyan { color: var(--cyan-accent, #0284C7) !important; }
 
   .mqa-icon-tasks {
     background: rgba(139, 92, 246, 0.14) !important;
@@ -2703,3 +2703,11 @@
     box-shadow: 0 4px 18px -2px rgba(0, 0, 0, 0.45) !important;
   }
 }
+
+  /* Generous clearance for fixed bottom navigation bar (60px + safe-area) */
+  .dashboard-container,
+  .student-tab-panel,
+  .zone-pathway,
+  #skillTreeContainer {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
+  }

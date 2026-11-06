@@ -46,7 +46,25 @@ function switchStudentSubTab(tabId, isUserGesture = true) {
   }
 
   // Update URL hash without jumping
-  history.replaceState(null, null, `#${tabId}`);
+  // Smooth scroll into target panel if clicked by user
+  if (isUserGesture && tabId === 'research') {
+    const researchPanel = document.getElementById('panel_research');
+    if (researchPanel) {
+      setTimeout(() => {
+        researchPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+    }
+  } else if (isUserGesture && tabId === 'benches') {
+    const dashboardTop = document.querySelector('.candidate-hero-bar');
+    if (dashboardTop) {
+      setTimeout(() => {
+        dashboardTop.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+    }
+  }
+
+  // Update URL hash without jumping
+  history.replaceState(null, null, #);
 }
 
 // Redirect helpers for Profile & Settings
@@ -213,8 +231,40 @@ function closeLabBenchesDropdown() {
   if (trigger) trigger.setAttribute('aria-expanded', 'false');
 }
 
-function toggleMobileNavDrawer(e) {
-  if (e) {
+function openMobileNavDrawer() {
+  const drawer = document.getElementById('vlkMobileDrawer');
+  const backdrop = document.getElementById('vlkMobileDrawerBackdrop');
+  const toggleBtn = document.getElementById('mobileNavToggleBtn');
+  if (!drawer) return;
+
+  drawer.classList.add('active');
+  if (backdrop) backdrop.classList.add('active');
+  if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
+
+  drawer.removeAttribute('aria-hidden');
+  drawer.removeAttribute('inert');
+  drawer.inert = false;
+  document.body.style.overflow = 'hidden';
+
+  try {
+    const rawUser = localStorage.getItem('vlk_user');
+    if (rawUser) {
+      const u = JSON.parse(rawUser);
+      const nameEl = document.getElementById('drawerStudentName');
+      const avatarEl = document.getElementById('drawerStudentAvatar');
+      if (nameEl && u.name) nameEl.textContent = u.name;
+      if (avatarEl && window.__studentInitials) avatarEl.textContent = window.__studentInitials;
+    }
+  } catch (err) {}
+
+  setTimeout(() => {
+    const closeBtn = drawer.querySelector('.vlk-drawer-close-btn');
+    if (closeBtn) closeBtn.focus();
+  }, 50);
+}
+
+function closeMobileNavDrawer(e) {
+  if (e && typeof e.stopPropagation === 'function') {
     e.stopPropagation();
     e.preventDefault();
   }
@@ -223,39 +273,35 @@ function toggleMobileNavDrawer(e) {
   const toggleBtn = document.getElementById('mobileNavToggleBtn');
   if (!drawer) return;
 
-  const isActive = drawer.classList.toggle('active');
-  if (backdrop) backdrop.classList.toggle('active', isActive);
-  if (toggleBtn) toggleBtn.setAttribute('aria-expanded', isActive ? 'true' : 'false');
-  drawer.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+  drawer.classList.remove('active');
+  if (backdrop) backdrop.classList.remove('active');
 
-  if (isActive) {
-    document.body.style.overflow = 'hidden';
-    try {
-      const rawUser = localStorage.getItem('vlk_user');
-      if (rawUser) {
-        const u = JSON.parse(rawUser);
-        const nameEl = document.getElementById('drawerStudentName');
-        const avatarEl = document.getElementById('drawerStudentAvatar');
-        if (nameEl && u.name) nameEl.textContent = u.name;
-        if (avatarEl && window.__studentInitials) avatarEl.textContent = window.__studentInitials;
-      }
-    } catch (err) {}
-  } else {
-    document.body.style.overflow = '';
+  // Return focus to toggle button before marking drawer hidden
+  if (toggleBtn) {
+    toggleBtn.setAttribute('aria-expanded', 'false');
+    toggleBtn.focus();
+  } else if (document.activeElement && drawer.contains(document.activeElement)) {
+    document.activeElement.blur();
   }
+
+  drawer.setAttribute('aria-hidden', 'true');
+  drawer.setAttribute('inert', '');
+  drawer.inert = true;
+  document.body.style.overflow = '';
 }
 
-function closeMobileNavDrawer() {
-  const drawer = document.getElementById('vlkMobileDrawer');
-  const backdrop = document.getElementById('vlkMobileDrawerBackdrop');
-  const toggleBtn = document.getElementById('mobileNavToggleBtn');
-  if (drawer) {
-    drawer.classList.remove('active');
-    drawer.setAttribute('aria-hidden', 'true');
+function toggleMobileNavDrawer(e) {
+  if (e && typeof e.stopPropagation === 'function') {
+    e.stopPropagation();
+    e.preventDefault();
   }
-  if (backdrop) backdrop.classList.remove('active');
-  if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'false');
-  document.body.style.overflow = '';
+  const drawer = document.getElementById('vlkMobileDrawer');
+  if (!drawer) return;
+  if (drawer.classList.contains('active')) {
+    closeMobileNavDrawer(e);
+  } else {
+    openMobileNavDrawer();
+  }
 }
 
 document.addEventListener('click', (e) => {
@@ -356,6 +402,20 @@ function initMobileStudentWorkstation() {
   // Poll once shortly after dashboard data loads
   setTimeout(syncResumeActionCard, 800);
   setTimeout(syncResumeActionCard, 2400);
+  // 4. Standalone Mode / PWA Install Button Visibility
+  try {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                         window.navigator.standalone === true;
+    const installBtn = document.getElementById('drawerInstallAppBtn');
+    if (installBtn && isStandalone) {
+      installBtn.style.display = 'none';
+    }
+    window.addEventListener('appinstalled', () => {
+      const b = document.getElementById('drawerInstallAppBtn');
+      if (b) b.style.display = 'none';
+    });
+  } catch (e) {}
+
 }
 
 if (document.readyState === 'loading') {

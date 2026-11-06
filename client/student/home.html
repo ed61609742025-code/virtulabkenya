@@ -371,6 +371,7 @@
     border-radius: 12px;
     box-sizing: border-box;
     flex-shrink: 0;
+    margin: 0 auto;
   }
   [data-theme="dark"] .vlk-nav-bar {
     background: rgba(15, 26, 46, 0.7);
@@ -870,8 +871,40 @@
     if (trigger) trigger.setAttribute('aria-expanded', 'false');
   };
 
-  window.toggleMobileNavDrawer = function(e) {
-    if (e) {
+  window.openMobileNavDrawer = function() {
+    var drawer = document.getElementById('vlkMobileDrawer');
+    var backdrop = document.getElementById('vlkMobileDrawerBackdrop');
+    var toggleBtn = document.getElementById('mobileNavToggleBtn');
+    if (!drawer) return;
+
+    drawer.classList.add('active');
+    if (backdrop) backdrop.classList.add('active');
+    if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
+
+    drawer.removeAttribute('aria-hidden');
+    drawer.removeAttribute('inert');
+    drawer.inert = false;
+    document.body.style.overflow = 'hidden';
+
+    try {
+      var rawUser = localStorage.getItem('vlk_user');
+      if (rawUser) {
+        var u = JSON.parse(rawUser);
+        var nameEl = document.getElementById('drawerStudentName');
+        var avatarEl = document.getElementById('drawerStudentAvatar');
+        if (nameEl && u.name) nameEl.textContent = u.name;
+        if (avatarEl && window.__studentInitials) avatarEl.textContent = window.__studentInitials;
+      }
+    } catch (err) {}
+
+    setTimeout(function() {
+      var closeBtn = drawer.querySelector('.vlk-drawer-close-btn');
+      if (closeBtn) closeBtn.focus();
+    }, 50);
+  };
+
+  window.closeMobileNavDrawer = function(e) {
+    if (e && typeof e.stopPropagation === 'function') {
       e.stopPropagation();
       e.preventDefault();
     }
@@ -879,38 +912,36 @@
     var backdrop = document.getElementById('vlkMobileDrawerBackdrop');
     var toggleBtn = document.getElementById('mobileNavToggleBtn');
     if (!drawer) return;
-    var isActive = drawer.classList.toggle('active');
-    if (backdrop) backdrop.classList.toggle('active', isActive);
-    if (toggleBtn) toggleBtn.setAttribute('aria-expanded', isActive ? 'true' : 'false');
-    drawer.setAttribute('aria-hidden', isActive ? 'false' : 'true');
-    if (isActive) {
-      document.body.style.overflow = 'hidden';
-      try {
-        var rawUser = localStorage.getItem('vlk_user');
-        if (rawUser) {
-          var u = JSON.parse(rawUser);
-          var nameEl = document.getElementById('drawerStudentName');
-          var avatarEl = document.getElementById('drawerStudentAvatar');
-          if (nameEl && u.name) nameEl.textContent = u.name;
-          if (avatarEl && window.__studentInitials) avatarEl.textContent = window.__studentInitials;
-        }
-      } catch (err) {}
-    } else {
-      document.body.style.overflow = '';
+
+    drawer.classList.remove('active');
+    if (backdrop) backdrop.classList.remove('active');
+
+    // Return focus to toggle button before applying aria-hidden/inert to prevent browser warning
+    if (toggleBtn) {
+      toggleBtn.setAttribute('aria-expanded', 'false');
+      toggleBtn.focus();
+    } else if (document.activeElement && drawer.contains(document.activeElement)) {
+      document.activeElement.blur();
     }
+
+    drawer.setAttribute('aria-hidden', 'true');
+    drawer.setAttribute('inert', '');
+    drawer.inert = true;
+    document.body.style.overflow = '';
   };
 
-  window.closeMobileNavDrawer = function() {
-    var drawer = document.getElementById('vlkMobileDrawer');
-    var backdrop = document.getElementById('vlkMobileDrawerBackdrop');
-    var toggleBtn = document.getElementById('mobileNavToggleBtn');
-    if (drawer) {
-      drawer.classList.remove('active');
-      drawer.setAttribute('aria-hidden', 'true');
+  window.toggleMobileNavDrawer = function(e) {
+    if (e && typeof e.stopPropagation === 'function') {
+      e.stopPropagation();
+      e.preventDefault();
     }
-    if (backdrop) backdrop.classList.remove('active');
-    if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
+    var drawer = document.getElementById('vlkMobileDrawer');
+    if (!drawer) return;
+    if (drawer.classList.contains('active')) {
+      window.closeMobileNavDrawer(e);
+    } else {
+      window.openMobileNavDrawer();
+    }
   };
 
   document.addEventListener('click', function(e) {
@@ -946,7 +977,7 @@
             <!-- Desktop & Tablet Navigation Bar -->
       <nav class="vlk-nav-bar" aria-label="Student Main Navigation">
         <!-- 1. Home / Workstation -->
-        <a href="home.html" class="vlk-nav-link active" aria-current="page" data-tooltip="Student Workstation &amp; Dashboard" data-tooltip-pos="bottom">
+        <a href="home.html" class="vlk-nav-link active" id="tabBtn_benches" onclick="if(window.location.pathname.endsWith('home.html')||window.location.pathname.endsWith('/student/')){ if(window.switchStudentSubTab) switchStudentSubTab('benches'); }" aria-current="page" data-tooltip="Student Workstation &amp; Dashboard" data-tooltip-pos="bottom">
           <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
             <polyline points="9 22 9 12 15 12 15 22"></polyline>
@@ -954,96 +985,7 @@
           <span>Home</span>
         </a>
 
-        <!-- 2. Lab Benches with Interactive Dropdown -->
-        <div class="vlk-nav-dropdown" id="labBenchesDropdown">
-          <button type="button" class="vlk-nav-dropdown-trigger" id="labBenchesTrigger" onclick="toggleLabBenchesDropdown(event)" aria-haspopup="true" aria-expanded="false" data-tooltip="KCSE Practical Laboratory Benches" data-tooltip-pos="bottom">
-            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"></path>
-              <path d="M8.5 2h7"></path>
-              <path d="M7 16h10"></path>
-            </svg>
-            <span>Lab Benches</span>
-            <svg class="vlk-icon chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-          </button>
-
-          <div class="vlk-dropdown-menu" id="labBenchesMenu" role="menu" aria-label="Practical Laboratory Benches">
-            <div class="vlk-dropdown-header">
-              <span>KCSE Paper 3 Practicals</span>
-              <span class="vlk-dropdown-header-tag">40 Marks</span>
-            </div>
-
-            <a href="lab.html?studyMode=guided" class="vlk-dropdown-item" role="menuitem">
-              <div class="vlk-dd-icon" style="background:rgba(217,119,6,0.12); color:#D97706;">⚗️</div>
-              <div class="vlk-dd-text">
-                <div class="vlk-dd-title">Volumetric Titration</div>
-                <div class="vlk-dd-sub">Acid-Base, Redox &amp; Back-titration</div>
-              </div>
-              <span class="vlk-dd-qtag">Q1 · 15M</span>
-            </a>
-
-            <a href="qualitative.html" class="vlk-dropdown-item" role="menuitem">
-              <div class="vlk-dd-icon" style="background:rgba(5,150,105,0.12); color:#059669;">🧪</div>
-              <div class="vlk-dd-text">
-                <div class="vlk-dd-title">Qualitative Salt Analysis</div>
-                <div class="vlk-dd-sub">Cations, Anions &amp; Flame Tests</div>
-              </div>
-              <span class="vlk-dd-qtag">Q2 · 15M</span>
-            </a>
-
-            <a href="organic.html" class="vlk-dropdown-item" role="menuitem">
-              <div class="vlk-dd-icon" style="background:rgba(16,185,129,0.12); color:#10B981;">🌿</div>
-              <div class="vlk-dd-text">
-                <div class="vlk-dd-title">Organic Chemistry</div>
-                <div class="vlk-dd-sub">Unsaturation, Esters &amp; Functional Groups</div>
-              </div>
-              <span class="vlk-dd-qtag">Q3 · 10M</span>
-            </a>
-
-            <a href="energy.html" class="vlk-dropdown-item" role="menuitem">
-              <div class="vlk-dd-icon" style="background:rgba(239,68,68,0.12); color:#EF4444;">🔥</div>
-              <div class="vlk-dd-text">
-                <div class="vlk-dd-title">Thermochemistry &amp; Enthalpy</div>
-                <div class="vlk-dd-sub">ΔH Neutralization &amp; Displacement</div>
-              </div>
-              <span class="vlk-dd-qtag">Q1/2</span>
-            </a>
-
-            <a href="rates.html" class="vlk-dropdown-item" role="menuitem">
-              <div class="vlk-dd-icon" style="background:rgba(245,158,11,0.12); color:#F59E0B;">⏱️</div>
-              <div class="vlk-dd-text">
-                <div class="vlk-dd-title">Reaction Rates &amp; Kinetics</div>
-                <div class="vlk-dd-sub">Disappearing Cross, Gas Syringe &amp; Rates</div>
-              </div>
-              <span class="vlk-dd-qtag">Q1/2</span>
-            </a>
-
-            <a href="solubility.html" class="vlk-dropdown-item" role="menuitem">
-              <div class="vlk-dd-icon" style="background:rgba(2,132,199,0.12); color:#0284C7;">📈</div>
-              <div class="vlk-dd-text">
-                <div class="vlk-dd-title">Solubility &amp; Crystallization</div>
-                <div class="vlk-dd-sub">Saturation curves &amp; crystal temp</div>
-              </div>
-              <span class="vlk-dd-qtag">Q1/2</span>
-            </a>
-
-            <a href="gas_prep.html" class="vlk-dropdown-item" role="menuitem">
-              <div class="vlk-dd-icon" style="background:rgba(139,92,246,0.12); color:#8B5CF6;">💨</div>
-              <div class="vlk-dd-text">
-                <div class="vlk-dd-title">Gas Preparation &amp; Tests</div>
-                <div class="vlk-dd-sub">CO₂, SO₂, Cl₂, O₂, H₂ &amp; NH₃</div>
-              </div>
-              <span class="vlk-dd-qtag">Lab</span>
-            </a>
-
-            <div class="vlk-dropdown-footer">
-              <a href="lab.html" class="vlk-dd-all-link">Enter Virtual Lab Workbench &rarr;</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- 3. Mock Exams Hub -->
+        <!-- 2. Mock Exams Hub -->
         <a href="mock_exams.html" class="vlk-nav-link" data-tooltip="KCSE Paper 3 National Mock Examination Center" data-tooltip-pos="bottom">
           <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"></path>
@@ -1056,7 +998,7 @@
           <span class="vlk-nav-badge">40M</span>
         </a>
 
-        <!-- 4. Revision Handbook -->
+        <!-- 3. Revision Handbook -->
         <a href="reference.html" class="vlk-nav-link" data-tooltip="KCSE Observational Criteria, Flame Tests &amp; Formulas" data-tooltip-pos="bottom">
           <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
@@ -1065,7 +1007,7 @@
           <span>Revision</span>
         </a>
 
-        <!-- 5. Performance History -->
+        <!-- 4. Performance History -->
         <a href="history.html" class="vlk-nav-link" data-tooltip="Performance Analytics, KCSE Readiness &amp; Session History" data-tooltip-pos="bottom">
           <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
@@ -1074,12 +1016,23 @@
           <span>History</span>
         </a>
 
-        <!-- 6. Speed Drill -->
+        <!-- 5. Speed Drill -->
         <a href="speed_battle.html" class="vlk-nav-link" data-tooltip="Diagnostic Speed Drill &amp; Rapid Recall" data-tooltip-pos="bottom">
           <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
           </svg>
           <span>Drills</span>
+        </a>
+
+        <!-- 6. Assessments & Surveys -->
+        <a href="#panel_research" class="vlk-nav-link" id="tabBtn_research" onclick="if(window.switchStudentSubTab) switchStudentSubTab('research');" data-tooltip="Standardized Assessments &amp; Feedback Surveys" data-tooltip-pos="bottom">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+            <path d="M9 12h6"></path>
+            <path d="M9 16h6"></path>
+          </svg>
+          <span>Assessments</span>
         </a>
       </nav>
 
@@ -1193,8 +1146,8 @@
   </nav>
 
   <!-- Mobile Navigation Drawer & Backdrop -->
-  <div id="vlkMobileDrawerBackdrop" class="vlk-mobile-drawer-backdrop" onclick="toggleMobileNavDrawer(event)" aria-hidden="true"></div>
-  <aside id="vlkMobileDrawer" class="vlk-mobile-drawer" aria-label="Mobile Navigation Drawer" aria-hidden="true">
+  <div id="vlkMobileDrawerBackdrop" class="vlk-mobile-drawer-backdrop" onclick="closeMobileNavDrawer(event)" aria-hidden="true"></div>
+  <aside id="vlkMobileDrawer" class="vlk-mobile-drawer" aria-label="Mobile Navigation Drawer" aria-hidden="true" inert>
     <div class="vlk-drawer-header">
       <div class="vlk-drawer-user-meta">
         <div class="vlk-drawer-avatar" id="drawerStudentAvatar">ST</div>
@@ -1203,7 +1156,7 @@
           <div class="vlk-drawer-syllabus">KCSE Chemistry Paper 3</div>
         </div>
       </div>
-      <button type="button" class="vlk-drawer-close-btn" onclick="toggleMobileNavDrawer(event)" aria-label="Close navigation drawer">&times;</button>
+      <button type="button" class="vlk-drawer-close-btn" onclick="closeMobileNavDrawer(event)" aria-label="Close navigation drawer">&times;</button>
     </div>
 
     <div class="vlk-drawer-body">
@@ -1257,7 +1210,11 @@
       </a>
     </div>
 
-    <div class="vlk-drawer-footer">
+    <div class="vlk-drawer-footer" style="display:flex; flex-direction:column; gap:8px;">
+      <button type="button" class="btn btn-primary" id="drawerInstallAppBtn" style="width:100%; justify-content:center; display:inline-flex; align-items:center; gap:8px;" onclick="closeMobileNavDrawer(); if(window.VLKPwa && typeof window.VLKPwa.installDirectly === 'function'){ window.VLKPwa.installDirectly(); } else if(typeof window.installVirtuLabApp === 'function'){ window.installVirtuLabApp(); }">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span>Install App (100% Offline)</span>
+      </button>
       <button type="button" class="btn btn-outline" style="width:100%; justify-content:center; display:inline-flex; align-items:center; gap:8px;" onclick="if(window.Auth && typeof window.Auth.logout === 'function'){ window.Auth.logout(); } else { localStorage.clear(); window.location.href='/student/login.html'; }">
         <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         <span>Log Out</span>
@@ -1332,30 +1289,6 @@
 
     <!-- System Broadcast Announcement Banner (High-Visibility Priority Bulletin) -->
     <div id="systemBroadcastBanner" class="system-broadcast-container" style="display:none;" role="region" aria-label="Official Broadcast Notices"></div>
-
-    <!-- Sub-tabs Segmented Control -->
-    <nav class="student-subtabs-nav" aria-label="Workstation Views" role="tablist">
-      <button class="student-subtab-btn active" id="tabBtn_benches" role="tab" aria-selected="true" aria-controls="panel_benches" onclick="switchStudentSubTab('benches')" data-tooltip="Lab workbenches and guided pathways" data-tooltip-pos="bottom">
-        <span class="subtab-icon" aria-hidden="true"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg></span>
-        <span class="subtab-label-desktop" data-i18n="tab_benches">Laboratory Benches</span>
-        <span class="subtab-label-mobile" data-i18n="m_workbenches">Workbenches</span>
-      </button>
-      <a href="reference.html" class="student-subtab-btn" id="tabBtn_reference" data-tooltip="KCSE reference tables and formulas" data-tooltip-pos="bottom" style="text-decoration:none;">
-        <span class="subtab-icon" aria-hidden="true"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
-        <span class="subtab-label-desktop">Revision Handbook &rarr;</span>
-        <span class="subtab-label-mobile">Revision</span>
-      </a>
-      <a href="history.html" class="student-subtab-btn" id="tabBtn_achievements" data-tooltip="Grades, performance charts and session history" data-tooltip-pos="bottom" style="text-decoration:none;">
-        <span class="subtab-icon" aria-hidden="true"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span>
-        <span class="subtab-label-desktop">Performance &amp; History &rarr;</span>
-        <span class="subtab-label-mobile">History</span>
-      </a>
-      <button class="student-subtab-btn" id="tabBtn_research" role="tab" aria-selected="false" aria-controls="panel_research" onclick="switchStudentSubTab('research')" data-tooltip="Assessments and surveys" data-tooltip-pos="bottom">
-        <span class="subtab-icon" aria-hidden="true"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg></span>
-        <span class="subtab-label-desktop" data-i18n="tab_research">Assessments &amp; Surveys</span>
-        <span class="subtab-label-mobile" data-i18n="m_research">Assessments</span>
-      </button>
-    </nav>
 
     <!-- Tab 1: Laboratory Benches & Assignments -->
     <div class="student-tab-panel active" id="panel_benches" role="tabpanel" aria-labelledby="tabBtn_benches">
@@ -2319,7 +2252,7 @@
   <script defer src="../shared/subscription-ui.js?v=167"></script>
 
   
-  <script defer src="js/home.js?v=181"></script>
+  <script defer src="js/home.js?v=182"></script>
 
   <!-- ── Mobile Bottom Navigation Bar (hidden on desktop via CSS) ── -->
   <nav class="vlk-bottom-nav" aria-label="Mobile Bottom Navigation" id="vlkBottomNav">

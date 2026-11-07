@@ -458,24 +458,26 @@
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 8px !important;
-  min-height: 44px !important;
-  padding: 10px 20px !important;
-  border-radius: 12px !important;
-  background: linear-gradient(135deg, #0284C7 0%, #2563EB 100%) !important;
+  gap: 10px !important;
+  min-height: 52px !important;
+  padding: 13px 26px !important;
+  border-radius: 14px !important;
+  background: linear-gradient(135deg, #0284C7 0%, #0369A1 45%, #1D4ED8 100%) !important;
   color: #FFFFFF !important;
   font-family: 'Plus Jakarta Sans', sans-serif !important;
-  font-size: 0.90rem !important;
-  font-weight: 800 !important;
+  font-size: 1.02rem !important;
+  font-weight: 850 !important;
+  letter-spacing: -0.01em !important;
   text-decoration: none !important;
-  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35) !important;
-  transition: all 0.18s ease !important;
+  box-shadow: 0 8px 24px -2px rgba(2, 132, 199, 0.45), 0 2px 6px rgba(14, 165, 233, 0.3) !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
   white-space: nowrap !important;
+  position: relative !important;
 }
 
 .btn-resume-primary:hover {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.45) !important;
+  transform: translateY(-2.5px) scale(1.02) !important;
+  box-shadow: 0 12px 30px rgba(2, 132, 199, 0.55), 0 0 0 2px rgba(255, 255, 255, 0.2) inset !important;
   filter: brightness(1.08) !important;
 }
 
@@ -661,12 +663,21 @@
 .st-expand-pathway-btn {
   background: var(--card-bg, #FFFFFF) !important;
   border: 1.5px solid var(--card-border, #E2E8F0) !important;
+  border-radius: var(--vlk-radius-card, 16px) !important;
   color: var(--heading-color) !important;
+  padding: 12px 24px !important;
+  box-shadow: var(--vlk-card-shadow) !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 0.88rem !important;
+  font-weight: 800 !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .st-expand-pathway-btn:hover {
   border-color: var(--cyan-accent, #0284C7) !important;
   color: var(--cyan-accent, #0284C7) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: var(--vlk-card-shadow-hover) !important;
 }
 
 /* ── 7. Teacher Assignments Section Modernization ── */
@@ -1884,7 +1895,9 @@
   }
 
   .practice-text-desc {
-    font-size: 0.76rem !important;
+    font-size: 0.84rem !important;
+    line-height: 1.50 !important;
+    font-weight: 500 !important;
   }
 
   /* 6. KCSE Readiness Card Mobile */
@@ -2657,8 +2670,9 @@
   }
 
   .practice-text-desc {
-    font-size: 0.74rem !important;
-    line-height: 1.35 !important;
+    font-size: 0.84rem !important;
+    line-height: 1.50 !important;
+    font-weight: 500 !important;
   }
 
   /* Order 4: Teacher Assignments Continuous Assessment */
@@ -2766,4 +2780,91 @@
   .pulse-card.pulse-readiness-card {
     display: none !important;
   }
+}
+
+/* ── Titre Concordancy Alert Box Contextual Styling (UI/UX enhancement) ── */
+.concordancy-alert-card-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px 0;
+}
+.concordancy-alert-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.concordancy-alert-pill {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: rgba(220, 38, 38, 0.12);
+  color: #DC2626;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(220, 38, 38, 0.25);
+}
+.concordancy-alert-spec {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #B45309;
+  background: rgba(245, 158, 11, 0.12);
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+.concordancy-alert-title {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #991B1B;
+  line-height: 1.3;
+}
+[data-theme="dark"] .concordancy-alert-title {
+  color: #F87171;
+}
+.concordancy-alert-expl {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--text-main, #334155);
+}
+.concordancy-alert-actions {
+  margin-top: 4px;
+}
+.concordancy-rubric-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.80rem;
+  font-weight: 800;
+  color: #0284C7;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s ease;
+}
+.concordancy-rubric-link:hover {
+  color: #0369A1;
+}
+
+/* ── Uniform Completed Step Indicator (Suggestion 10) ── */
+.vlk-step-completed-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #10B981 !important;
+  color: #FFFFFF !important;
+  flex-shrink: 0;
+  box-shadow: 0 1px 4px rgba(16, 185, 129, 0.35);
+}
+.vlk-step-completed-badge svg {
+  width: 12px;
+  height: 12px;
+  stroke: #FFFFFF;
+  stroke-width: 3.2;
 }

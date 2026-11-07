@@ -449,7 +449,7 @@ html, body {
 .nav-brand-academic {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
   text-decoration: none;
   color: var(--heading-color);
   min-width: 0;
@@ -482,7 +482,7 @@ html, body {
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   flex-shrink: 0;
   min-width: 0;
 }
@@ -1051,10 +1051,10 @@ html, body {
 }
 
 .practice-text-desc {
-  font-size: 0.82rem;
+  font-size: 0.86rem;
   font-weight: 500;
   color: var(--text-muted);
-  line-height: 1.45;
+  line-height: 1.55;
 }
 
 /* ── 10. ASSIGNMENTS & HOMEWORK GRID ── */

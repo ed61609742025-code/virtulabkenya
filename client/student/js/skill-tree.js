@@ -315,11 +315,14 @@
           </div>
           <div class="st-stat-progress-compact">
             <div class="st-progress-label-row">
-              <span>Syllabus Mastery</span>
+              <span>Syllabus Mastery (${totalCompletedNodes}/${totalNodesCount} Practicals)</span>
               <b style="color:var(--green-accent);">${syllabusPct}%</b>
             </div>
-            <div class="st-progress-track">
-              <div class="st-progress-fill" style="width:${syllabusPct}%;"></div>
+            <div class="st-progress-track" role="progressbar" aria-valuenow="${syllabusPct}" aria-valuemin="0" aria-valuemax="100">
+              <div class="st-progress-fill" style="width:${syllabusPct}%;">
+                ${syllabusPct >= 18 ? `<span class="st-progress-fill-badge">${syllabusPct}%</span>` : ''}
+              </div>
+              ${syllabusPct < 18 ? `<span class="st-progress-track-badge" style="left: calc(${syllabusPct}% + 6px);">${syllabusPct}%</span>` : ''}
             </div>
           </div>
         </div>
@@ -337,7 +340,7 @@
       let statusIcon = '&bull;';
       let statusClass = 'status-upcoming';
       if (isComplete) {
-        statusIcon = '&check;';
+        statusIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;"><polyline points="20 6 9 17 4 12"/></svg>';
         statusClass = 'status-completed';
       } else if (isCurrent) {
         statusIcon = '&bull;';

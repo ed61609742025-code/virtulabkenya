@@ -453,27 +453,29 @@
   box-shadow: 0 3px 0 var(--b-card-depth);
 }
 
-/* Beacon Pill above active node */
+/* Beacon Pill anchored directly onto active node circle (Suggestion 5) */
 .st-node-beacon {
   position: absolute;
-  top: -14px;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
   background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
   color: #FFFFFF;
+  border: 2px solid var(--b-surface, #FFFFFF);
   font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 0.64rem;
-  font-weight: 800;
-  letter-spacing: 0.05em;
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  padding: 3px 9px;
-  border-radius: 100px;
-  box-shadow: 0 0 14px rgba(2, 132, 199, 0.5), 0 2px 6px rgba(0, 0, 0, 0.2);
+  padding: 3px 10px;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.4), 0 1px 3px rgba(0, 0, 0, 0.1);
   white-space: nowrap;
   pointer-events: none;
   z-index: 10;
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  animation: stBeaconGlow 2s infinite ease-in-out;
 }
 
 .st-beacon-pulse-dot {
@@ -599,9 +601,9 @@
 }
 
 .st-tooltip-sub {
-  font-size: 0.72rem;
+  font-size: 0.80rem;
   color: var(--text-muted, #64748B);
-  line-height: 1.35;
+  line-height: 1.45;
   margin-bottom: 8px;
 }
 
@@ -704,11 +706,12 @@
 
 .st-node-sublabel {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.76rem;
+  font-size: 0.80rem;
   font-weight: 600;
-  color: var(--b-text-muted);
+  color: var(--b-text-muted, #64748B);
   letter-spacing: -0.01em;
-  margin-top: 1px;
+  line-height: 1.35;
+  margin-top: 2px;
 }
 
 /* ── 5. CAPSTONE EXAM NODE (SPECIAL GOLD HIGHLIGHT) ── */
@@ -823,9 +826,9 @@
 }
 
 .st-modal-desc {
-  font-size: 0.84rem;
-  color: var(--b-text-subtle);
-  line-height: 1.5;
+  font-size: 0.88rem;
+  color: var(--b-text-subtle, #334155);
+  line-height: 1.6;
   margin-bottom: 16px;
 }
 
@@ -902,8 +905,14 @@
   }
 
   .st-node-sublabel {
-    font-size: 0.68rem;
-  }
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.80rem;
+  font-weight: 600;
+  color: var(--b-text-muted, #64748B);
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  margin-top: 2px;
+}
 
   .st-node-wrapper.capstone .st-node-circle {
     width: 82px;
@@ -1016,9 +1025,12 @@
 
 .st-node-sublabel {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.7rem;
+  font-size: 0.80rem;
   font-weight: 600;
-  color: var(--text-muted);
+  color: var(--b-text-muted, #64748B);
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  margin-top: 2px;
 }
 
 
@@ -1082,8 +1094,14 @@
   }
 
   .st-node-sublabel {
-    font-size: 0.66rem !important;
-  }
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.80rem;
+  font-weight: 600;
+  color: var(--b-text-muted, #64748B);
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  margin-top: 2px;
+}
 
   .st-node-wrapper.capstone .st-node-circle {
     width: 80px !important;
@@ -1300,12 +1318,14 @@
   }
 
   .st-node-sublabel {
-    font-size: 0.68rem !important;
-    line-height: 1.2 !important;
-    color: var(--b-text-muted) !important;
-    word-break: normal !important;
-    overflow-wrap: break-word !important;
-  }
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.80rem;
+  font-weight: 600;
+  color: var(--b-text-muted, #64748B);
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  margin-top: 2px;
+}
 }
 
 @media (max-width: 400px) {
@@ -1345,8 +1365,14 @@
   }
 
   .st-node-sublabel {
-    font-size: 0.64rem !important;
-  }
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.80rem;
+  font-weight: 600;
+  color: var(--b-text-muted, #64748B);
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  margin-top: 2px;
+}
 }
 
 /* ── THEMED BRANCH LAB CARD ACCENTS ── */
@@ -1441,31 +1467,32 @@
 .st-branch-chip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  border-radius: 999px;
-  border: 1.5px solid var(--b-border, #E2E8F0);
+  gap: 8px;
+  padding: 7px 15px;
+  border-radius: var(--vlk-radius-card, 14px);
+  border: 1.5px solid #CBD5E1;
   background: var(--b-surface, #FFFFFF);
-  color: var(--b-text-muted, #64748B);
+  color: #1E293B;
   font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 0.78rem;
-  font-weight: 700;
+  font-size: 0.82rem;
+  font-weight: 750;
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   user-select: none;
 }
 .st-branch-chip:hover {
-  border-color: var(--b-primary, #0284C7);
-  color: var(--b-text, #0F172A);
+  border-color: #0284C7;
+  color: #0284C7;
+  background: #F0F9FF;
   transform: translateY(-1px);
 }
 .st-branch-chip.active {
-  background: rgba(2, 132, 199, 0.08);
-  border-color: var(--b-primary, #0284C7);
-  color: var(--b-primary, #0284C7);
-  font-weight: 800;
-  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.12);
+  background: #0284C7;
+  border-color: #0284C7;
+  color: #FFFFFF;
+  font-weight: 850;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
 }
 .st-chip-status {
   font-size: 0.8rem;
@@ -1516,16 +1543,16 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 24px;
-  border-radius: 999px;
+  padding: 12px 26px;
+  border-radius: var(--vlk-radius-card, 16px);
   border: 1.5px solid var(--b-border, #CBD5E1);
   background: var(--b-surface, #FFFFFF);
   color: var(--b-text, #0F172A);
   font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 0.84rem;
+  font-size: 0.88rem;
   font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .st-expand-pathway-btn:hover {
@@ -1587,7 +1614,72 @@
     line-height: 1.18 !important;
   }
   .st-nodes-track.track-count-3 .st-node-sublabel {
-    font-size: 0.60rem !important;
-    line-height: 1.12 !important;
-  }
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.80rem;
+  font-weight: 600;
+  color: var(--b-text-muted, #64748B);
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  margin-top: 2px;
+}
+}
+
+/* ── Progress Indicators: Quantitative Direct Feedback (Suggestion 3) ── */
+.st-progress-track {
+  height: 18px;
+  background: var(--b-surface-subtle, #E2E8F0);
+  border-radius: 999px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+.st-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10B981 0%, #059669 100%);
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 6px;
+  transition: width 0.4s ease;
+  min-width: 0;
+}
+.st-progress-fill-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 850;
+  color: #FFFFFF;
+  line-height: 1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+.st-progress-track-badge {
+  position: absolute;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 850;
+  color: #0F172A;
+  line-height: 1;
+}
+
+/* ── Uniform Completed Step Badge (Suggestion 10) ── */
+.st-chip-status.status-completed {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #10B981;
+  color: #FFFFFF;
+  font-size: 0.72rem;
+  font-weight: 900;
+  line-height: 1;
+  box-shadow: 0 1px 4px rgba(16, 185, 129, 0.35);
+  margin-right: 2px;
+}
+.st-branch-chip.active .st-chip-status.status-completed {
+  background: #FFFFFF;
+  color: #059669;
 }

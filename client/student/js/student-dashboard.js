@@ -1749,12 +1749,32 @@ requireStudentLogin();
 
       if (titrErrSession) {
         diagnosticAdvice = {
-          category: '⚠️ TITRE CONCORDANCY PENALTY',
+          category: '⚠️ KNEC TABLE 1 CONCORDANCY PENALTY [PA]',
           badgeClass: 'badge-danger',
-          sourceNotice: '✨ <strong>Titre Spread Alert:</strong> Values exceeded KNEC ±0.20 cm³ concordancy margin',
+          sourceNotice: `
+            <div class="concordancy-alert-card-inner">
+              <div class="concordancy-alert-header">
+                <span class="concordancy-alert-pill">⚠️ Official KNEC Rubric Notice</span>
+                <span class="concordancy-alert-spec">Tolerance: &le; &plusmn;0.20 cm&sup3;</span>
+              </div>
+              <div class="concordancy-alert-title">
+                <strong>Titre Spread Exceeded:</strong> Burette readings differed beyond the KNEC &plusmn;0.20 cm&sup3; margin
+              </div>
+              <div class="concordancy-alert-expl">
+                <b>Why this is penalized:</b> Under the KNEC Paper 3 Principle of Averaging [PA], averaging discordant titres penalizes the 1.0 mark averaging score and forfeits downstream stoichiometry accuracy.<br>
+                <b>How to avoid it:</b> Only average 2 or 3 non-rough trials agreeing within &plusmn;0.20 cm&sup3; (ideal &plusmn;0.10 cm&sup3;). If trials 1 and 2 differ by &gt; 0.20 cm&sup3;, perform a 3rd trial immediately and tick (&check;) only the concordant pair.
+              </div>
+              <div class="concordancy-alert-actions">
+                <a href="reference.html#sec_volumetric" class="concordancy-rubric-link" target="_blank" rel="noopener">
+                  <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                  <span>Read KNEC Table 1 Averaging Rules &amp; Rubric &rarr;</span>
+                </a>
+              </div>
+            </div>
+          `,
           title: 'Titre Concordancy Warning (KNEC Table 1)',
           body: 'In your recent titration, titres differed by more than 0.20 cm³. Paper 3 examiners penalize averaging non-concordant values: you forfeit all 4 calculation marks! If Trial 1 is 24.10 cm³ and Trial 2 is 24.50 cm³, you must perform a 3rd trial to achieve concordancy within ±0.20 cm³ before calculating the mean titre.',
-          actionText: 'Practice Concordant Burette Swirling →',
+          actionText: 'Launch Concordancy Remediation Drill →',
           actionUrl: 'lab.html?type=acidBase&studyMode=guided',
           quickCheck: {
             question: 'Given titres of 21.30 cm³, 21.70 cm³, and 21.40 cm³, which should be averaged?',

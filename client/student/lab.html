@@ -250,6 +250,14 @@
             </button>
           </div>
 
+          <!-- Apparatus Guide -->
+          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Apparatus Guide</span>
+            <button type="button" onclick="window.ApparatusGallery ? window.ApparatusGallery.open({mode:'gallery'}) : (window.location.href='/student/reference.html')" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border); color:var(--cyan-accent); display:inline-flex; align-items:center; gap:4px;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              <span>View Guide</span>
+            </button>
+          </div>
           <!-- Language Selector Row -->
           <div style="display:flex; flex-direction:column; gap:6px; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
             <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Language / Lugha</span>
@@ -804,6 +812,17 @@
                     <div class="lens-readout-sub" id="lensGuidanceSub">
                       Read at <b>bottom of meniscus</b>
                     </div>
+                    <div class="parallax-view-controls">
+                      <div class="parallax-ctrl-header">
+                        <span class="parallax-label">Sightline</span>
+                        <span class="parallax-status-chip" id="parallaxStatusChip">🎯 0° Calibrated</span>
+                      </div>
+                      <div class="parallax-btn-group">
+                        <button type="button" class="parallax-btn" id="btnParallaxLow" onclick="setParallaxAngle(-8)" title="View from below (-8°)">Low</button>
+                        <button type="button" class="parallax-btn active" id="btnParallaxZero" onclick="setParallaxAngle(0)" title="View at eye level (0°)">Eye Level</button>
+                        <button type="button" class="parallax-btn" id="btnParallaxHigh" onclick="setParallaxAngle(8)" title="View from above (+8°)">High</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1243,6 +1262,33 @@
       <button type="button" class="dock-btn dock-btn-record" id="dockRecordBtn" onclick="recordTrial()" title="Record endpoint">Record</button>
     </div>
   </div>
+  <!-- Apparatus Gallery Module -->
+  <link rel="stylesheet" href="/shared/apparatus-gallery.css" media="print" onload="this.media='all'">
+  <script src="/shared/apparatus-gallery.js"></script>
+  <script>
+    // Apparatus First-Visit Gate — required for first-timers
+    (function() {
+      'use strict';
+      function checkAndShowApparatusGate() {
+        if (window.location.search.includes('mode=exam') || window.location.search.includes('embedded=1')) return;
+        try {
+          var cert = JSON.parse(localStorage.getItem('vlk_apparatus_certified') || 'null');
+          if (!cert || !cert.passed) {
+            setTimeout(function() {
+              if (window.ApparatusGallery) {
+                window.ApparatusGallery.open({ mode: 'intro', required: true });
+              }
+            }, 900);
+          }
+        } catch(e) {}
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', checkAndShowApparatusGate);
+      } else {
+        checkAndShowApparatusGate();
+      }
+    })();
+  </script>
 </body>
 </html>
 

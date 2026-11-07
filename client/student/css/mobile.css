@@ -123,9 +123,12 @@
   /* body padding-bottom extended for safe area and bottom nav bar */
   
   .dashboard-container,
-  .student-tab-panel,
-  #skillTreeContainer {
+  .student-tab-panel {
     padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  #skillTreeContainer {
+    padding-bottom: 0 !important;
   }
 
   body {
@@ -1610,7 +1613,32 @@
 
   .zone-pathway {
     margin-top: 0 !important;
-    margin-bottom: 16px !important;
+    margin-bottom: 12px !important;
+    padding-bottom: 14px !important;
+  }
+
+  /* Remove branch navigation pills on mobile */
+  .st-branch-nav-chips {
+    display: none !important;
+  }
+
+  /* Eliminate empty gap between Skill Tree pathway and Teacher Assignments */
+  #skillTreeContainer {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+  }
+  .skill-tree-pathway {
+    gap: 16px !important;
+    padding: 6px 0 10px !important;
+  }
+  .st-expand-footer-wrap {
+    margin-top: 10px !important;
+    margin-bottom: 0 !important;
+    padding: 4px 0 0 !important;
+  }
+  .zone-assignments-upgraded,
+  #zone_assignments {
+    margin-top: 0 !important;
   }
 }
 

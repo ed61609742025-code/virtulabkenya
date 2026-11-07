@@ -2706,10 +2706,13 @@
 
   /* Generous clearance for fixed bottom navigation bar (60px + safe-area) */
   .dashboard-container,
-  .student-tab-panel,
-  .zone-pathway,
-  #skillTreeContainer {
+  .student-tab-panel {
     padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  #skillTreeContainer,
+  .zone-pathway {
+    padding-bottom: 0 !important;
   }
 
 
@@ -2730,6 +2733,31 @@
   .dash-sidebar-col {
     gap: 14px !important;
     margin-top: 4px !important;
+  }
+
+  /* Hide branch navigation pills on mobile */
+  .st-branch-nav-chips {
+    display: none !important;
+  }
+
+  /* Compact skill tree footer clearance and eliminate empty gap */
+  #zone_pathway,
+  .zone-pathway {
+    margin-bottom: 12px !important;
+    padding-bottom: 14px !important;
+  }
+  #skillTreeContainer {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+  }
+  .st-expand-footer-wrap {
+    margin-top: 10px !important;
+    margin-bottom: 0 !important;
+    padding: 4px 0 0 !important;
+  }
+  #zone_assignments,
+  .zone-assignments-upgraded {
+    margin-top: 0 !important;
   }
 }
 

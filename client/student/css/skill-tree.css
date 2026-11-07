@@ -106,23 +106,28 @@
   }
 }
 
-/* Branch Section Container */
+/* Branch Section Container (Suggestion 1 & 5: Visual separators & distinctive card depth) */
 .st-branch {
   position: relative;
   background: var(--b-surface);
-  border: 2px solid var(--b-border);
+  border: 1.5px solid var(--b-border);
+  border-left: 5px solid var(--b-primary, #0284C7);
   border-radius: 20px;
-  padding: 22px 24px;
+  padding: 20px 22px;
   box-shadow: var(--b-card-shadow);
+  margin-bottom: 24px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .st-branch-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 1.5px solid var(--b-border);
+  margin-bottom: 16px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  background: var(--b-surface-subtle, #F8FAFC);
+  border: 1px solid var(--b-border, #E2E8F0);
   flex-wrap: wrap;
   gap: 10px;
 }
@@ -156,9 +161,13 @@
   align-items: start;
   gap: 16px;
   position: relative;
-  padding: 16px 6px 10px;
+  padding: 20px 14px 14px;
   width: 100%;
   box-sizing: border-box;
+  background: var(--b-surface-subtle, #F8FAFC);
+  border: 1px solid var(--b-border, #E2E8F0);
+  border-radius: 16px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 /* Static pseudo-line retired in favor of dynamic SVG connectors */
@@ -1624,43 +1633,42 @@
 }
 }
 
-/* ── Progress Indicators: Quantitative Direct Feedback (Suggestion 3) ── */
+/* ── Progress Indicators: Sleek, Uncluttered Bar with Above-Right Percentage (Suggestion 8) ── */
+.st-progress-label-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: 0.78rem;
+  color: var(--b-text-muted, #64748B);
+}
+.st-progress-label-text {
+  font-weight: 750;
+  color: var(--b-text, #0F172A);
+}
+.st-progress-meta-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.74rem;
+  color: var(--b-text-muted, #64748B);
+}
+.st-progress-pct-bold {
+  color: var(--b-emerald, #10B981);
+  font-size: 0.84rem;
+  font-weight: 900;
+}
 .st-progress-track {
-  height: 18px;
+  width: 100%;
+  height: 8px;
   background: var(--b-surface-subtle, #E2E8F0);
   border-radius: 999px;
-  position: relative;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  position: relative;
 }
 .st-progress-fill {
   height: 100%;
   background: linear-gradient(90deg, #10B981 0%, #059669 100%);
   border-radius: 999px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding-right: 6px;
   transition: width 0.4s ease;
-  min-width: 0;
-}
-.st-progress-fill-badge {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.68rem;
-  font-weight: 850;
-  color: #FFFFFF;
-  line-height: 1;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-}
-.st-progress-track-badge {
-  position: absolute;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.68rem;
-  font-weight: 850;
-  color: #0F172A;
-  line-height: 1;
 }
 
 /* ── Uniform Completed Step Badge (Suggestion 10) ── */
@@ -1682,4 +1690,16 @@
 .st-branch-chip.active .st-chip-status.status-completed {
   background: #FFFFFF;
   color: #059669;
+}
+
+[data-theme="dark"] .st-branch-header {
+  background: rgba(15, 26, 46, 0.6) !important;
+  border-color: rgba(56, 189, 248, 0.2) !important;
+}
+[data-theme="dark"] .st-nodes-track {
+  background: rgba(15, 26, 46, 0.4) !important;
+  border-color: rgba(56, 189, 248, 0.15) !important;
+}
+[data-theme="dark"] .st-progress-label-text {
+  color: #F8FAFC !important;
 }

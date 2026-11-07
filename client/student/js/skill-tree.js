@@ -315,14 +315,11 @@
           </div>
           <div class="st-stat-progress-compact">
             <div class="st-progress-label-row">
-              <span>Syllabus Mastery (${totalCompletedNodes}/${totalNodesCount} Practicals)</span>
-              <b style="color:var(--green-accent);">${syllabusPct}%</b>
+              <span class="st-progress-label-text">Syllabus Mastery</span>
+              <span class="st-progress-meta-text"><b>${totalCompletedNodes}/${totalNodesCount}</b> Practicals &bull; <b class="st-progress-pct-bold">${syllabusPct}%</b></span>
             </div>
             <div class="st-progress-track" role="progressbar" aria-valuenow="${syllabusPct}" aria-valuemin="0" aria-valuemax="100">
-              <div class="st-progress-fill" style="width:${syllabusPct}%;">
-                ${syllabusPct >= 18 ? `<span class="st-progress-fill-badge">${syllabusPct}%</span>` : ''}
-              </div>
-              ${syllabusPct < 18 ? `<span class="st-progress-track-badge" style="left: calc(${syllabusPct}% + 6px);">${syllabusPct}%</span>` : ''}
+              <div class="st-progress-fill" style="width:${syllabusPct}%;"></div>
             </div>
           </div>
         </div>

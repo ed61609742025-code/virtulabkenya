@@ -348,7 +348,7 @@
   border-left: 5px solid var(--cyan-accent, #0284C7) !important;
   border-radius: var(--vlk-radius-card) !important;
   padding: 22px 26px !important;
-  margin-bottom: 0 !important;
+  margin-bottom: 26px !important;
   box-shadow: var(--vlk-card-shadow) !important;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
   overflow: hidden !important;
@@ -1107,13 +1107,15 @@
 .mwalimu-diagnostic-banner {
   background: rgba(245, 158, 11, 0.1) !important;
   border: 1px solid rgba(245, 158, 11, 0.28) !important;
-  border-radius: 8px !important;
-  padding: 6px 10px !important;
-  font-size: 0.74rem !important;
+  border-radius: 10px !important;
+  padding: 10px 14px !important;
+  margin-top: 12px !important;
+  margin-bottom: 14px !important;
+  font-size: 0.78rem !important;
   color: var(--heading-color) !important;
   display: flex !important;
   align-items: center !important;
-  gap: 6px !important;
+  gap: 8px !important;
 }
 
 .tip-title {
@@ -1179,14 +1181,38 @@
 }
 
 .tip-next-chip {
-  padding: 6px 10px;
-  border-radius: 8px;
-  border: 1px solid var(--card-border);
-  background: transparent;
-  font-size: 0.74rem;
-  font-weight: 700;
-  color: var(--text-muted);
-  cursor: pointer;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 8px 14px !important;
+  border-radius: 9px !important;
+  border: 1.5px solid #94A3B8 !important;
+  background: #FFFFFF !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 0.80rem !important;
+  font-weight: 800 !important;
+  color: #1E293B !important;
+  cursor: pointer !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.tip-next-chip:hover {
+  background: #F8FAFC !important;
+  border-color: #0284C7 !important;
+  color: #0284C7 !important;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.18) !important;
+  transform: translateX(2px) !important;
+}
+
+[data-theme="dark"] .tip-next-chip {
+  background: #1E293B !important;
+  border-color: #475569 !important;
+  color: #F8FAFC !important;
+}
+[data-theme="dark"] .tip-next-chip:hover {
+  border-color: #38BDF8 !important;
+  color: #38BDF8 !important;
 }
 
 /* ── 10. Sidebar Card: Daily Challenge Modernization ── */
@@ -2797,16 +2823,24 @@
   gap: 6px;
 }
 .concordancy-alert-pill {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 0.72rem;
-  font-weight: 850;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  background: rgba(220, 38, 38, 0.12);
-  color: #DC2626;
-  padding: 3px 8px;
-  border-radius: 6px;
-  border: 1px solid rgba(220, 38, 38, 0.25);
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 0.74rem !important;
+  font-weight: 850 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.04em !important;
+  background: #FEF3C7 !important;
+  color: #78350F !important;
+  padding: 3px 9px !important;
+  border-radius: 6px !important;
+  border: 1.5px solid #D97706 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+[data-theme="dark"] .concordancy-alert-pill {
+  background: rgba(245, 158, 11, 0.25) !important;
+  color: #FDE68A !important;
+  border-color: #F59E0B !important;
 }
 .concordancy-alert-spec {
   font-family: 'JetBrains Mono', monospace;
@@ -2867,4 +2901,54 @@
   height: 12px;
   stroke: #FFFFFF;
   stroke-width: 3.2;
+}
+
+/* ── Mwalimu AI Spacing & Affordance Refinements (Suggestion 3 & 4) ── */
+.mwalimu-source-line {
+  margin-top: 4px !important;
+  margin-bottom: 8px !important;
+  display: block !important;
+}
+
+.tip-title {
+  margin-top: 6px !important;
+  margin-bottom: 8px !important;
+}
+
+.quiz-chevron {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 26px !important;
+  height: 26px !important;
+  border-radius: 50% !important;
+  background: rgba(245, 158, 11, 0.15) !important;
+  color: #D97706 !important;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease !important;
+}
+
+.quiz-chevron.open {
+  transform: rotate(180deg) !important;
+  background: rgba(245, 158, 11, 0.28) !important;
+}
+
+.quiz-chevron-svg {
+  width: 16px !important;
+  height: 16px !important;
+  stroke-width: 2.6 !important;
+}
+
+/* ── Bench Mastery Progress Percentage Alignment (Suggestion 8) ── */
+.resume-progress-header {
+  display: flex !important;
+  align-items: baseline !important;
+  justify-content: space-between !important;
+  margin-bottom: 6px !important;
+}
+
+.resume-progress-pct {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 0.86rem !important;
+  font-weight: 850 !important;
+  color: var(--heading-color) !important;
 }

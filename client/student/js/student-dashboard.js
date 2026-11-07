@@ -1754,7 +1754,7 @@ requireStudentLogin();
           sourceNotice: `
             <div class="concordancy-alert-card-inner">
               <div class="concordancy-alert-header">
-                <span class="concordancy-alert-pill">⚠️ Official KNEC Rubric Notice</span>
+                <span class="concordancy-alert-pill" style="background:#FEF3C7; color:#78350F; border:1.5px solid #D97706; font-weight:850; padding:3px 9px; border-radius:6px; display:inline-flex; align-items:center; gap:4px;">⚠️ Official KNEC Rubric Notice</span>
                 <span class="concordancy-alert-spec">Tolerance: &le; &plusmn;0.20 cm&sup3;</span>
               </div>
               <div class="concordancy-alert-title">

@@ -679,21 +679,21 @@
     transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow-y: hidden;
   }
   .vlk-mobile-drawer.active {
     transform: translateX(0);
   }
 
   .vlk-drawer-header {
-    padding: 18px 16px 14px;
+    padding: 16px 16px 14px;
     border-bottom: 1.5px solid var(--card-border);
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
     background: var(--card-bg-hover);
+    flex-shrink: 0;
   }
   .vlk-drawer-user-meta {
     display: flex;
@@ -738,87 +738,374 @@
     padding: 2px 8px;
     line-height: 1;
     border-radius: 6px;
-    transition: color 0.15s ease;
+    transition: color 0.15s ease, background 0.15s ease;
   }
   .vlk-drawer-close-btn:hover {
     color: var(--heading-color);
+    background: rgba(0, 0, 0, 0.05);
   }
 
   .vlk-drawer-body {
-    padding: 14px 12px;
+    padding: 12px 14px 20px;
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 5px;
     flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
+  /* Section Titles Visual Hierarchy */
   .vlk-drawer-section-title {
-    font-size: 0.66rem;
-    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.76rem;
+    font-weight: 850;
     text-transform: uppercase;
-    color: var(--text-muted);
-    letter-spacing: 0.05em;
-    padding: 10px 10px 4px;
-    margin-top: 4px;
+    color: var(--heading-color);
+    opacity: 0.8;
+    letter-spacing: 0.08em;
+    padding: 14px 10px 6px;
+    margin-top: 10px;
+    border-top: 1px solid var(--card-border);
   }
+  .vlk-drawer-section-title:first-of-type {
+    margin-top: 0;
+    padding-top: 4px;
+    border-top: none;
+  }
+  .vlk-drawer-section-title::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--cyan-accent, #0284C7);
+    flex-shrink: 0;
+  }
+
+  /* Menu Items Spacing & Touch Ergonomics */
   .vlk-drawer-link {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-    border-radius: 9px;
+    gap: 12px;
+    padding: 11px 14px;
+    min-height: 44px;
+    border-radius: 11px;
     text-decoration: none;
     font-weight: 700;
-    font-size: 0.86rem;
+    font-size: 0.88rem;
     color: var(--text-main);
-    transition: all 0.15s ease;
-  }
-  .vlk-drawer-link:hover {
-    background: var(--card-bg-hover);
-    color: var(--heading-color);
-  }
-  .vlk-drawer-link.active {
-    background: var(--acad-oxford, #0B2545);
-    color: #FFFFFF !important;
-  }
-  .vlk-drawer-link.active .vlk-icon {
-    stroke: #FFFFFF !important;
-  }
-  [data-theme="dark"] .vlk-drawer-link.active {
-    background: #0284C7;
-  }
-  [data-theme="green"] .vlk-drawer-link.active {
-    background: #059669;
+    border: 1.5px solid transparent;
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
   }
   .vlk-drawer-link .vlk-icon {
-    width: 17px;
-    height: 17px;
-    stroke-width: 2;
+    width: 19px;
+    height: 19px;
+    stroke-width: 2.1;
+    stroke: currentColor;
+    flex-shrink: 0;
+    transition: transform 0.18s ease;
+  }
+  .vlk-drawer-link:hover,
+  .vlk-drawer-link:focus-visible {
+    background: rgba(2, 132, 199, 0.08);
+    border-color: rgba(2, 132, 199, 0.22);
+    color: #0284C7;
+    transform: translateX(3px);
+  }
+  .vlk-drawer-link:hover .vlk-icon,
+  .vlk-drawer-link:focus-visible .vlk-icon {
+    stroke: #0284C7;
+    transform: scale(1.08);
   }
 
+  /* Clear Active State Feedback */
+  .vlk-drawer-link.active {
+    background: linear-gradient(135deg, #0B2545 0%, #17375E 100%);
+    border-color: #0B2545;
+    color: #FFFFFF !important;
+    font-weight: 800;
+    box-shadow: 0 4px 14px rgba(11, 37, 69, 0.25);
+  }
+  .vlk-drawer-link.active .vlk-icon {
+    stroke: #38BDF8 !important;
+  }
+  .vlk-drawer-link.active::after {
+    content: '';
+    position: absolute;
+    right: 14px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #38BDF8;
+    box-shadow: 0 0 8px #38BDF8;
+  }
+  [data-theme="dark"] .vlk-drawer-link.active {
+    background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
+    border-color: #38BDF8;
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+  }
+  [data-theme="green"] .vlk-drawer-link.active {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    border-color: #34D399;
+    box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35);
+  }
+
+  /* Sublinks for Practical Benches */
   .vlk-drawer-sublink {
     display: flex;
     align-items: center;
-    gap: 9px;
-    padding: 7px 12px 7px 18px;
-    border-radius: 7px;
+    gap: 11px;
+    padding: 9px 14px 9px 16px;
+    min-height: 40px;
+    border-radius: 9px;
     text-decoration: none;
-    font-size: 0.80rem;
-    font-weight: 600;
+    font-size: 0.84rem;
+    font-weight: 650;
     color: var(--text-muted);
-    transition: all 0.15s ease;
+    border: 1.5px solid transparent;
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .vlk-drawer-sublink:hover {
-    background: var(--card-bg-hover);
+  .vlk-drawer-sublink:hover,
+  .vlk-drawer-sublink:focus-visible {
+    background: rgba(2, 132, 199, 0.08);
+    border-color: rgba(2, 132, 199, 0.18);
     color: var(--heading-color);
+    transform: translateX(3px);
   }
   .vlk-drawer-bullet {
-    font-size: 0.85rem;
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
   }
 
+  /* Optimized Drawer Footer & Button Affordance */
   .vlk-drawer-footer {
-    padding: 14px 16px;
-    border-top: 1px solid var(--card-border);
+    padding: 14px 16px max(16px, env(safe-area-inset-bottom, 16px));
+    border-top: 1.5px solid var(--card-border);
     background: var(--card-bg-hover);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .vlk-drawer-install-btn {
+    width: 100%;
+    min-height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-radius: 11px;
+    background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
+    border: 1px solid #38BDF8;
+    color: #FFFFFF;
+    font-size: 0.86rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.28);
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    text-decoration: none;
+  }
+  .vlk-drawer-install-btn:hover,
+  .vlk-drawer-install-btn:focus-visible {
+    background: linear-gradient(135deg, #0369A1 0%, #075985 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(2, 132, 199, 0.38);
+    color: #FFFFFF;
+  }
+  .vlk-drawer-install-btn-left {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .vlk-drawer-install-btn .vlk-icon {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2.2;
+    stroke: #FFFFFF;
+  }
+  .vlk-drawer-install-pill {
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.22);
+    color: #FFFFFF;
+    backdrop-filter: blur(4px);
+    white-space: nowrap;
+  }
+  .vlk-drawer-logout-btn {
+    width: 100%;
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    background: transparent;
+    border: 1.5px solid var(--card-border);
+    color: var(--text-muted);
+    font-size: 0.84rem;
+    font-weight: 750;
+    cursor: pointer;
+    transition: all 0.18s ease;
+  }
+  .vlk-drawer-logout-btn:hover,
+  .vlk-drawer-logout-btn:focus-visible {
+    background: rgba(239, 68, 68, 0.08);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #EF4444;
+  }
+  .vlk-drawer-logout-btn:hover .vlk-icon,
+  .vlk-drawer-logout-btn:focus-visible .vlk-icon {
+    stroke: #EF4444;
+  }
+
+  /* Contextual Offline / PWA Install Banner in Main Workspace */
+  .vlk-offline-install-callout {
+    margin: 12px 0 16px;
+    padding: 12px 16px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(2, 132, 199, 0.08) 0%, rgba(14, 165, 233, 0.04) 100%);
+    border: 1.5px solid rgba(2, 132, 199, 0.28);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.08);
+    transition: all 0.2s ease;
+  }
+  [data-theme="dark"] .vlk-offline-install-callout {
+    background: linear-gradient(135deg, rgba(2, 132, 199, 0.18) 0%, rgba(14, 165, 233, 0.10) 100%);
+    border-color: rgba(56, 189, 248, 0.35);
+  }
+  .vlk-offline-callout-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    flex: 1;
+  }
+  .vlk-offline-icon-ring {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #0284C7, #2563EB);
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+  }
+  .vlk-offline-icon-ring .vlk-icon {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2.2;
+    stroke: #FFFFFF;
+  }
+  .vlk-offline-text {
+    min-width: 0;
+    flex: 1;
+  }
+  .vlk-offline-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: var(--heading-color);
+    line-height: 1.25;
+    flex-wrap: wrap;
+  }
+  .vlk-offline-badge {
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: rgba(34, 197, 94, 0.15);
+    color: #16A34A;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+  }
+  [data-theme="dark"] .vlk-offline-badge {
+    background: rgba(34, 197, 94, 0.22);
+    color: #4ADE80;
+    border-color: rgba(74, 222, 128, 0.4);
+  }
+  .vlk-offline-subtitle {
+    margin: 2px 0 0;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.35;
+  }
+  .vlk-offline-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .btn-offline-install-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    min-height: 38px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
+    color: #FFFFFF;
+    font-size: 0.82rem;
+    font-weight: 800;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+  .btn-offline-install-cta:hover {
+    background: linear-gradient(135deg, #0369A1 0%, #075985 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+  }
+  .btn-offline-dismiss {
+    background: transparent;
+    border: none;
+    font-size: 1.3rem;
+    line-height: 1;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 6px;
+    transition: all 0.15s ease;
+  }
+  .btn-offline-dismiss:hover {
+    color: var(--heading-color);
+    background: var(--card-bg-hover);
+  }
+
+  @media (max-width: 640px) {
+    .vlk-offline-install-callout {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+      padding: 12px;
+    }
+    .vlk-offline-actions {
+      justify-content: space-between;
+      width: 100%;
+    }
+    .btn-offline-install-cta {
+      flex: 1;
+      justify-content: center;
+    }
   }
 
   /* Responsive Breakpoints */
@@ -871,6 +1158,44 @@
     if (trigger) trigger.setAttribute('aria-expanded', 'false');
   };
 
+  window.dismissOfflineCallout = function() {
+    var banner = document.getElementById('vlkMainOfflineInstallNotice');
+    if (banner) {
+      banner.style.display = 'none';
+      try {
+        localStorage.setItem('vlk_offline_notice_dismissed', Date.now().toString());
+      } catch (e) {}
+    }
+  };
+
+  function syncPwaInstallState() {
+    try {
+      var isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                         window.navigator.standalone === true ||
+                         document.referrer.includes('android-app://');
+      var callout = document.getElementById('vlkMainOfflineInstallNotice');
+      var drawerText = document.getElementById('drawerInstallBtnText');
+      var drawerPill = document.getElementById('drawerInstallPill');
+
+      if (isStandalone) {
+        if (callout) callout.style.display = 'none';
+        if (drawerText) drawerText.textContent = 'App Installed';
+        if (drawerPill) {
+          drawerPill.textContent = 'Offline Ready';
+          drawerPill.style.background = 'rgba(34, 197, 94, 0.28)';
+          drawerPill.style.color = '#FFFFFF';
+        }
+      } else {
+        var dismissedTime = localStorage.getItem('vlk_offline_notice_dismissed');
+        if (callout && (!dismissedTime || (Date.now() - parseInt(dismissedTime, 10)) > 7 * 24 * 60 * 60 * 1000)) {
+          callout.style.display = 'flex';
+        }
+      }
+    } catch (e) {}
+  }
+  document.addEventListener('DOMContentLoaded', syncPwaInstallState);
+  window.addEventListener('appinstalled', syncPwaInstallState);
+
   window.openMobileNavDrawer = function() {
     var drawer = document.getElementById('vlkMobileDrawer');
     var backdrop = document.getElementById('vlkMobileDrawerBackdrop');
@@ -878,6 +1203,7 @@
     if (!drawer) return;
 
     drawer.classList.add('active');
+    syncPwaInstallState();
     if (backdrop) backdrop.classList.add('active');
     if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
 
@@ -1174,7 +1500,7 @@
         <span>Revision Handbook</span>
       </a>
       <a href="history.html" class="vlk-drawer-link">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line><line x1="2" y1="20" x2="22" y2="20"></line></svg>
         <span>Performance &amp; History</span>
       </a>
       <a href="speed_battle.html" class="vlk-drawer-link">
@@ -1218,12 +1544,15 @@
       </a>
     </div>
 
-    <div class="vlk-drawer-footer" style="display:flex; flex-direction:column; gap:8px;">
-      <button type="button" class="btn btn-primary" id="drawerInstallAppBtn" style="width:100%; justify-content:center; display:inline-flex; align-items:center; gap:8px;" onclick="closeMobileNavDrawer(); if(window.VLKPwa && typeof window.VLKPwa.installDirectly === 'function'){ window.VLKPwa.installDirectly(); } else if(typeof window.installVirtuLabApp === 'function'){ window.installVirtuLabApp(); }">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        <span>Install App (100% Offline)</span>
+    <div class="vlk-drawer-footer">
+      <button type="button" class="vlk-drawer-install-btn" id="drawerInstallAppBtn" onclick="closeMobileNavDrawer(); if(window.VLKPwa && typeof window.VLKPwa.installDirectly === 'function'){ window.VLKPwa.installDirectly(); } else if(typeof window.installVirtuLabApp === 'function'){ window.installVirtuLabApp(); }">
+        <span class="vlk-drawer-install-btn-left">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span id="drawerInstallBtnText">Install App</span>
+        </span>
+        <span class="vlk-drawer-install-pill" id="drawerInstallPill">100% Offline</span>
       </button>
-      <button type="button" class="btn btn-outline" style="width:100%; justify-content:center; display:inline-flex; align-items:center; gap:8px;" onclick="if(window.Auth && typeof window.Auth.logout === 'function'){ window.Auth.logout(); } else { localStorage.clear(); window.location.href='/student/login.html'; }">
+      <button type="button" class="vlk-drawer-logout-btn" onclick="if(window.Auth && typeof window.Auth.logout === 'function'){ window.Auth.logout(); } else { localStorage.clear(); window.location.href='/student/login.html'; }">
         <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         <span>Log Out</span>
       </button>
@@ -1303,6 +1632,29 @@
 
       <!-- Upgrade / Pass Status Banner (shown/hidden by subscription-ui.js based on entitlement) -->
       <div id="vlkUpgradeBanner" style="display:none;"></div>
+
+      <!-- Contextual Offline PWA Installation & Sync Notice -->
+      <div id="vlkMainOfflineInstallNotice" class="vlk-offline-install-callout" style="display:none;" role="region" aria-label="Offline Laboratory Access">
+        <div class="vlk-offline-callout-content">
+          <div class="vlk-offline-icon-ring" aria-hidden="true">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </div>
+          <div class="vlk-offline-text">
+            <div class="vlk-offline-title">
+              <span>VirtuLab Offline Laboratory</span>
+              <span class="vlk-offline-badge">100% Offline Ready</span>
+            </div>
+            <p class="vlk-offline-subtitle">Install to home screen for full-screen practice across all 8 KCSE practical benches with zero mobile data bundles required.</p>
+          </div>
+        </div>
+        <div class="vlk-offline-actions">
+          <button type="button" class="btn-offline-install-cta" onclick="if(window.VLKPwa && typeof window.VLKPwa.installDirectly === 'function'){ window.VLKPwa.installDirectly(); } else if(typeof window.installVirtuLabApp === 'function'){ window.installVirtuLabApp(); }">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Install App</span>
+          </button>
+          <button type="button" class="btn-offline-dismiss" onclick="dismissOfflineCallout()" aria-label="Dismiss offline banner">&times;</button>
+        </div>
+      </div>
 
 <!-- Modern 2-Column Responsive Dashboard Workspace Grid -->
       <div class="dashboard-workspace-grid">

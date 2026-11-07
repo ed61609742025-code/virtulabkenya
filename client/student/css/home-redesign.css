@@ -2711,3 +2711,24 @@
   #skillTreeContainer {
     padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
   }
+
+
+/* ── Mobile De-congestion: Redundant elements moved to Side Panel / Drawer ── */
+@media (max-width: 768px) {
+  .mobile-quick-actions {
+    display: none !important;
+  }
+
+  /* Hide duplicate Daily Challenge card & duplicate Targeted Revision card on mobile
+     since Speed Drills, Warmup, and Bench Benches are accessible in the Side Panel & Resume Hero */
+  .dash-sidebar-col .daily-challenge-card,
+  .dash-sidebar-col .coaching-rec-wrap {
+    display: none !important;
+  }
+
+  /* Keep KCSE Readiness & Mwalimu AI Tutor spacious and prominent */
+  .dash-sidebar-col {
+    gap: 14px !important;
+    margin-top: 4px !important;
+  }
+}

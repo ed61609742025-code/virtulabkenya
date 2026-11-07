@@ -1181,6 +1181,14 @@
         <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         <span>Speed Battle Drills</span>
       </a>
+      <a href="#zone_assignments" class="vlk-drawer-link" onclick="closeMobileNavDrawer(); focusAssignmentsSection(event);">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg>
+        <span>Teacher Assignments</span>
+      </a>
+      <a href="#panel_research" class="vlk-drawer-link" onclick="closeMobileNavDrawer(); if(window.switchStudentSubTab) switchStudentSubTab('research');">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <span>Assessments &amp; Surveys</span>
+      </a>
       <a href="profile.html" class="vlk-drawer-link">
         <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         <span>Candidate Profile</span>
@@ -1296,64 +1304,7 @@
       <!-- Upgrade / Pass Status Banner (shown/hidden by subscription-ui.js based on entitlement) -->
       <div id="vlkUpgradeBanner" style="display:none;"></div>
 
-      <!-- ── Mobile "Big 4" Thumb-Zone Quick Action Hub ── -->
-      <section class="mobile-quick-actions" aria-label="Mobile Quick Access Hub">
-        <div class="mqa-header">
-          <span class="mqa-knec-pill">KCSE PAPER 3</span>
-          <span class="mqa-heading">Quick Actions</span>
-        </div>
-        <div class="mqa-grid">
-          <!-- 1. Daily Diagnostic Blitz -->
-          <a href="speed_battle.html?mode=daily_bite" class="mqa-card mqa-blitz">
-            <div class="mqa-icon mqa-icon-blitz" aria-hidden="true">
-              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            </div>
-            <div class="mqa-info">
-              <span class="mqa-tag tag-gold">+100 XP</span>
-              <div class="mqa-title">Daily Blitz</div>
-              <div class="mqa-sub">3-Min Diagnostic Drill</div>
-            </div>
-          </a>
-
-          <!-- 2. KCSE 40-Mark Mock -->
-          <a href="mock_exams.html" class="mqa-card mqa-mock">
-            <div class="mqa-icon mqa-icon-mock" aria-hidden="true">
-              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15l-2 5l4-2l4 2l-2-5"/><circle cx="12" cy="8" r="7"/></svg>
-            </div>
-            <div class="mqa-info">
-              <span class="mqa-tag tag-emerald">KNEC 40M</span>
-              <div class="mqa-title">Mock Exam</div>
-              <div class="mqa-sub">Timed Full Paper 3</div>
-            </div>
-          </a>
-
-          <!-- 3. Teacher Assignments -->
-          <a href="#zone_assignments" class="mqa-card mqa-tasks" onclick="focusAssignmentsSection(event)">
-            <div class="mqa-icon mqa-icon-tasks" aria-hidden="true">
-              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg>
-            </div>
-            <div class="mqa-info">
-              <span class="mqa-tag tag-purple" id="mqaTasksBadge">TASKS</span>
-              <div class="mqa-title">Assignments</div>
-              <div class="mqa-sub" id="mqaTasksSub">Continuous Assessment</div>
-            </div>
-          </a>
-
-          <!-- 4. Revision Handbook -->
-          <a href="reference.html" class="mqa-card mqa-handbook">
-            <div class="mqa-icon mqa-icon-handbook" aria-hidden="true">
-              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-            </div>
-            <div class="mqa-info">
-              <span class="mqa-tag tag-cyan">HANDBOOK</span>
-              <div class="mqa-title">Revision</div>
-              <div class="mqa-sub">Criteria &amp; Salt Tables</div>
-            </div>
-          </a>
-        </div>
-      </section>
-
-      <!-- Modern 2-Column Responsive Dashboard Workspace Grid -->
+<!-- Modern 2-Column Responsive Dashboard Workspace Grid -->
       <div class="dashboard-workspace-grid">
 
         <!-- ═══════════════════════════════════════════════════════════════════ -->
@@ -2252,7 +2203,7 @@
   <script defer src="../shared/subscription-ui.js?v=167"></script>
 
   
-  <script defer src="js/home.js?v=182"></script>
+  <script defer src="js/home.js?v=183"></script>
 
   <!-- ── Mobile Bottom Navigation Bar (hidden on desktop via CSS) ── -->
   <nav class="vlk-bottom-nav" aria-label="Mobile Bottom Navigation" id="vlkBottomNav">

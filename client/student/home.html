@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
@@ -626,13 +626,13 @@
     background: rgba(2, 132, 199, 0.08);
   }
 
-  /* Hamburger Menu Toggle Button (Mobile/Tablet) */
+  /* Hamburger Menu Toggle Button (Moved to place of name initials) */
   .vlk-mobile-toggle-btn {
-    display: none;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
     border-radius: 9px;
     background: var(--card-bg);
     border: 1.5px solid var(--card-border);
@@ -642,9 +642,16 @@
     padding: 0;
     flex-shrink: 0;
   }
-  .vlk-mobile-toggle-btn:hover {
+  .vlk-mobile-toggle-btn:hover,
+  .vlk-mobile-toggle-btn:focus-visible {
     border-color: var(--cyan-accent);
     color: var(--cyan-accent);
+    background: rgba(2, 132, 199, 0.08);
+  }
+  .vlk-mobile-toggle-btn .vlk-icon {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2.2;
   }
 
   /* Mobile Slide-Out Drawer & Backdrop */
@@ -1364,15 +1371,6 @@
 
       <div class="nav-actions">
         <!-- Single Language Toggle Button -->
-                <!-- Mobile Drawer Hamburger Toggle Button -->
-        <button type="button" class="vlk-mobile-toggle-btn" id="mobileNavToggleBtn" onclick="toggleMobileNavDrawer(event)" aria-label="Toggle Navigation Menu" aria-expanded="false" data-tooltip="Navigation Menu" data-tooltip-pos="bottom">
-          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-          </svg>
-        </button>
-
         <button type="button" class="user-avatar-btn lang-single-toggle-btn" id="langToggleSingleBtn" onclick="toggleLanguage()" data-tooltip="Language: English (Switch to Kiswahili)" data-tooltip-pos="bottom" aria-label="Toggle language: currently English">
           <svg class="lang-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="12" cy="12" r="10"></circle>
@@ -1463,10 +1461,17 @@
         </div>
 
 
-        <!-- User Profile Direct Link -->
-        <a href="profile.html" class="user-avatar-btn nav-avatar-link" id="userMenuBtn" data-tooltip="Candidate Profile &amp; Settings" data-tooltip-pos="bottom" aria-label="Candidate Profile">
-          <span class="nav-avatar-initials" id="navAvatarInitials">ST</span>
-        </a>
+        <!-- Mobile Navigation Drawer Hamburger Toggle Button (Moved to place of name initials) -->
+        <button type="button" class="vlk-mobile-toggle-btn" id="mobileNavToggleBtn" onclick="toggleMobileNavDrawer(event)" aria-label="Toggle Navigation Menu" aria-expanded="false" data-tooltip="Navigation Menu" data-tooltip-pos="bottom">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+
+        <!-- Hidden compatibility anchor for scripts referencing navAvatarInitials -->
+        <span id="navAvatarInitials" style="display:none;" aria-hidden="true">ST</span>
       </div>
     </div>
   </nav>
@@ -2105,6 +2110,45 @@
               </div>
             </div>
 
+          <!-- APPARATUS INTRODUCTION CARD -->
+          <div id="apparatusOnboardingCard" style="margin-bottom:16px; border-radius:16px; border:1.5px solid var(--card-border); background:var(--card-bg); overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+            <div style="height:4px; background:linear-gradient(90deg, #0284C7, #059669, #D97706);"></div>
+            <div style="padding:16px 18px 14px;">
+              <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:10px;">
+                <div>
+                  <div style="display:flex; align-items:center; gap:7px; margin-bottom:5px;">
+                    <span id="apparatusCertBadge" style="font-size:0.68rem; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; padding:2px 8px; border-radius:100px; background:rgba(239,68,68,0.12); color:#DC2626; border:1px solid rgba(239,68,68,0.3);">Not Started</span>
+                    <span style="font-size:0.68rem; font-weight:700; color:var(--text-muted); font-family:'JetBrains Mono',monospace;">18 Apparatus &middot; 5-Q Quiz</span>
+                  </div>
+                  <h3 style="margin:0 0 4px; font-size:0.95rem; font-weight:800; color:var(--heading-color); line-height:1.2;">&#x1F52C; Meet Your Lab Apparatus</h3>
+                  <p style="margin:0; font-size:0.78rem; color:var(--text-muted); line-height:1.45;">Learn all 18 tools used in KCSE Chemistry Paper 3 practicals before entering the virtual bench.</p>
+                </div>
+                <div style="width:40px; height:40px; border-radius:10px; background:rgba(2,132,199,0.1); border:1.5px solid rgba(2,132,199,0.2); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                  <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:20px;height:20px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                </div>
+              </div>
+              <div style="margin-bottom:10px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+                  <span style="font-size:0.72rem; font-weight:700; color:var(--text-muted);">Apparatus Certified</span>
+                  <span style="font-size:0.72rem; font-weight:800; color:var(--cyan-accent); font-family:'JetBrains Mono',monospace;" id="apparatusProgressText">0 / 18</span>
+                </div>
+                <div style="height:5px; background:var(--card-border); border-radius:100px; overflow:hidden;">
+                  <div id="apparatusProgressFill" style="height:100%; width:0%; background:linear-gradient(90deg, #0284C7, #38BDF8); border-radius:100px; transition:width 0.4s ease;"></div>
+                </div>
+              </div>
+              <div style="display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap;">
+                <span style="font-size:0.68rem; font-weight:700; padding:2px 7px; border-radius:5px; background:rgba(2,132,199,0.1); color:#0284C7; border:1px solid rgba(2,132,199,0.2);">Burette</span>
+                <span style="font-size:0.68rem; font-weight:700; padding:2px 7px; border-radius:5px; background:rgba(5,150,105,0.1); color:#059669; border:1px solid rgba(5,150,105,0.2);">Pipette</span>
+                <span style="font-size:0.68rem; font-weight:700; padding:2px 7px; border-radius:5px; background:rgba(217,119,6,0.1); color:#D97706; border:1px solid rgba(217,119,6,0.2);">Bunsen Burner</span>
+                <span style="font-size:0.68rem; font-weight:700; padding:2px 7px; border-radius:5px; background:rgba(124,58,237,0.1); color:#7C3AED; border:1px solid rgba(124,58,237,0.2);">+ 15 more &rarr;</span>
+              </div>
+              <button type="button" id="apparatusStartBtn" onclick="window.ApparatusGallery ? window.ApparatusGallery.open({mode:'intro'}) : alert('Gallery loading...')" style="width:100%; padding:9px 14px; background:linear-gradient(135deg, #0284C7, #0369A1); color:#fff; border:none; border-radius:9px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.84rem; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:7px; transition:all 0.15s ease; box-shadow:0 2px 8px rgba(2,132,199,0.25);">
+                <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:16px;height:16px;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <span id="apparatusStartBtnText">Start Apparatus Tour</span>
+              </button>
+            </div>
+          </div>
+
           <!-- Daily Challenge Highlight Banner (Top Priority) -->
       <div id="dailyChallengeCard" class="daily-challenge-card">
         <div class="daily-challenge-left">
@@ -2582,5 +2626,26 @@
   </nav>
 
   
+  <!-- Apparatus Gallery Module -->
+  <link rel="stylesheet" href="../shared/apparatus-gallery.css" media="print" onload="this.media='all'">
+  <script defer src="../shared/apparatus-gallery.js"></script>
+  <script>
+    // Apparatus Onboarding Card — sync certification status on load
+    document.addEventListener('DOMContentLoaded', function() {
+      try {
+        var cert = JSON.parse(localStorage.getItem('vlk_apparatus_certified') || 'null');
+        var badge = document.getElementById('apparatusCertBadge');
+        var btnText = document.getElementById('apparatusStartBtnText');
+        var fill = document.getElementById('apparatusProgressFill');
+        var prog = document.getElementById('apparatusProgressText');
+        if (cert && cert.passed) {
+          if (badge) { badge.textContent = 'Certified \u2713'; badge.style.background = 'rgba(5,150,105,0.12)'; badge.style.color = '#059669'; badge.style.borderColor = 'rgba(5,150,105,0.3)'; }
+          if (btnText) btnText.textContent = 'Review Apparatus Gallery';
+          if (fill) fill.style.width = '100%';
+          if (prog) prog.textContent = '18 / 18';
+        }
+      } catch(e) {}
+    });
+  </script>
 </body>
 </html>

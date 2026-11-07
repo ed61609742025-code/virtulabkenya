@@ -2363,9 +2363,9 @@
     display: none !important;
   }
 
-  /* Order 2: Dash Sidebar Container (Unwrapped flex items) */
+  /* Order 4: Dash Sidebar Container (Placed below coursework) */
   .dash-sidebar-col {
-    order: 2 !important;
+    order: 4 !important;
     width: 100% !important;
     display: flex !important;
     flex-direction: column !important;
@@ -2374,10 +2374,10 @@
     padding: 0 !important;
   }
 
-  /* 5. Mobile KCSE Readiness Card (Restored & Mobile-Optimized) */
+  /* 5. Mobile KCSE Readiness Card: Hidden on mobile since accessible in thumb-zone Bottom Nav (History) & Side Panel */
   #pulseCardReadiness,
   .pulse-card.pulse-readiness-card {
-    display: flex !important;
+    display: none !important;
     flex-direction: column !important;
     order: 1 !important;
     width: 100% !important;
@@ -2594,9 +2594,9 @@
     display: none !important;
   }
 
-  /* Order 3: Practical Chemistry Benches Grid */
+  /* Order 2: Practical Chemistry Benches Grid */
   .zone-pathway {
-    order: 3 !important;
+    order: 2 !important;
     width: 100% !important;
     box-sizing: border-box !important;
     margin-bottom: 0 !important;
@@ -2730,5 +2730,12 @@
   .dash-sidebar-col {
     gap: 14px !important;
     margin-top: 4px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  #pulseCardReadiness,
+  .pulse-card.pulse-readiness-card {
+    display: none !important;
   }
 }

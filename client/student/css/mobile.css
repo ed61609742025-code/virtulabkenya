@@ -1634,3 +1634,10 @@
     margin-top: 4px !important;
   }
 }
+
+@media (max-width: 768px) {
+  #pulseCardReadiness,
+  .pulse-card.pulse-readiness-card {
+    display: none !important;
+  }
+}

@@ -102,7 +102,8 @@
     padding-bottom: 8px !important;
   }
   .st-nodes-track {
-    padding: 12px 6px 8px !important;
+    padding: 22px 18px 18px !important;
+    gap: clamp(18px, 2.4vw, 28px) !important;
   }
 }
 
@@ -134,13 +135,60 @@
 
 .st-branch-title {
   font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-  font-size: 1.02rem;
-  font-weight: 800;
-  color: var(--b-text);
+  font-size: 1.16rem;
+  font-weight: 850;
+  color: var(--b-text-strong, #0F172A);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: -0.02em;
+}
+.st-branch-icon-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+.st-branch-header-meta {
   display: flex;
   align-items: center;
   gap: 8px;
-  letter-spacing: -0.01em;
+  flex-wrap: wrap;
+}
+.st-branch-completed-badge {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 850;
+  color: #065F46;
+  background: #D1FAE5;
+  border: 1.5px solid #10B981;
+  padding: 3px 10px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 1px 4px rgba(16, 185, 129, 0.2);
+}
+[data-theme="dark"] .st-branch-completed-badge {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34D399;
+  border-color: #34D399;
+}
+.st-branch-progress-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--b-text-muted, #64748B);
+  background: var(--b-surface, #FFFFFF);
+  border: 1px solid var(--b-border, #CBD5E1);
+  padding: 3px 8px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
 }
 
 .st-branch-tag {
@@ -707,20 +755,39 @@
 /* Node label below circle */
 .st-node-label {
   font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--b-text);
-  line-height: 1.25;
+  font-size: 0.92rem;
+  font-weight: 850;
+  color: var(--b-text-strong, #0F172A);
+  line-height: 1.34;
+  min-height: 2.75em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-wrap: balance;
+}
+[data-theme="dark"] .st-node-label {
+  color: #F8FAFC;
 }
 
 .st-node-sublabel {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.80rem;
-  font-weight: 600;
-  color: var(--b-text-muted, #64748B);
+  font-weight: 750;
+  color: var(--b-text-muted, #334155);
   letter-spacing: -0.01em;
   line-height: 1.35;
-  margin-top: 2px;
+  min-height: 1.6em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.04);
+  margin-top: 4px;
+}
+[data-theme="dark"] .st-node-sublabel {
+  color: #CBD5E1;
+  background: rgba(255, 255, 255, 0.06);
 }
 
 /* ── 5. CAPSTONE EXAM NODE (SPECIAL GOLD HIGHLIGHT) ── */
@@ -1676,16 +1743,17 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
-  background: #10B981;
-  color: #FFFFFF;
-  font-size: 0.72rem;
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%) !important;
+  color: #FFFFFF !important;
+  font-size: 0.76rem;
   font-weight: 900;
   line-height: 1;
-  box-shadow: 0 1px 4px rgba(16, 185, 129, 0.35);
-  margin-right: 2px;
+  box-shadow: 0 0 0 2.5px rgba(16, 185, 129, 0.28), 0 2px 6px rgba(16, 185, 129, 0.45) !important;
+  margin-right: 3px;
+  flex-shrink: 0;
 }
 .st-branch-chip.active .st-chip-status.status-completed {
   background: #FFFFFF;
@@ -1702,4 +1770,41 @@
 }
 [data-theme="dark"] .st-progress-label-text {
   color: #F8FAFC !important;
+}
+
+/* ── Differentiated Topic Category Card Designs (Visual Hierarchy) ── */
+.st-branch.st-branch-volumetric {
+  border-left: 5.5px solid #0284C7 !important;
+  background: linear-gradient(180deg, rgba(2, 132, 199, 0.04) 0%, var(--b-surface) 80px);
+}
+.st-branch.st-branch-qualitative {
+  border-left: 5.5px solid #059669 !important;
+  background: linear-gradient(180deg, rgba(5, 150, 105, 0.04) 0%, var(--b-surface) 80px);
+}
+.st-branch.st-branch-kinetics {
+  border-left: 5.5px solid #D97706 !important;
+  background: linear-gradient(180deg, rgba(217, 119, 6, 0.04) 0%, var(--b-surface) 80px);
+}
+.st-branch.st-branch-organic {
+  border-left: 5.5px solid #7C3AED !important;
+  background: linear-gradient(180deg, rgba(124, 58, 237, 0.04) 0%, var(--b-surface) 80px);
+}
+.st-branch.st-branch-capstone {
+  border-left: 5.5px solid #F59E0B !important;
+  background: linear-gradient(135deg, var(--b-surface) 0%, rgba(245, 158, 11, 0.1) 100%);
+}
+[data-theme="dark"] .st-branch.st-branch-volumetric {
+  background: linear-gradient(180deg, rgba(56, 189, 248, 0.08) 0%, var(--b-surface) 80px);
+}
+[data-theme="dark"] .st-branch.st-branch-qualitative {
+  background: linear-gradient(180deg, rgba(52, 211, 153, 0.08) 0%, var(--b-surface) 80px);
+}
+[data-theme="dark"] .st-branch.st-branch-kinetics {
+  background: linear-gradient(180deg, rgba(251, 191, 36, 0.08) 0%, var(--b-surface) 80px);
+}
+[data-theme="dark"] .st-branch.st-branch-organic {
+  background: linear-gradient(180deg, rgba(167, 139, 250, 0.08) 0%, var(--b-surface) 80px);
+}
+[data-theme="dark"] .st-branch.st-branch-capstone {
+  background: linear-gradient(135deg, var(--b-surface) 0%, rgba(245, 158, 11, 0.16) 100%);
 }

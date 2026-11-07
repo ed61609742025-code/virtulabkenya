@@ -9,6 +9,39 @@
   let _lastSessions = [];
   let _selectedBranchId = null;
 
+  const BRANCH_METADATA = {
+    'branch-volumetric': {
+      iconName: 'burette',
+      accentColor: '#0284C7',
+      bgTint: 'rgba(2, 132, 199, 0.1)',
+      themeClass: 'st-branch-volumetric'
+    },
+    'branch-qualitative': {
+      iconName: 'test-tube',
+      accentColor: '#059669',
+      bgTint: 'rgba(5, 150, 105, 0.1)',
+      themeClass: 'st-branch-qualitative'
+    },
+    'branch-kinetics': {
+      iconName: 'timer',
+      accentColor: '#D97706',
+      bgTint: 'rgba(217, 119, 6, 0.1)',
+      themeClass: 'st-branch-kinetics'
+    },
+    'branch-organic-gas': {
+      iconName: 'leaf',
+      accentColor: '#7C3AED',
+      bgTint: 'rgba(124, 58, 237, 0.1)',
+      themeClass: 'st-branch-organic'
+    },
+    'branch-capstone': {
+      iconName: 'trophy',
+      accentColor: '#F59E0B',
+      bgTint: 'rgba(245, 158, 11, 0.14)',
+      themeClass: 'st-branch-capstone'
+    }
+  };
+
   const PATHWAY_DATA = [
     {
       id: 'branch-volumetric',
@@ -337,7 +370,7 @@
       let statusIcon = '&bull;';
       let statusClass = 'status-upcoming';
       if (isComplete) {
-        statusIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;"><polyline points="20 6 9 17 4 12"/></svg>';
+        statusIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><polyline points="20 6 9 17 4 12"/></svg>';
         statusClass = 'status-completed';
       } else if (isCurrent) {
         statusIcon = '&bull;';
@@ -377,12 +410,29 @@
       const isCapstoneBranch = !!branch.isCapstone;
       const nodeCount = branch.nodes.length;
       html += `
-        <section class="st-branch ${isCapstoneBranch ? 'st-capstone-branch' : ''}" id="${branch.id}">
+                const meta = BRANCH_METADATA[branch.id] || { iconName: 'flask', accentColor: '#0284C7', bgTint: 'rgba(2, 132, 199, 0.1)', themeClass: '' };
+        const branchIconSvg = (window.VLKIcons && typeof window.VLKIcons.svg === 'function')
+          ? window.VLKIcons.svg(meta.iconName, { size: 18, strokeWidth: 2 })
+          : '';
+
+        html += `
+        <section class="st-branch ${meta.themeClass} ${isCapstoneBranch ? 'st-capstone-branch' : ''}" id="${branch.id}">
             <div class="st-branch-header">
               <div class="st-branch-title">
-                <span>${branch.title}</span>
+                <span class="st-branch-icon-badge" style="background:${meta.bgTint}; color:${meta.accentColor};" aria-hidden="true">${branchIconSvg}</span>
+                <span class="st-branch-title-text">${branch.title}</span>
               </div>
-              <span class="st-branch-tag">${branch.tag}</span>
+              <div class="st-branch-header-meta">
+                ${branch.isCompleted ? `
+                  <span class="st-branch-completed-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span>Conquered (${branch.completedCount}/${nodeCount})</span>
+                  </span>
+                ` : `
+                  <span class="st-branch-progress-pill">${branch.completedCount}/${nodeCount} Done</span>
+                `}
+                <span class="st-branch-tag">${branch.tag}</span>
+              </div>
             </div>
 
             <div class="st-nodes-track track-count-${nodeCount}" style="--node-count: ${nodeCount};">

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
@@ -1742,11 +1742,11 @@
           <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
             <span class="dash-section-badge badge-green">40 Marks Syllabus</span>
             <!-- View Toggle Switcher -->
-            <div class="pathway-view-toggle">
-              <button type="button" class="view-toggle-btn active" id="btnViewTree" onclick="SkillTree.switchView('tree')" data-tooltip="Pathway view" data-tooltip-pos="bottom">
+            <div class="pathway-view-toggle" role="tablist" aria-label="Topic View Modes">
+              <button type="button" class="view-toggle-btn active" id="btnViewTree" role="tab" aria-selected="true" aria-controls="panel_benches" onclick="SkillTree.switchView('tree')" data-tooltip="Pathway view" data-tooltip-pos="bottom">
                 <span data-i18n="btn_learning_pathway">Pathway View</span>
               </button>
-              <button type="button" class="view-toggle-btn" id="btnViewGrid" onclick="SkillTree.switchView('grid')" data-tooltip="Grid view" data-tooltip-pos="bottom">
+              <button type="button" class="view-toggle-btn" id="btnViewGrid" role="tab" aria-selected="false" aria-controls="panel_benches" onclick="SkillTree.switchView('grid')" data-tooltip="Grid view" data-tooltip-pos="bottom">
                 <span data-i18n="btn_discipline_grid">Grid View</span>
               </button>
             </div>
@@ -1756,14 +1756,14 @@
 
           
         <!-- Interactive Visual Skill Tree Pathway View -->
-        <div id="skillTreeContainer">
+        <div id="skillTreeContainer" role="tabpanel" aria-label="Learning Pathway View">
           <div style="text-align:center; padding:36px; font-family:'JetBrains Mono', monospace; font-size:0.88rem; color:var(--text-muted);">
             Loading practical pathway…
           </div>
         </div>
 
         <!-- Grid View Wrap -->
-        <div id="practiceGridWrap" style="display:none;">
+        <div id="practiceGridWrap" role="tabpanel" id="panel_benches" aria-label="Practical Discipline Grid" style="display:none;">
           <!-- Search and Filter Bar -->
           <div class="search-filter-bar" style="border-radius:12px; margin-bottom:20px; background:var(--card-bg-hover); border:1px solid var(--card-border); padding:14px 18px;">
             <div class="search-input-wrap">
@@ -2004,27 +2004,71 @@
             </div>
           </div>
 
-          <!-- 5-Discipline Mini-Bar Visualizer -->
-          <div class="pulse-mini-disciplines" id="pulseMiniDisciplines" aria-label="Discipline Mastery Preview">
-            <div class="mini-disc-col" title="Volumetric: 0%">
-              <div class="mini-disc-bar-track"><div class="mini-disc-bar-fill disc-volumetric" id="miniDisc_volumetric" style="height:85%;"></div></div>
-              <span class="mini-disc-label">Vol</span>
+          <!-- 5-Discipline Structured Mastery List (Scannable & Less Dense) -->
+          <div class="readiness-disciplines-list" id="pulseMiniDisciplines" aria-label="KCSE Practical Disciplines Mastery">
+            <div class="readiness-disc-row" title="Volumetric Analysis">
+              <div class="readiness-disc-meta">
+                <span class="readiness-disc-icon-badge" style="background:rgba(2,132,199,0.12); color:#0284C7;" aria-hidden="true">
+                  <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><path d="M14.5 2v17.5c0 1.4-1.1 2.5-2.5 2.5s-2.5-1.1-2.5-2.5V2"/><path d="M8.5 2h7"/></svg>
+                </span>
+                <span class="readiness-disc-name">Volumetric</span>
+              </div>
+              <div class="readiness-disc-bar-track">
+                <div class="readiness-disc-bar-fill disc-volumetric" id="miniDisc_volumetric" style="width:85%; height:100%;"></div>
+              </div>
+              <span class="readiness-disc-val" id="miniDiscPct_volumetric">85%</span>
             </div>
-            <div class="mini-disc-col" title="Qualitative Salts: 0%">
-              <div class="mini-disc-bar-track"><div class="mini-disc-bar-fill disc-qualitative" id="miniDisc_qualitative" style="height:70%;"></div></div>
-              <span class="mini-disc-label">Salt</span>
+
+            <div class="readiness-disc-row" title="Qualitative Salt Analysis">
+              <div class="readiness-disc-meta">
+                <span class="readiness-disc-icon-badge" style="background:rgba(5,150,105,0.12); color:#059669;" aria-hidden="true">
+                  <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/></svg>
+                </span>
+                <span class="readiness-disc-name">Qualitative Salts</span>
+              </div>
+              <div class="readiness-disc-bar-track">
+                <div class="readiness-disc-bar-fill disc-qualitative" id="miniDisc_qualitative" style="width:70%; height:100%;"></div>
+              </div>
+              <span class="readiness-disc-val" id="miniDiscPct_qualitative">70%</span>
             </div>
-            <div class="mini-disc-col" title="Kinetics: 0%">
-              <div class="mini-disc-bar-track"><div class="mini-disc-bar-fill disc-rates" id="miniDisc_rates" style="height:60%;"></div></div>
-              <span class="mini-disc-label">Rate</span>
+
+            <div class="readiness-disc-row" title="Reaction Rates & Kinetics">
+              <div class="readiness-disc-meta">
+                <span class="readiness-disc-icon-badge" style="background:rgba(217,119,6,0.12); color:#D97706;" aria-hidden="true">
+                  <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 14 14"/></svg>
+                </span>
+                <span class="readiness-disc-name">Kinetics</span>
+              </div>
+              <div class="readiness-disc-bar-track">
+                <div class="readiness-disc-bar-fill disc-rates" id="miniDisc_rates" style="width:60%; height:100%;"></div>
+              </div>
+              <span class="readiness-disc-val" id="miniDiscPct_rates">60%</span>
             </div>
-            <div class="mini-disc-col" title="Thermochemistry: 0%">
-              <div class="mini-disc-bar-track"><div class="mini-disc-bar-fill disc-energy" id="miniDisc_energy" style="height:80%;"></div></div>
-              <span class="mini-disc-label">Heat</span>
+
+            <div class="readiness-disc-row" title="Thermochemistry & Enthalpies">
+              <div class="readiness-disc-meta">
+                <span class="readiness-disc-icon-badge" style="background:rgba(239,68,68,0.12); color:#DC2626;" aria-hidden="true">
+                  <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+                </span>
+                <span class="readiness-disc-name">Thermochem</span>
+              </div>
+              <div class="readiness-disc-bar-track">
+                <div class="readiness-disc-bar-fill disc-energy" id="miniDisc_energy" style="width:80%; height:100%;"></div>
+              </div>
+              <span class="readiness-disc-val" id="miniDiscPct_energy">80%</span>
             </div>
-            <div class="mini-disc-col" title="Organic & Gases: 0%">
-              <div class="mini-disc-bar-track"><div class="mini-disc-bar-fill disc-organic" id="miniDisc_organic" style="height:75%;"></div></div>
-              <span class="mini-disc-label">Org</span>
+
+            <div class="readiness-disc-row" title="Organic Chemistry & Gases">
+              <div class="readiness-disc-meta">
+                <span class="readiness-disc-icon-badge" style="background:rgba(124,58,237,0.12); color:#7C3AED;" aria-hidden="true">
+                  <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+                </span>
+                <span class="readiness-disc-name">Organic &amp; Gases</span>
+              </div>
+              <div class="readiness-disc-bar-track">
+                <div class="readiness-disc-bar-fill disc-organic" id="miniDisc_organic" style="width:75%; height:100%;"></div>
+              </div>
+              <span class="readiness-disc-val" id="miniDiscPct_organic">75%</span>
             </div>
           </div>
 

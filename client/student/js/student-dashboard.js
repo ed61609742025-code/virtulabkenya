@@ -1754,19 +1754,22 @@ requireStudentLogin();
           sourceNotice: `
             <div class="concordancy-alert-card-inner">
               <div class="concordancy-alert-header">
-                <span class="concordancy-alert-pill" style="background:#FEF3C7; color:#78350F; border:1.5px solid #D97706; font-weight:850; padding:3px 9px; border-radius:6px; display:inline-flex; align-items:center; gap:4px;">⚠️ Official KNEC Rubric Notice</span>
+                <span class="concordancy-alert-pill">
+                  <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                  Official KNEC Rubric Notice
+                </span>
                 <span class="concordancy-alert-spec">Tolerance: &le; &plusmn;0.20 cm&sup3;</span>
               </div>
               <div class="concordancy-alert-title">
-                <strong>Titre Spread Exceeded:</strong> Burette readings differed beyond the KNEC &plusmn;0.20 cm&sup3; margin
+                <strong class="concordancy-alert-strong">Titre Spread Exceeded:</strong> Burette readings differed beyond the KNEC &plusmn;0.20 cm&sup3; concordancy margin
               </div>
               <div class="concordancy-alert-expl">
-                <b>Why this is penalized:</b> Under the KNEC Paper 3 Principle of Averaging [PA], averaging discordant titres penalizes the 1.0 mark averaging score and forfeits downstream stoichiometry accuracy.<br>
-                <b>How to avoid it:</b> Only average 2 or 3 non-rough trials agreeing within &plusmn;0.20 cm&sup3; (ideal &plusmn;0.10 cm&sup3;). If trials 1 and 2 differ by &gt; 0.20 cm&sup3;, perform a 3rd trial immediately and tick (&check;) only the concordant pair.
+                <div class="concordancy-expl-row"><b>Why this is penalized:</b> Under the KNEC Paper 3 <em>Principle of Averaging [PA]</em>, averaging discordant titres penalizes the 1.0 mark averaging score and forfeits downstream stoichiometry accuracy.</div>
+                <div class="concordancy-expl-row"><b>How to avoid it:</b> Only average 2 or 3 non-rough trials agreeing within &plusmn;0.20 cm&sup3; (ideal &plusmn;0.10 cm&sup3;). If trials 1 and 2 differ by &gt; 0.20 cm&sup3;, perform a 3rd trial immediately and tick (&check;) only the concordant pair.</div>
               </div>
               <div class="concordancy-alert-actions">
                 <a href="reference.html#sec_volumetric" class="concordancy-rubric-link" target="_blank" rel="noopener">
-                  <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                  <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:14px;height:14px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
                   <span>Read KNEC Table 1 Averaging Rules &amp; Rubric &rarr;</span>
                 </a>
               </div>
@@ -2164,7 +2167,15 @@ requireStudentLogin();
 
     ['volumetric', 'qualitative', 'rates', 'energy', 'organic'].forEach(key => {
       const el = document.getElementById('miniDisc_' + key);
-      if (el) el.style.height = `${Math.max(6, discStats[key])}%`;
+      const pctEl = document.getElementById('miniDiscPct_' + key);
+      const pct = Math.max(0, Math.min(100, discStats[key] || 0));
+      if (el) {
+        el.style.width = `${Math.max(6, pct)}%`;
+        el.style.height = `${Math.max(6, pct)}%`;
+      }
+      if (pctEl) {
+        pctEl.textContent = `${pct}%`;
+      }
     });
 
     for (const [key, count] of Object.entries(topicCounts)) {

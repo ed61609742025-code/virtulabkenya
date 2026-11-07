@@ -409,13 +409,12 @@
     branchesToRender.forEach((branch, bIdx) => {
       const isCapstoneBranch = !!branch.isCapstone;
       const nodeCount = branch.nodes.length;
-      html += `
-                const meta = BRANCH_METADATA[branch.id] || { iconName: 'flask', accentColor: '#0284C7', bgTint: 'rgba(2, 132, 199, 0.1)', themeClass: '' };
-        const branchIconSvg = (window.VLKIcons && typeof window.VLKIcons.svg === 'function')
-          ? window.VLKIcons.svg(meta.iconName, { size: 18, strokeWidth: 2 })
-          : '';
+      const meta = BRANCH_METADATA[branch.id] || { iconName: 'flask', accentColor: '#0284C7', bgTint: 'rgba(2, 132, 199, 0.1)', themeClass: '' };
+      const branchIconSvg = (window.VLKIcons && typeof window.VLKIcons.svg === 'function')
+        ? window.VLKIcons.svg(meta.iconName, { size: 18, strokeWidth: 2 })
+        : '';
 
-        html += `
+      html += `
         <section class="st-branch ${meta.themeClass} ${isCapstoneBranch ? 'st-capstone-branch' : ''}" id="${branch.id}">
             <div class="st-branch-header">
               <div class="st-branch-title">

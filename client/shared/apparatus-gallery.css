@@ -319,27 +319,33 @@
 
 /* SVG diagram container */
 .vlk-ag-card-svg {
-  width: 56px;
-  height: 72px;
+  width: 84px;
+  height: 104px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  background: var(--ag-panel2);
+  border: 1px solid var(--ag-card-border);
+  border-radius: 12px;
+  padding: 8px;
+  position: relative;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+  transition: all var(--ag-transition);
+}
+
+.vlk-ag-card:hover .vlk-ag-card-svg {
+  background: var(--ag-card-bg);
+  border-color: var(--ag-cyan);
+  box-shadow: 0 4px 14px rgba(2,132,199,0.22);
+  transform: translateY(-2px);
 }
 
 .vlk-ag-card-svg svg {
   max-width: 100%;
   max-height: 100%;
-  stroke: var(--ag-ink);
-  fill: none;
-  stroke-linecap: round;
-  stroke-linejoin: round;
   overflow: visible;
-  transition: stroke var(--ag-transition);
-}
-
-.vlk-ag-card:hover .vlk-ag-card-svg svg {
-  stroke: var(--ag-cyan);
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.18));
 }
 
 .vlk-ag-card-name {
@@ -494,20 +500,108 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--ag-panel2);
-  border: 1px solid var(--ag-card-border);
-  border-radius: 16px;
-  padding: 28px 20px;
-  min-height: 160px;
+  background: radial-gradient(circle at 50% 35%, var(--ag-panel2) 0%, var(--ag-card-bg) 100%);
+  border: 1.5px solid var(--ag-card-border);
+  border-radius: 18px;
+  padding: 32px 20px;
+  min-height: 220px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.08);
+}
+
+.vlk-ag-detail-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  position: relative;
 }
 
 .vlk-ag-detail-diagram svg {
-  stroke: var(--ag-ink);
-  fill: none;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  max-height: 180px;
-  max-width: 220px;
+  max-height: 210px;
+  max-width: 240px;
+  overflow: visible;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.2));
+}
+
+/* Authentic Specs Card in Detail View */
+.vlk-ag-specs-card {
+  background: var(--ag-panel2);
+  border: 1.5px solid var(--ag-card-border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 4px;
+}
+
+.vlk-ag-specs-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--ag-card-border);
+  padding-bottom: 8px;
+}
+
+.vlk-ag-specs-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ag-heading);
+}
+
+.vlk-ag-specs-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--ag-teal);
+  background: rgba(2, 132, 199, 0.1);
+  padding: 2px 7px;
+  border-radius: 5px;
+  border: 1px solid rgba(2, 132, 199, 0.25);
+}
+
+.vlk-ag-specs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 640px) {
+  .vlk-ag-specs-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.vlk-ag-spec-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.vlk-ag-spec-full {
+  grid-column: 1 / -1;
+  border-top: 1px dashed var(--ag-card-border);
+  padding-top: 8px;
+  margin-top: 4px;
+}
+
+.vlk-ag-spec-k {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--ag-text-muted);
+}
+
+.vlk-ag-spec-v {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--ag-text);
+  line-height: 1.35;
 }
 
 /* Detail heading */
@@ -682,12 +776,10 @@
 }
 
 .vlk-ag-quiz-diagram svg {
-  stroke: var(--ag-ink);
-  fill: none;
-  stroke-linecap: round;
-  stroke-linejoin: round;
   max-height: 140px;
   max-width: 180px;
+  overflow: visible;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.18));
 }
 
 /* Quiz option buttons */

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Grades & Performance Analytics — VirtuLab Kenya</title>
+<title>Grades &amp; Performance Analytics — VirtuLab Kenya</title>
 <script src="/shared/auth-guard.js"></script>
 <script>
   var t = localStorage.getItem('vlk_theme') || 'dark';
@@ -15,13 +15,14 @@
 <meta name="theme-color" content="#0F172A">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400..800;1,6..72,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;850;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/style.css">
 <link rel="stylesheet" href="../shared/pwa-installer.css">
 <link rel="stylesheet" href="../shared/brilliant-theme.css">
 <link rel="stylesheet" href="../shared/gamification-engine.css">
 <link rel="stylesheet" href="css/dashboard.css">
 <link rel="stylesheet" href="css/mobile.css">
+<link rel="stylesheet" href="css/home-redesign.css?v=167">
 <script src="/shared/theme.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha384-bs/nf9FbdNouRbMiFcrcZfLXYPKiPaGVGplVbv7dLGECccEXDW+S3zjqSKR5ZEaD sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
 
@@ -36,27 +37,37 @@
     margin: 0;
     padding-left: env(safe-area-inset-left, 0px);
     padding-right: env(safe-area-inset-right, 0px);
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  body.has-bottom-nav {
+    padding-bottom: calc(76px + env(safe-area-inset-bottom, 16px));
   }
 
   .wrap {
-    max-width: 1200px;
+    max-width: 1240px;
     margin: 0 auto;
-    padding: 20px 16px 90px;
+    padding: 20px 16px 40px;
     box-sizing: border-box;
     width: 100%;
   }
 
-  /* Academic Institutional Banner */
+  @media (max-width: 600px) {
+    .wrap {
+      padding: 14px 12px 30px;
+    }
+  }
+
+  /* ── Academic Institutional Ribbon ── */
   .candidate-top-ribbon {
-    background: var(--acad-oxford);
+    background: var(--acad-oxford, #0B2545);
     color: #FFFFFF;
     font-size: 0.76rem;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.05em;
     text-align: center;
-    padding: 6px 16px;
-    border-bottom: 2px solid var(--acad-gold);
+    padding: 7px 16px;
+    border-bottom: 2px solid var(--acad-gold, #F59E0B);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -66,312 +77,415 @@
   [data-theme="dark"] .candidate-top-ribbon { background: #0B1728; color: #E2E8F0; }
   [data-theme="green"] .candidate-top-ribbon { background: #061F10; color: #D1FAE5; }
 
-  .history-header {
+  /* ── 1. Minimalist Hero Bar ── */
+  .minimalist-hero-bar {
+    background: var(--card-bg, #FFFFFF);
+    border: 1.5px solid var(--card-border, #E2E8F0);
+    border-radius: 18px;
+    box-shadow: var(--vlk-card-shadow, 0 4px 20px rgba(0,0,0,0.06));
+    padding: 18px 24px;
+    margin-bottom: 22px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 24px;
     flex-wrap: wrap;
-    gap: 14px;
+    gap: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .minimalist-hero-bar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3.5px;
+    background: linear-gradient(90deg, #0284C7 0%, #10B981 50%, #F59E0B 100%);
+    opacity: 0.95;
+  }
+  .mini-hero-left {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+  }
+  .mini-hero-badge-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .mini-hero-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.70rem;
+    font-weight: 800;
+    color: var(--cyan-accent, #0284C7);
+    background: rgba(2, 132, 199, 0.12);
+    border: 1px solid rgba(2, 132, 199, 0.28);
+    border-radius: 6px;
+    padding: 3px 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .mini-hero-syllabus {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-muted);
+  }
+  .mini-hero-title {
+    font-size: 1.45rem;
+    font-weight: 900;
+    color: var(--heading-color);
+    letter-spacing: -0.025em;
+    margin: 0;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  @media (max-width: 600px) {
+    .mini-hero-title {
+      font-size: 1.25rem;
+    }
+    .minimalist-hero-bar {
+      padding: 14px 16px;
+    }
   }
 
-  /* ── 1. KCSE READINESS SCORE CARD ── */
+  /* ── 2. KCSE READINESS SCORE CARD ── */
   .readiness-card {
     background: var(--card-bg);
     border: 1.5px solid var(--card-border);
-    border-top: 4px solid var(--acad-gold);
-    border-radius: 16px;
-    padding: 20px 24px;
+    border-top: 4px solid var(--acad-gold, #F59E0B);
+    border-radius: 18px;
+    padding: 22px 24px;
     margin-bottom: 24px;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--vlk-card-shadow, 0 4px 20px rgba(0,0,0,0.06));
     width: 100%;
     box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .readiness-card:hover {
+    box-shadow: var(--vlk-card-shadow-hover, 0 12px 32px rgba(2, 132, 199, 0.12));
   }
   .readiness-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 16px;
+    gap: 14px;
+    margin-bottom: 18px;
   }
   .readiness-title {
-    font-family: 'Cinzel', serif;
-    font-size: 1.15rem;
-    font-weight: 800;
+    font-size: 1.2rem;
+    font-weight: 850;
     color: var(--heading-color);
+    letter-spacing: -0.015em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
   .readiness-sub {
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     color: var(--text-muted);
-    margin-top: 3px;
+    margin-top: 4px;
+    line-height: 1.45;
   }
   .readiness-score-badge {
     display: flex;
     align-items: baseline;
-    gap: 6px;
+    gap: 8px;
     background: var(--card-bg-hover);
-    border: 1.5px solid var(--acad-gold-border);
-    padding: 6px 14px;
+    border: 1.5px solid var(--acad-gold-border, rgba(245, 158, 11, 0.35));
+    padding: 8px 18px;
     border-radius: 100px;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.1);
   }
   .score-num {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 1.25rem;
+    font-size: 1.35rem;
     font-weight: 900;
-    color: var(--acad-gold);
+    color: var(--acad-gold, #F59E0B);
   }
   .score-status {
-    font-size: 0.76rem;
-    font-weight: 800;
+    font-size: 0.78rem;
+    font-weight: 850;
     color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.05em;
   }
   .readiness-progress-bar-wrap {
     width: 100%;
-    height: 10px;
+    height: 12px;
     background: var(--card-bg-hover);
-    border: 1px solid var(--card-border);
+    border: 1.5px solid var(--card-border);
     border-radius: 100px;
     overflow: hidden;
-    margin-bottom: 18px;
+    margin-bottom: 14px;
   }
   .readiness-progress-bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, #F59E0B, #10B981);
+    background: linear-gradient(90deg, #F59E0B 0%, #10B981 100%);
     border-radius: 100px;
-    transition: width 0.4s ease;
+    transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.35);
   }
+  .readiness-milestones {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    font-weight: 750;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    padding: 0 4px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .readiness-milestone-pill {
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: var(--card-bg-hover);
+    border: 1px solid var(--card-border);
+  }
+
+  /* 10 Syllabus Topics Responsive Grid */
   .readiness-topics-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
+    gap: 12px;
     width: 100%;
     box-sizing: border-box;
   }
   @media (max-width: 1100px) {
     .readiness-topics-grid {
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
     }
   }
   @media (max-width: 580px) {
     .readiness-topics-grid {
       grid-template-columns: 1fr 1fr;
+      gap: 8px;
     }
   }
+
   .topic-item {
     background: var(--card-bg-hover);
-    border: 1px solid var(--card-border);
-    border-radius: 10px;
-    padding: 10px 12px;
+    border: 1.5px solid var(--card-border);
+    border-radius: 14px;
+    padding: 12px 14px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     min-width: 0;
     box-sizing: border-box;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+    user-select: none;
+    outline: none;
+    position: relative;
   }
-  .topic-item:hover {
+  .topic-item:hover, .topic-item:focus-visible {
     border-color: var(--cyan-accent);
-    transform: translateY(-1px);
+    background: var(--card-bg);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(2, 132, 199, 0.12);
   }
-  .topic-icon {
-    font-size: 1.2rem;
+  .topic-item:active {
+    transform: translateY(0);
+  }
+  .topic-item.mastered {
+    border-color: rgba(16, 185, 129, 0.45);
+    background: rgba(16, 185, 129, 0.08);
+  }
+  .topic-icon-wrap {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
     flex-shrink: 0;
+    transition: transform 0.2s ease;
+  }
+  .topic-item:hover .topic-icon-wrap {
+    transform: scale(1.08);
+  }
+  .topic-item.mastered .topic-icon-wrap {
+    border-color: rgba(16, 185, 129, 0.4);
+    background: rgba(16, 185, 129, 0.14);
+  }
+  .topic-info {
+    min-width: 0;
+    flex: 1;
   }
   .topic-name {
-    font-size: 0.8rem;
-    font-weight: 800;
+    font-size: 0.84rem;
+    font-weight: 850;
     color: var(--heading-color);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    line-height: 1.2;
   }
   .topic-status {
-    font-size: 0.7rem;
+    font-size: 0.72rem;
     color: var(--text-muted);
-    font-weight: 600;
+    font-weight: 650;
+    margin-top: 3px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .topic-item.mastered .topic-status {
+    color: var(--green-accent, #10B981);
+    font-weight: 800;
   }
 
-  /* ── 2. CHARTS & ACHIEVEMENTS LAYOUT ── */
+  /* ── 3. CHARTS & ACHIEVEMENTS LAYOUT ── */
   .analytics-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 330px;
-    gap: 20px;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 22px;
     align-items: start;
-    margin-bottom: 28px;
+    margin-bottom: 30px;
   }
   @media (max-width: 1023px) {
     .analytics-grid {
       grid-template-columns: minmax(0, 1fr);
+      gap: 20px;
     }
   }
 
   .student-charts-row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
-    gap: 16px;
+    gap: 18px;
     width: 100%;
     box-sizing: border-box;
   }
   .student-chart-card {
     background: var(--card-bg);
     border: 1.5px solid var(--card-border);
-    border-radius: 14px;
-    padding: 18px;
-    box-shadow: var(--shadow-sm);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: var(--vlk-card-shadow);
     min-width: 0;
     box-sizing: border-box;
+    transition: border-color 0.2s ease;
+  }
+  .student-chart-card:hover {
+    border-color: var(--cyan-accent);
+  }
+  .chart-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .chart-card-title {
+    font-size: 0.95rem;
+    font-weight: 850;
+    color: var(--heading-color);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .chart-card-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: rgba(2, 132, 199, 0.12);
+    color: var(--cyan-accent, #0284C7);
+    border: 1px solid rgba(2, 132, 199, 0.24);
   }
 
+  /* My Achievements Widget */
   .widget-card {
     background: var(--card-bg);
     border: 1.5px solid var(--card-border);
-    border-radius: 14px;
-    padding: 18px;
+    border-radius: 16px;
+    padding: 20px;
     margin-bottom: 18px;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--vlk-card-shadow);
     box-sizing: border-box;
   }
   .widget-title {
-    font-family: 'Cinzel', serif;
-    font-size: 1rem;
-    font-weight: 800;
+    font-size: 1.05rem;
+    font-weight: 850;
     color: var(--heading-color);
-    margin-bottom: 14px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
   .stat-row-item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 10px 0;
+    gap: 14px;
+    padding: 12px 0;
     border-bottom: 1px solid var(--card-border);
+    transition: background 0.15s ease;
   }
   .stat-row-item:last-child {
     border-bottom: none;
     padding-bottom: 0;
   }
   .stat-icon-circle {
-    width: 34px;
-    height: 34px;
-    border-radius: 8px;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.95rem;
+    font-size: 1.15rem;
     font-weight: 800;
     flex-shrink: 0;
+    transition: transform 0.2s ease;
   }
-  .stat-icon-circle.green { background: rgba(16, 185, 129, 0.15); color: #10B981; }
-  .stat-icon-circle.purple { background: rgba(168, 85, 247, 0.15); color: #A855F7; }
-  .stat-icon-circle.blue { background: rgba(56, 189, 248, 0.15); color: #0284C7; }
+  .stat-row-item:hover .stat-icon-circle {
+    transform: scale(1.08);
+  }
+  .stat-icon-circle.green { background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.35); }
+  .stat-icon-circle.purple { background: rgba(168, 85, 247, 0.15); color: #A855F7; border: 1px solid rgba(168, 85, 247, 0.35); }
+  .stat-icon-circle.blue { background: rgba(56, 189, 248, 0.15); color: #0284C7; border: 1px solid rgba(56, 189, 248, 0.35); }
+  [data-theme="dark"] .stat-icon-circle.blue { color: #38BDF8; }
   .stat-text-label {
     font-size: 0.72rem;
     color: var(--text-muted);
-    font-weight: 700;
+    font-weight: 800;
     text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
   .stat-text-val {
-    font-size: 0.88rem;
-    font-weight: 800;
+    font-size: 0.98rem;
+    font-weight: 850;
     color: var(--heading-color);
+    margin-top: 2px;
+    font-family: 'JetBrains Mono', monospace;
   }
 
+  /* Leaderboard Card (Fluid, Zero Horizontal Scroll) */
   .leaderboard-glass-card {
     background: var(--card-bg);
     border: 1.5px solid var(--card-border);
-    border-radius: 14px;
-    padding: 18px;
-    box-shadow: var(--shadow-sm);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: var(--vlk-card-shadow);
     box-sizing: border-box;
   }
-
-  /* ── 3. ATTEMPTS LIST & TABS ── */
-  .history-tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 16px;
-    border-bottom: 1px solid var(--card-border);
-    padding-bottom: 12px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-  @media (max-width: 900px) {
-    .history-tabs {
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-      padding-bottom: 8px;
-    }
-    .history-tabs::-webkit-scrollbar {
-      display: none;
-    }
-  }
-  .tab-btn {
-    padding: 8px 18px;
-    border-radius: 100px;
-    font-size: 0.82rem;
-    font-weight: 700;
-    border: 1px solid var(--card-border);
-    background: var(--card-bg);
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  .tab-btn.active {
-    background: var(--acad-oxford);
-    color: #FFF;
-    border-color: var(--acad-oxford);
-    box-shadow: 0 4px 14px rgba(11, 37, 69, 0.25);
-  }
-  [data-theme="dark"] .tab-btn.active {
-    background: #0284C7;
-    border-color: #0284C7;
-    color: #FFF;
-  }
-
-  /* ── 1. LOGO CREST & BANNER ── */
-  .seal-crest-small {
-    width: 38px;
-    height: 38px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, rgba(2, 132, 199, 0.25), rgba(16, 185, 129, 0.25));
-    border: 1.5px solid var(--card-border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.35rem;
-    box-shadow: var(--shadow-sm);
-    flex-shrink: 0;
-  }
-
-  /* ── 2. READINESS SCORE CARD & MILESTONES ── */
-  .readiness-milestones {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.68rem;
-    font-weight: 700;
-    color: var(--text-muted);
-    margin-top: 5px;
-    margin-bottom: 16px;
-    padding: 0 4px;
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-  .topic-item {
-    cursor: pointer;
-    user-select: none;
-  }
-  .topic-item.mastered {
-    border-color: rgba(16, 185, 129, 0.45);
-    background: rgba(16, 185, 129, 0.08);
-  }
-
-  /* ── 3. LEADERBOARD CARD (FLUID, ZERO HORIZONTAL SCROLL) ── */
   .lb-list-wrap {
     display: flex;
     flex-direction: column;
@@ -381,11 +495,11 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 12px;
+    padding: 10px 14px;
     border-radius: 12px;
     background: var(--card-bg-hover);
     border: 1px solid var(--card-border);
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .lb-rank-card:hover {
     border-color: var(--cyan-accent);
@@ -393,8 +507,8 @@
   }
   .lb-rank-card.is-you {
     border: 1.5px solid var(--cyan-accent);
-    background: rgba(2, 132, 199, 0.08);
-    box-shadow: 0 0 14px rgba(2, 132, 199, 0.15);
+    background: rgba(2, 132, 199, 0.1);
+    box-shadow: 0 0 16px rgba(2, 132, 199, 0.18);
   }
   .lb-rank-left {
     display: flex;
@@ -403,31 +517,32 @@
     min-width: 0;
   }
   .lb-medal {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     min-width: 24px;
     text-align: center;
-    font-weight: 800;
+    font-weight: 850;
     line-height: 1;
   }
   .lb-avatar {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     background: linear-gradient(135deg, #0284C7, #2563EB);
     color: #FFF;
-    font-size: 0.72rem;
-    font-weight: 800;
+    font-size: 0.74rem;
+    font-weight: 850;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
   }
   .lb-info {
     min-width: 0;
   }
   .lb-name {
-    font-size: 0.82rem;
-    font-weight: 800;
+    font-size: 0.84rem;
+    font-weight: 850;
     color: var(--heading-color);
     white-space: nowrap;
     overflow: hidden;
@@ -437,20 +552,21 @@
     gap: 6px;
   }
   .lb-you-chip {
-    font-size: 0.6rem;
-    padding: 1px 6px;
+    font-size: 0.62rem;
+    padding: 2px 7px;
     border-radius: 100px;
-    background: var(--cyan-accent);
+    background: var(--cyan-accent, #0284C7);
     color: #FFF;
-    font-weight: 800;
+    font-weight: 850;
     letter-spacing: 0.04em;
   }
   .lb-meta {
-    font-size: 0.7rem;
+    font-size: 0.72rem;
     color: var(--text-muted);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    margin-top: 1px;
   }
   .lb-score-pill {
     text-align: right;
@@ -458,51 +574,141 @@
   }
   .lb-acc {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.84rem;
+    font-size: 0.88rem;
     font-weight: 900;
-    color: var(--green-accent);
+    color: var(--green-accent, #10B981);
   }
 
-  /* ── 4. FILTER BAR & SEARCH INPUT ── */
+  /* ── 4. ATTEMPTS LIST & TABS ── */
+  .history-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 18px;
+    border-bottom: 1.5px solid var(--card-border);
+    padding-bottom: 14px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  @media (max-width: 900px) {
+    .history-tabs {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding-bottom: 10px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .history-tabs::-webkit-scrollbar {
+      display: none;
+    }
+  }
+  .tab-btn {
+    padding: 9px 18px;
+    border-radius: 100px;
+    font-size: 0.84rem;
+    font-weight: 750;
+    border: 1.5px solid var(--card-border);
+    background: var(--card-bg);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tab-btn:hover {
+    color: var(--heading-color);
+    border-color: var(--cyan-accent);
+    background: var(--card-bg-hover);
+    transform: translateY(-1px);
+  }
+  .tab-btn:active {
+    transform: translateY(0);
+  }
+  .tab-btn.active {
+    background: var(--acad-oxford, #0B2545);
+    color: #FFFFFF !important;
+    border-color: var(--acad-oxford, #0B2545);
+    box-shadow: 0 4px 14px rgba(11, 37, 69, 0.25);
+  }
+  [data-theme="dark"] .tab-btn.active {
+    background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
+    border-color: #38BDF8;
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 16px rgba(2, 132, 199, 0.4);
+  }
+  [data-theme="green"] .tab-btn.active {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    border-color: #34D399;
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 16px rgba(5, 150, 105, 0.4);
+  }
+
+  /* ── 5. FILTER BAR & SEARCH INPUT ── */
   .filter-bar-wrap {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 16px;
+    gap: 12px;
+    margin-bottom: 20px;
     flex-wrap: wrap;
   }
   .filter-bar-left {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     flex-wrap: wrap;
     flex: 1;
   }
+  .search-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 240px;
+    max-width: 440px;
+  }
   .search-input-pill {
-    padding: 9px 14px;
+    padding: 10px 16px 10px 38px;
     border: 1.5px solid var(--card-border);
-    border-radius: 10px;
-    font-size: 0.82rem;
+    border-radius: 12px;
+    font-size: 0.84rem;
+    font-family: inherit;
     background: var(--card-bg);
     color: var(--text-main);
     outline: none;
-    min-width: 220px;
-    flex: 1;
-    max-width: 380px;
-    transition: border-color 0.2s;
+    width: 100%;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   }
   .search-input-pill:focus {
     border-color: var(--cyan-accent);
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+  }
+  .search-icon-svg {
+    position: absolute;
+    left: 12px;
+    color: var(--text-muted);
+    pointer-events: none;
   }
   .filter-select {
-    padding: 9px 12px;
+    padding: 10px 14px;
     border: 1.5px solid var(--card-border);
-    border-radius: 10px;
-    font-size: 0.82rem;
+    border-radius: 12px;
+    font-size: 0.84rem;
+    font-family: inherit;
+    font-weight: 700;
     background: var(--card-bg);
-    color: var(--text-main);
+    color: var(--heading-color);
     outline: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .filter-select:focus {
+    border-color: var(--cyan-accent);
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
   }
   .sr-only {
     position: absolute;
@@ -516,20 +722,21 @@
     border: 0;
   }
 
-  /* ── 5. EXPANDABLE SESSION ROWS & DIAGNOSTIC DETAILS ── */
+  /* ── 6. EXPANDABLE SESSION ROWS & DIAGNOSTIC DETAILS ── */
   .session-list-wrapper {
     background: var(--card-bg);
     border: 1.5px solid var(--card-border);
-    border-radius: 14px;
+    border-radius: 16px;
     overflow: hidden;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--vlk-card-shadow);
   }
   .session-row {
-    padding: 16px 20px;
+    padding: 18px 22px;
     border-bottom: 1px solid var(--card-border);
-    font-size: 0.82rem;
+    font-size: 0.84rem;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
   }
   .session-row:last-child {
     border-bottom: none;
@@ -539,27 +746,37 @@
   }
   .session-row.is-expanded {
     background: var(--card-bg-hover);
-    border-left: 3.5px solid var(--cyan-accent);
+    border-left: 4px solid var(--cyan-accent);
+  }
+  [data-theme="dark"] .session-row.is-expanded {
+    border-left-color: #38BDF8;
+    background: rgba(15, 26, 46, 0.7);
+  }
+  [data-theme="green"] .session-row.is-expanded {
+    border-left-color: #34D399;
+    background: rgba(12, 33, 20, 0.7);
   }
   .session-row-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 14px;
     flex-wrap: wrap;
   }
   .session-row .s-title {
-    font-weight: 800;
-    font-size: 0.92rem;
+    font-weight: 850;
+    font-size: 0.94rem;
     color: var(--heading-color);
     display: flex;
     align-items: center;
     gap: 8px;
+    line-height: 1.3;
   }
   .session-row .s-meta {
-    font-size: 0.74rem;
+    font-size: 0.76rem;
     color: var(--text-muted);
-    margin-top: 4px;
+    margin-top: 5px;
+    font-weight: 600;
   }
   .expand-indicator {
     font-size: 0.72rem;
@@ -572,12 +789,12 @@
   }
 
   .drilldown-panel {
-    margin-top: 14px;
-    padding-top: 14px;
+    margin-top: 16px;
+    padding-top: 16px;
     border-top: 1px dashed var(--card-border);
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     animation: fadeIn 0.2s ease-in-out;
   }
   @keyframes fadeIn {
@@ -588,223 +805,426 @@
   .diagnostic-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 10px;
+    gap: 12px;
   }
   .diagnostic-cell {
     background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 10px;
-    padding: 8px 12px;
+    border: 1.5px solid var(--card-border);
+    border-radius: 12px;
+    padding: 10px 14px;
   }
   .diagnostic-cell-lbl {
     font-size: 0.68rem;
     text-transform: uppercase;
-    font-weight: 800;
+    font-weight: 850;
     color: var(--text-muted);
-    letter-spacing: 0.04em;
+    letter-spacing: 0.05em;
   }
   .diagnostic-cell-val {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.86rem;
-    font-weight: 800;
+    font-size: 0.88rem;
+    font-weight: 850;
     color: var(--heading-color);
-    margin-top: 3px;
+    margin-top: 4px;
   }
 
   .mini-trials-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.78rem;
-    margin-top: 6px;
+    font-size: 0.80rem;
+    margin-top: 8px;
     background: var(--card-bg);
-    border-radius: 10px;
+    border-radius: 12px;
     overflow: hidden;
-    border: 1px solid var(--card-border);
+    border: 1.5px solid var(--card-border);
   }
   .mini-trials-table th, .mini-trials-table td {
-    padding: 7px 12px;
+    padding: 8px 14px;
     text-align: center;
     border-bottom: 1px solid var(--card-border);
   }
   .mini-trials-table th {
-    background: rgba(255,255,255,0.03);
-    color: var(--text-muted);
-    font-weight: 800;
+    background: var(--card-bg-hover);
+    color: var(--heading-color);
+    font-weight: 850;
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
   .mini-trials-table tr:last-child td {
     border-bottom: none;
   }
 
-  .qual-detail-box {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 10px;
-    padding: 10px 14px;
-    margin-top: 6px;
-  }
-  @media (max-width: 600px) {
-    .qual-detail-box { grid-template-columns: 1fr; }
-  }
-
-  .obs-toggle-btn {
-    background: transparent;
-    border: 1px solid var(--card-border);
-    border-radius: 8px;
-    padding: 6px 12px;
-    color: var(--cyan-accent);
-    font-size: 0.76rem;
-    font-weight: 700;
-    cursor: pointer;
-    margin-top: 6px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: all 0.2s ease;
-  }
-  .obs-toggle-btn:hover {
-    background: rgba(2, 132, 199, 0.1);
-    border-color: var(--cyan-accent);
-  }
-  .obs-log-list {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 10px;
-    padding: 10px 14px;
-    margin-top: 6px;
-    font-size: 0.78rem;
-    line-height: 1.6;
-  }
-
   .empty-state-card {
-    padding: 38px 20px;
+    padding: 42px 24px;
     text-align: center;
     background: var(--card-bg);
     border: 1.5px dashed var(--card-border);
-    border-radius: 16px;
-    margin: 12px 0;
+    border-radius: 18px;
+    margin: 14px 0;
   }
   .empty-state-icon {
-    font-size: 2.4rem;
-    margin-bottom: 10px;
+    font-size: 2.6rem;
+    margin-bottom: 12px;
     display: inline-block;
   }
   .empty-state-title {
-    font-size: 1.05rem;
-    font-weight: 800;
+    font-size: 1.12rem;
+    font-weight: 850;
     color: var(--heading-color);
-    margin-bottom: 4px;
-    font-family: 'Cinzel', serif;
+    margin-bottom: 6px;
   }
   .empty-state-desc {
-    font-size: 0.82rem;
+    font-size: 0.84rem;
     color: var(--text-muted);
-    max-width: 440px;
-    margin: 0 auto 16px;
+    max-width: 480px;
+    margin: 0 auto 18px;
     line-height: 1.5;
   }
   .empty-state-btn {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 20px;
+    gap: 8px;
+    padding: 10px 24px;
     border-radius: 100px;
-    background: var(--cyan-btn-bg);
+    background: var(--cyan-accent, #0284C7);
     color: #FFF;
-    font-weight: 800;
-    font-size: 0.82rem;
+    font-weight: 850;
+    font-size: 0.84rem;
     text-decoration: none;
     transition: all 0.2s ease;
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.28);
   }
   .empty-state-btn:hover {
-    background: var(--cyan-btn-hover);
-    transform: translateY(-1px);
+    background: #0369A1;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(2, 132, 199, 0.38);
   }
 
-  .result-pill { font-size: 0.72rem; font-weight: 800; padding: 4px 12px; border-radius: 100px; white-space: nowrap; }
-  .result-correct { background: var(--green-bg); color: var(--green-accent); border: 1px solid var(--green-accent); }
-  .result-incorrect { background: var(--red-bg); color: var(--red-accent); border: 1px solid var(--red-accent); }
+  .result-pill {
+    font-size: 0.74rem;
+    font-weight: 850;
+    padding: 5px 14px;
+    border-radius: 100px;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    letter-spacing: 0.02em;
+  }
+  .result-correct {
+    background: rgba(16, 185, 129, 0.14);
+    color: var(--green-accent, #10B981);
+    border: 1.5px solid rgba(16, 185, 129, 0.4);
+  }
+  .result-incorrect {
+    background: rgba(239, 68, 68, 0.14);
+    color: var(--red-accent, #EF4444);
+    border: 1.5px solid rgba(239, 68, 68, 0.4);
+  }
 
-  .empty { color: var(--text-muted); font-size: 0.88rem; padding: 32px; text-align: center; background: var(--card-bg); border: 1px dashed var(--card-border); border-radius: 14px; }
+  .empty {
+    color: var(--text-muted);
+    font-size: 0.90rem;
+    padding: 36px 20px;
+    text-align: center;
+    background: var(--card-bg);
+    border: 1px dashed var(--card-border);
+    border-radius: 16px;
+  }
+
+  /* ── Mobile Navigation Drawer Styles ── */
+  .vlk-mobile-drawer-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 19998;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+  }
+  .vlk-mobile-drawer-backdrop.active {
+    opacity: 1;
+    visibility: visible;
+  }
+  .vlk-mobile-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: min(84vw, 320px);
+    background: var(--card-bg, #0F172A);
+    border-right: 1.5px solid var(--card-border, #1E293B);
+    z-index: 19999;
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
+  }
+  .vlk-mobile-drawer.active {
+    transform: translateX(0);
+  }
 </style>
-</head>
-<body>
+<script>
+  window.openMobileNavDrawer = function() {
+    var drawer = document.getElementById('vlkMobileDrawer');
+    var backdrop = document.getElementById('vlkMobileDrawerBackdrop');
+    var toggleBtn = document.getElementById('mobileNavToggleBtn');
+    if (!drawer) return;
+    drawer.removeAttribute('aria-hidden');
+    drawer.removeAttribute('inert');
+    drawer.inert = false;
+    drawer.classList.add('active');
+    if (backdrop) backdrop.classList.add('active');
+    if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  };
 
+  window.closeMobileNavDrawer = function(e) {
+    if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+    var drawer = document.getElementById('vlkMobileDrawer');
+    var backdrop = document.getElementById('vlkMobileDrawerBackdrop');
+    var toggleBtn = document.getElementById('mobileNavToggleBtn');
+    if (!drawer) return;
+    drawer.classList.remove('active');
+    if (backdrop) backdrop.classList.remove('active');
+    if (toggleBtn) {
+      toggleBtn.setAttribute('aria-expanded', 'false');
+      toggleBtn.focus();
+    }
+    drawer.setAttribute('aria-hidden', 'true');
+    drawer.setAttribute('inert', '');
+    drawer.inert = true;
+    document.body.style.overflow = '';
+  };
+
+  window.toggleMobileNavDrawer = function(e) {
+    if (e && typeof e.stopPropagation === 'function') {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    var drawer = document.getElementById('vlkMobileDrawer');
+    if (!drawer) return;
+    if (drawer.classList.contains('active')) {
+      window.closeMobileNavDrawer(e);
+    } else {
+      window.openMobileNavDrawer();
+    }
+  };
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      window.closeMobileNavDrawer();
+    }
+  });
+</script>
+</head>
+<body class="has-bottom-nav">
 
 <!-- Standardized Top Navigation Bar -->
 <nav class="top-nav" aria-label="Main Navigation">
-  <a href="home.html" class="nav-brand-academic" aria-label="VirtuLab Kenya Home">
-    <div class="seal-crest-small" style="background:transparent; border:none; box-shadow:none; padding:0;">
-      <img src="../shared/virtulab-logo.svg" alt="VirtuLab Kenya" width="36" height="36" style="display:block;" onerror="this.outerHTML='⚗️'">
-    </div>
-    <div style="display:flex; flex-direction:column;">
-      <div style="font-family:'Cinzel', serif; font-weight:900; font-size:1.1rem; color:var(--heading-color); line-height:1.1; letter-spacing:0.04em;">VirtuLab Kenya</div>
-      <div style="font-size:0.68rem; font-weight:700; color:var(--text-muted); letter-spacing:0.02em;">Chemistry Practical Workstation</div>
-    </div>
-  </a>
+  <div class="top-navbar">
+    <a href="home.html" class="nav-brand-academic" data-tooltip="Home" data-tooltip-pos="bottom">
+      <div class="vlk-brand-logo-wrap">
+        <img src="/shared/virtulab-logo.svg" alt="VirtuLab Kenya Logo" class="vlk-brand-logo-img" width="36" height="36" onerror="this.outerHTML='⚗️'">
+      </div>
+      <div>
+        <div class="nav-brand-title" style="font-size:1.15rem; font-weight:800; letter-spacing:-0.02em; color:var(--heading-color); line-height:1.1;"><span class="brand-word-virtu">VirtuLab</span> <span class="brand-word-kenya">Kenya</span></div>
+        <div class="nav-brand-motto" style="font-size:0.62rem; font-weight:700; color:var(--cyan-accent, #0284C7); letter-spacing:0.04em; text-transform:uppercase;">Chemistry Practical Workstation</div>
+      </div>
+    </a>
 
-  <!-- Central Welcome Header (Desktop Only) -->
-  <div class="navbar-welcome-message" style="display:flex; flex-direction:column; align-items:center; gap:2px;">
-    <div style="font-size:0.92rem; font-weight:800; color:var(--heading-color);">
-      Candidate: <span id="studentName">Tecla Rice</span>
-    </div>
-    <div style="display:flex; align-items:center; gap:6px; font-size:0.72rem; font-weight:700;">
-      <span style="color:#F59E0B; background:rgba(245, 158, 11, 0.12); padding:2px 8px; border-radius:100px; border:1px solid rgba(245, 158, 11, 0.3); display:inline-flex; align-items:center; gap:4px;">
-        🔥 <span id="streakCount">1</span>-Day Streak
-      </span>
-      <span style="color:var(--text-muted);" id="todayDate">Today: Aug 23, 2026</span>
-    </div>
-  </div>
-
-  <div class="nav-actions">
-    <!-- Language Switcher Controls -->
-    <div class="theme-toggle-group" title="Switch language / Lugha" aria-label="Language selector">
-      <button class="theme-btn-chip lang-btn-chip active" data-lang="en" onclick="setLanguage('en')" aria-label="Switch to English">🇬🇧 EN</button>
-      <button class="theme-btn-chip lang-btn-chip" data-lang="sw" onclick="setLanguage('sw')" aria-label="Badilisha kwenda Swahili">🇰🇪 SW</button>
+    <!-- Central Candidate Status Badge (Desktop / Tablet) -->
+    <div class="navbar-welcome-message" style="display:flex; flex-direction:column; align-items:center; gap:2px;">
+      <div style="font-size:0.92rem; font-weight:800; color:var(--heading-color);">
+        Candidate: <span id="studentName">Student Candidate</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; font-size:0.74rem; font-weight:700;">
+        <span style="color:#F59E0B; background:rgba(245, 158, 11, 0.12); padding:2px 8px; border-radius:100px; border:1px solid rgba(245, 158, 11, 0.3); display:inline-flex; align-items:center; gap:4px;">
+          🔥 <span id="streakCount">1</span>-Day Streak
+        </span>
+        <span style="color:var(--text-muted);" id="todayDate">Today: Aug 23, 2026</span>
+      </div>
     </div>
 
-    <!-- Theme Switcher Controls: 3-chip on desktop, single toggle on mobile -->
-    <div class="theme-toggle-group theme-multi-btn-group" title="Switch appearance theme" aria-label="Theme selector">
-      <button class="theme-btn-chip" data-theme="dark" onclick="setTheme('dark')" aria-label="Dark mode">🌙 Dark</button>
-      <button class="theme-btn-chip" data-theme="light" onclick="setTheme('light')" aria-label="Light mode">☀️ Light</button>
-      <button class="theme-btn-chip" data-theme="green" onclick="setTheme('green')" aria-label="Lab mode">🧪 Lab</button>
+    <!-- Desktop Nav Links Container -->
+    <div class="vlk-nav-bar" role="navigation" aria-label="Primary Workspace Links">
+      <a href="home.html" class="vlk-nav-link" data-tooltip="Student Workstation" data-tooltip-pos="bottom">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Workstation</span>
+      </a>
+      <a href="mock_exams.html" class="vlk-nav-link" data-tooltip="KCSE 40-Mark Mock Exams" data-tooltip-pos="bottom">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/><path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+        <span>Mocks</span>
+        <span class="vlk-nav-badge">40M</span>
+      </a>
+      <a href="reference.html" class="vlk-nav-link" data-tooltip="Revision & Reference Handbook" data-tooltip-pos="bottom">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span>Handbook</span>
+      </a>
+      <a href="history.html" class="vlk-nav-link active" data-tooltip="Grades & Performance Analytics" data-tooltip-pos="bottom">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line><line x1="2" y1="20" x2="22" y2="20"></line></svg>
+        <span>History</span>
+      </a>
     </div>
 
-    <!-- Single Theme Toggle Button for Mobile -->
-    <button type="button" class="theme-single-toggle-btn" id="historyThemeToggleSingleBtn" onclick="cycleTheme()" data-tooltip="Toggle Theme" aria-label="Toggle visual theme">
-      <svg class="theme-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-    </button>
+    <div class="nav-actions">
+      <!-- Single Language Toggle Button -->
+      <button type="button" class="user-avatar-btn lang-single-toggle-btn" id="langToggleSingleBtn" onclick="toggleLanguage()" data-tooltip="Language: English (Switch to Kiswahili)" data-tooltip-pos="bottom" aria-label="Toggle language: currently English">
+        <svg class="lang-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10z"></path></svg>
+        <span class="lang-badge-tag" id="langBadgeTag">EN</span>
+      </button>
 
-    <!-- Profile Avatar Dropdown Trigger Button -->
-    <button class="user-avatar-btn" onclick="window.location.href='profile.html'" title="Profile &amp; Settings" aria-label="User Account Settings" style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(16, 185, 129, 0.2));border:1.5px solid var(--card-border);color:var(--heading-color);display:flex;align-items:center;justify-content:center;cursor:pointer;">
-      👤
-    </button>
+      <!-- Theme Toggle: 3-chip switcher for desktop -->
+      <div class="theme-toggle-group theme-multi-btn-group" aria-label="Visual Theme Switcher">
+        <button class="theme-btn-chip active" data-theme="light" data-theme-val="light" onclick="setTheme('light')" data-tooltip="Light mode" data-tooltip-pos="bottom" aria-label="Light Theme">
+          <svg class="theme-icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          <span class="theme-label">Light</span>
+        </button>
+        <button class="theme-btn-chip" data-theme="dark" data-theme-val="dark" onclick="setTheme('dark')" data-tooltip="Dark mode" data-tooltip-pos="bottom" aria-label="Dark Theme">
+          <svg class="theme-icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          <span class="theme-label">Dark</span>
+        </button>
+        <button class="theme-btn-chip" data-theme="green" data-theme-val="green" onclick="setTheme('green')" data-tooltip="Lab mode" data-tooltip-pos="bottom" aria-label="Lab Theme">
+          <svg class="theme-icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31M14 2v7.31M8.5 2h7M14 9.3a6.5 6.5 0 1 1-4 0"></path><line x1="6" y1="16" x2="18" y2="16"></line></svg>
+          <span class="theme-label">Lab</span>
+        </button>
+      </div>
+
+      <!-- Single Theme Toggle Button (Mobile / Small Screens) -->
+      <button type="button" class="theme-single-toggle-btn" id="historyThemeToggleSingleBtn" onclick="cycleTheme()" data-tooltip="Toggle Theme" aria-label="Toggle visual theme">
+        <svg class="theme-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+      </button>
+
+      <!-- Mobile Navigation Drawer Hamburger Toggle Button -->
+      <button type="button" class="vlk-mobile-toggle-btn" id="mobileNavToggleBtn" onclick="toggleMobileNavDrawer(event)" aria-label="Toggle Navigation Menu" aria-expanded="false" data-tooltip="Navigation Menu" data-tooltip-pos="bottom">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+
+      <!-- Hidden compatibility anchor -->
+      <span id="navAvatarInitials" style="display:none;" aria-hidden="true">ST</span>
+    </div>
   </div>
 </nav>
 
-<div class="wrap">
-  <!-- Header Bar -->
-  <div class="history-header">
-    <div>
-      <h1 style="font-family:'Cinzel', serif; font-size:1.5rem; font-weight:800; color:var(--heading-color); margin:0 0 4px 0;">📊 Grades &amp; Performance Analytics</h1>
-      <div style="font-size:0.84rem; color:var(--text-muted);">Track your KCSE Paper 3 readiness, exam scores, and detailed practical attempt history</div>
+<!-- Mobile Navigation Drawer & Backdrop -->
+<div id="vlkMobileDrawerBackdrop" class="vlk-mobile-drawer-backdrop" onclick="closeMobileNavDrawer(event)" aria-hidden="true"></div>
+<aside id="vlkMobileDrawer" class="vlk-mobile-drawer" aria-label="Mobile Navigation Drawer" aria-hidden="true" inert>
+  <div class="vlk-drawer-header">
+    <div class="vlk-drawer-user-meta">
+      <div class="vlk-drawer-avatar" id="drawerStudentAvatar">ST</div>
+      <div>
+        <div class="vlk-drawer-name" id="drawerStudentName">Candidate</div>
+        <div class="vlk-drawer-syllabus">KCSE Chemistry Paper 3</div>
+      </div>
     </div>
-    <div style="display:flex; align-items:center; gap:10px;">
-      <a href="home.html" class="btn btn-primary" style="padding:8px 18px; border-radius:100px; font-size:0.82rem; text-decoration:none; font-weight:800; background:var(--acad-oxford); color:#FFF;">← Return to Student Hub</a>
-    </div>
+    <button type="button" class="vlk-drawer-close-btn" onclick="closeMobileNavDrawer(event)" aria-label="Close navigation drawer">&times;</button>
   </div>
 
+  <div class="vlk-drawer-body">
+    <div class="vlk-drawer-section-title">Navigation</div>
+    <a href="home.html" class="vlk-drawer-link">
+      <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Workstation (Home)</span>
+    </a>
+    <a href="mock_exams.html" class="vlk-drawer-link">
+      <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/><path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+      <span>Mock Examinations (40M)</span>
+    </a>
+    <a href="reference.html" class="vlk-drawer-link">
+      <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      <span>Revision Handbook</span>
+    </a>
+    <a href="history.html" class="vlk-drawer-link active">
+      <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line><line x1="2" y1="20" x2="22" y2="20"></line></svg>
+      <span>Performance &amp; History</span>
+    </a>
+    <a href="speed_battle.html" class="vlk-drawer-link">
+      <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      <span>Speed Battle Drills</span>
+    </a>
+    <a href="profile.html" class="vlk-drawer-link">
+      <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Candidate Profile</span>
+    </a>
+
+    <div class="vlk-drawer-section-title">Practical Benches</div>
+    <a href="lab.html?studyMode=guided" class="vlk-drawer-sublink">
+      <span class="vlk-drawer-bullet">⚗️</span> Volumetric Analysis (Q1)
+    </a>
+    <a href="qualitative.html" class="vlk-drawer-sublink">
+      <span class="vlk-drawer-bullet">🧪</span> Qualitative Salt Analysis (Q2)
+    </a>
+    <a href="organic.html" class="vlk-drawer-sublink">
+      <span class="vlk-drawer-bullet">🌿</span> Organic Chemistry (Q3)
+    </a>
+    <a href="energy.html" class="vlk-drawer-sublink">
+      <span class="vlk-drawer-bullet">🔥</span> Thermochemistry &amp; Enthalpy
+    </a>
+    <a href="rates.html" class="vlk-drawer-sublink">
+      <span class="vlk-drawer-bullet">⏱️</span> Reaction Rates &amp; Kinetics
+    </a>
+    <a href="gas_prep.html" class="vlk-drawer-sublink">
+      <span class="vlk-drawer-bullet">💨</span> Gas Preparation
+    </a>
+    <a href="solubility.html" class="vlk-drawer-sublink">
+      <span class="vlk-drawer-bullet">🌡️</span> Solubility Curves
+    </a>
+  </div>
+
+  <div class="vlk-drawer-footer">
+    <button type="button" class="vlk-drawer-logout-btn" onclick="Auth.logout()">
+      <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:16px;height:16px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+      <span>Log Out of VirtuLab</span>
+    </button>
+  </div>
+</aside>
+
+<div class="wrap">
+  <!-- Minimalist Hero Header Bar -->
+  <header class="minimalist-hero-bar" role="banner">
+    <div class="mini-hero-left">
+      <div class="mini-hero-badge-row">
+        <span class="mini-hero-tag">KCSE Paper 3</span>
+        <span class="mini-hero-syllabus">Official Practical Chemistry Portfolio</span>
+      </div>
+      <h1 class="mini-hero-title">
+        <span>📊</span>
+        <span>Grades &amp; Performance Analytics</span>
+      </h1>
+      <div style="font-size:0.84rem; color:var(--text-muted); line-height:1.45; margin-top:2px;">
+        Track your KCSE Paper 3 readiness, exam scores, concordance accuracy, and detailed session logs.
+      </div>
+    </div>
+    <div class="mini-hero-right" style="display:flex; align-items:center; gap:10px;">
+      <a href="home.html" class="btn btn-secondary" style="padding:10px 18px; border-radius:100px; font-size:0.84rem; font-weight:750; text-decoration:none; display:inline-flex; align-items:center; gap:7px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        <span>Return to Workstation</span>
+      </a>
+    </div>
+  </header>
+
   <!-- FEATURE 1: KCSE Paper 3 Exam Readiness Widget -->
-  <section class="readiness-card">
+  <section class="readiness-card" aria-label="KCSE Readiness Score">
     <div class="readiness-header">
       <div>
-        <div class="readiness-title">🎯 KCSE Paper 3 Readiness Score</div>
-        <div class="readiness-sub">Calculated from lab accuracy, concordant titres, and syllabus coverage.</div>
+        <div class="readiness-title">
+          <span>🎯</span>
+          <span>KCSE Paper 3 Readiness Score</span>
+        </div>
+        <div class="readiness-sub">Calculated from lab accuracy, concordant titres, and syllabus practical coverage.</div>
       </div>
-      <div style="display:flex;align-items:center;gap:10px;">
-        <a href="certificate.html" id="certClaimBtn" class="btn btn-primary" style="font-size:0.75rem;padding:5px 12px;border-radius:100px;text-decoration:none;display:none;">📜 Claim Certificate</a>
+      <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+        <a href="certificate.html" id="certClaimBtn" class="btn btn-primary" style="font-size:0.78rem; padding:6px 14px; border-radius:100px; text-decoration:none; display:none; font-weight:800;">📜 Claim Certificate</a>
         <div class="readiness-score-badge">
           <span class="score-num" id="readinessScoreNum">0%</span>
           <span class="score-status" id="readinessStatus">Novice</span>
@@ -812,92 +1232,92 @@
       </div>
     </div>
 
-    <div class="readiness-progress-bar-wrap">
+    <div class="readiness-progress-bar-wrap" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
       <div class="readiness-progress-bar-fill" id="readinessBarFill" style="width: 0%;"></div>
     </div>
     <div class="readiness-milestones">
-      <span>Novice (0–39%)</span>
-      <span>Developing (40–69%)</span>
-      <span>Competent (70–84%)</span>
-      <span>KCSE Ready (85–100%)</span>
+      <span class="readiness-milestone-pill">Novice (0–39%)</span>
+      <span class="readiness-milestone-pill">Developing (40–69%)</span>
+      <span class="readiness-milestone-pill">Competent (70–84%)</span>
+      <span class="readiness-milestone-pill">KCSE Ready (85–100%)</span>
     </div>
 
     <div class="readiness-topics-grid">
-      <div class="topic-item" data-topic="acidBase" onclick="switchTab('titration')" title="Jump to Acid-Base Titration logs">
-        <div class="topic-icon">🧪</div>
-        <div>
+      <div class="topic-item" data-topic="acidBase" onclick="switchTab('titration')" role="button" tabindex="0" title="Jump to Acid-Base Titration logs">
+        <div class="topic-icon-wrap">🧪</div>
+        <div class="topic-info">
           <div class="topic-name">Acid–Base</div>
           <div class="topic-status" id="topicStatus-acidBase">Not started</div>
         </div>
       </div>
 
-      <div class="topic-item" data-topic="redox" onclick="switchTab('titration')" title="Jump to Redox Titration logs">
-        <div class="topic-icon">⚗️</div>
-        <div>
+      <div class="topic-item" data-topic="redox" onclick="switchTab('titration')" role="button" tabindex="0" title="Jump to Redox Titration logs">
+        <div class="topic-icon-wrap">⚗️</div>
+        <div class="topic-info">
           <div class="topic-name">Redox</div>
           <div class="topic-status" id="topicStatus-redox">Not started</div>
         </div>
       </div>
 
-      <div class="topic-item" data-topic="precipitation" onclick="switchTab('titration')" title="Jump to Precipitation Titration logs">
-        <div class="topic-icon">💧</div>
-        <div>
+      <div class="topic-item" data-topic="precipitation" onclick="switchTab('titration')" role="button" tabindex="0" title="Jump to Precipitation Titration logs">
+        <div class="topic-icon-wrap">💧</div>
+        <div class="topic-info">
           <div class="topic-name">Precipitation</div>
           <div class="topic-status" id="topicStatus-precipitation">Not started</div>
         </div>
       </div>
 
-      <div class="topic-item" data-topic="complexometric" onclick="switchTab('titration')" title="Jump to Complexometric Titration logs">
-        <div class="topic-icon">🧬</div>
-        <div>
+      <div class="topic-item" data-topic="complexometric" onclick="switchTab('titration')" role="button" tabindex="0" title="Jump to Complexometric Titration logs">
+        <div class="topic-icon-wrap">🧬</div>
+        <div class="topic-info">
           <div class="topic-name">Complexometric</div>
           <div class="topic-status" id="topicStatus-complexometric">Not started</div>
         </div>
       </div>
 
-      <div class="topic-item" data-topic="qualitative" onclick="switchTab('qualitative')" title="Jump to Qualitative Analysis logs">
-        <div class="topic-icon">🧫</div>
-        <div>
+      <div class="topic-item" data-topic="qualitative" onclick="switchTab('qualitative')" role="button" tabindex="0" title="Jump to Qualitative Analysis logs">
+        <div class="topic-icon-wrap">🧫</div>
+        <div class="topic-info">
           <div class="topic-name">Qualitative</div>
           <div class="topic-status" id="topicStatus-qualitative">Not started</div>
         </div>
       </div>
 
-      <div class="topic-item" data-topic="organic" onclick="switchTab('organic')" title="Jump to Organic Chemistry logs">
-        <div class="topic-icon">⚗️</div>
-        <div>
+      <div class="topic-item" data-topic="organic" onclick="switchTab('organic')" role="button" tabindex="0" title="Jump to Organic Chemistry logs">
+        <div class="topic-icon-wrap">🌿</div>
+        <div class="topic-info">
           <div class="topic-name">Organic</div>
           <div class="topic-status" id="topicStatus-organic">Not started</div>
         </div>
       </div>
 
-      <div class="topic-item" data-topic="solubility" onclick="switchTab('solubility')" title="Jump to Solubility Curve logs">
-        <div class="topic-icon">🌡️</div>
-        <div>
+      <div class="topic-item" data-topic="solubility" onclick="switchTab('solubility')" role="button" tabindex="0" title="Jump to Solubility Curve logs">
+        <div class="topic-icon-wrap">🌡️</div>
+        <div class="topic-info">
           <div class="topic-name">Solubility</div>
           <div class="topic-status" id="topicStatus-solubility">Not started</div>
         </div>
       </div>
 
-      <div class="topic-item" data-topic="energy" onclick="switchTab('energy')" title="Jump to Thermochemistry logs">
-        <div class="topic-icon">🔥</div>
-        <div>
+      <div class="topic-item" data-topic="energy" onclick="switchTab('energy')" role="button" tabindex="0" title="Jump to Thermochemistry logs">
+        <div class="topic-icon-wrap">🔥</div>
+        <div class="topic-info">
           <div class="topic-name">Energy Changes</div>
           <div class="topic-status" id="topicStatus-energy">Not started</div>
         </div>
       </div>
 
-      <div class="topic-item" data-topic="rates" onclick="switchTab('rates')" title="Jump to Reaction Rates logs">
-        <div class="topic-icon">⚡</div>
-        <div>
+      <div class="topic-item" data-topic="rates" onclick="switchTab('rates')" role="button" tabindex="0" title="Jump to Reaction Rates logs">
+        <div class="topic-icon-wrap">⚡</div>
+        <div class="topic-info">
           <div class="topic-name">Reaction Rates</div>
           <div class="topic-status" id="topicStatus-rates">Not started</div>
         </div>
       </div>
 
-      <div class="topic-item" data-topic="gas" onclick="switchTab('gas')" title="Jump to Gas Preparation logs">
-        <div class="topic-icon">💨</div>
-        <div>
+      <div class="topic-item" data-topic="gas" onclick="switchTab('gas')" role="button" tabindex="0" title="Jump to Gas Preparation logs">
+        <div class="topic-icon-wrap">💨</div>
+        <div class="topic-info">
           <div class="topic-name">Gas Preparation</div>
           <div class="topic-status" id="topicStatus-gas">Not started</div>
         </div>
@@ -906,20 +1326,31 @@
   </section>
 
   <!-- FEATURE 2: Personal Performance Analytics Charts & Achievements -->
-  <div class="analytics-grid" style="margin-bottom:28px;">
+  <div class="analytics-grid">
     <div>
-      <section class="student-charts-section" style="margin-bottom:0;">
-        <h2 class="section-heading" style="font-size:1.05rem; margin-bottom:12px;">📈 Performance Analytics</h2>
+      <section class="student-charts-section" style="margin-bottom:0;" aria-label="Performance Analytics Charts">
         <div class="student-charts-row">
           <div class="student-chart-card">
-            <h3 style="font-size:0.88rem;font-weight:700;color:var(--heading-color);margin:0 0 10px 0;">30-Day Accuracy Trend</h3>
-            <div style="height: 180px; width: 100%; position: relative;">
+            <div class="chart-card-header">
+              <h3 class="chart-card-title">
+                <span>📈</span>
+                <span>30-Day Accuracy Trend</span>
+              </h3>
+              <span class="chart-card-badge">Concordance</span>
+            </div>
+            <div style="height: 190px; width: 100%; position: relative;">
               <canvas id="studentTrendChart"></canvas>
             </div>
           </div>
           <div class="student-chart-card">
-            <h3 style="font-size:0.88rem;font-weight:700;color:var(--heading-color);margin:0 0 10px 0;">By Practical Type</h3>
-            <div style="height: 180px; width: 100%; position: relative;">
+            <div class="chart-card-header">
+              <h3 class="chart-card-title">
+                <span>🎯</span>
+                <span>By Practical Type</span>
+              </h3>
+              <span class="chart-card-badge">Distribution</span>
+            </div>
+            <div style="height: 190px; width: 100%; position: relative;">
               <canvas id="studentTypeChart"></canvas>
             </div>
           </div>
@@ -930,7 +1361,10 @@
     <aside class="leaderboard-column">
       <!-- My Achievements Widget -->
       <div class="widget-card">
-        <div class="widget-title">My Achievements</div>
+        <div class="widget-title">
+          <span>🏆</span>
+          <span>My Achievements</span>
+        </div>
         
         <div class="stat-row-item">
           <div class="stat-icon-circle green">✓</div>
@@ -959,36 +1393,48 @@
 
       <!-- Leaderboard Card -->
       <div class="leaderboard-glass-card">
-        <h2 class="section-heading" style="font-size:1rem; margin-bottom:12px;">Leaderboard</h2>
+        <h2 class="widget-title" style="margin-bottom:14px; font-size:1.02rem;">
+          <span>🎖️</span>
+          <span>Leaderboard</span>
+        </h2>
         <div id="leaderboardBox">
-          <div class="empty-box">Loading leaderboard...</div>
+          <div class="empty-box" style="padding:18px 12px; text-align:center; font-size:0.84rem;">Loading leaderboard...</div>
         </div>
       </div>
     </aside>
   </div>
 
   <!-- FEATURE 3: Detailed Session Attempt History Logs -->
-  <h2 class="section-heading" style="font-size:1.15rem; margin-bottom:14px;">📜 Detailed Attempt Logs</h2>
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
+    <h2 style="font-size:1.25rem; font-weight:850; color:var(--heading-color); margin:0; display:flex; align-items:center; gap:8px;">
+      <span>📜</span>
+      <span>Detailed Attempt Logs</span>
+    </h2>
+    <div style="font-size:0.78rem; font-weight:700; color:var(--text-muted);">
+      Filter by practical topic or search candidate trials
+    </div>
+  </div>
   
   <!-- Navigation Tabs -->
-  <div class="history-tabs">
-    <button class="tab-btn active" id="tabTitration" onclick="switchTab('titration')">🧪 Titration</button>
-    <button class="tab-btn" id="tabQualitative" onclick="switchTab('qualitative')">🧫 Qualitative Salt</button>
-    <button class="tab-btn" id="tabOrganic" onclick="switchTab('organic')">⚗️ Organic</button>
-    <button class="tab-btn" id="tabSolubility" onclick="switchTab('solubility')">🌡️ Solubility</button>
-    <button class="tab-btn" id="tabEnergy" onclick="switchTab('energy')">🔥 Energy</button>
-    <button class="tab-btn" id="tabRates" onclick="switchTab('rates')">⚡ Rates</button>
-    <button class="tab-btn" id="tabGas" onclick="switchTab('gas')">💨 Gas Prep</button>
-    <button class="tab-btn" id="tabComposite" onclick="switchTab('composite')">📋 Mock Exam (40 Mks)</button>
-    <button class="tab-btn" id="tabCPCAT" onclick="switchTab('cpcat')">📑 CPCAT Research</button>
+  <div class="history-tabs" role="tablist" aria-label="Practical Discipline Attempt Logs">
+    <button class="tab-btn active" id="tabTitration" onclick="switchTab('titration')" role="tab">🧪 Titration</button>
+    <button class="tab-btn" id="tabQualitative" onclick="switchTab('qualitative')" role="tab">🧫 Qualitative Salt</button>
+    <button class="tab-btn" id="tabOrganic" onclick="switchTab('organic')" role="tab">🌿 Organic</button>
+    <button class="tab-btn" id="tabSolubility" onclick="switchTab('solubility')" role="tab">🌡️ Solubility</button>
+    <button class="tab-btn" id="tabEnergy" onclick="switchTab('energy')" role="tab">🔥 Energy</button>
+    <button class="tab-btn" id="tabRates" onclick="switchTab('rates')" role="tab">⚡ Rates</button>
+    <button class="tab-btn" id="tabGas" onclick="switchTab('gas')" role="tab">💨 Gas Prep</button>
+    <button class="tab-btn" id="tabComposite" onclick="switchTab('composite')" role="tab">📋 Mock Exam (40 Mks)</button>
+    <button class="tab-btn" id="tabCPCAT" onclick="switchTab('cpcat')" role="tab">📑 CPCAT Research</button>
   </div>
 
   <div class="filter-bar-wrap">
     <div class="filter-bar-left">
-      <div class="search-input-wrap" style="position:relative; display:flex; align-items:center; flex:1; min-width:240px; max-width:440px;">
+      <div class="search-input-wrap">
         <label for="sessionSearchInput" class="sr-only">Search practical attempts</label>
-        <input type="search" id="sessionSearchInput" name="vlk_session_search" class="search-input-pill" placeholder="🔍 Search attempts by title, reagent, salt, or method..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" data-lpignore="true" oninput="onSearchFilterChange()" style="width:100%; padding-right:32px;">
-        <button type="button" id="searchClearBtn" onclick="clearSearchInput()" title="Clear search filter" style="position:absolute; right:10px; background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:0.85rem; display:none; padding:4px; line-height:1;">✕</button>
+        <svg class="search-icon-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="search" id="sessionSearchInput" name="vlk_session_search" class="search-input-pill" placeholder="Search attempts by title, reagent, salt, or method..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" data-lpignore="true" oninput="onSearchFilterChange()">
+        <button type="button" id="searchClearBtn" onclick="clearSearchInput()" title="Clear search filter" style="position:absolute; right:12px; background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:0.95rem; display:none; padding:4px; line-height:1;">✕</button>
       </div>
 
       <div id="titrationFilters" style="display:flex; align-items:center;">
@@ -1011,12 +1457,15 @@
     </div>
 
     <div>
-      <button type="button" class="btn" onclick="exportCurrentTabCSV()" style="padding:9px 16px; font-size:0.82rem; border-radius:10px; font-weight:700; background:var(--card-bg-hover); border:1.5px solid var(--card-border); color:var(--heading-color); cursor:pointer;">📥 Export Tab CSV</button>
+      <button type="button" class="btn btn-secondary" onclick="exportCurrentTabCSV()" style="padding:10px 18px; font-size:0.84rem; border-radius:12px; font-weight:750; display:inline-flex; align-items:center; gap:6px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        <span>Export Tab CSV</span>
+      </button>
     </div>
   </div>
 
   <div id="sessionsBox" class="session-list-wrapper"><div class="empty" style="border:none; background:transparent;">Loading sessions…</div></div>
-  <div id="paginationBox" style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:16px;"></div>
+  <div id="paginationBox" style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:20px;"></div>
 </div>
 
 <!-- Mobile & Tablet Bottom Navigation Dock Bar -->
@@ -1056,7 +1505,7 @@
           👤
         </div>
         <div>
-          <div style="font-weight:900; font-size:1.25rem; color:var(--heading-color); font-family:var(--font-heading);" id="profHeaderName">Student Profile</div>
+          <div style="font-weight:900; font-size:1.25rem; color:var(--heading-color);" id="profHeaderName">Student Profile</div>
           <div style="font-size:0.8rem; color:var(--cyan-accent); font-weight:700; display:flex; align-items:center; gap:8px; margin-top:2px;">
             <span class="mwalimu-chip" style="font-size:0.68rem; padding:3px 10px; border-radius:100px; background:rgba(2,132,199,0.15); border:1px solid var(--cyan-accent);" id="profHeaderRole">🎓 Student Candidate</span>
             <span id="profHeaderEmail" style="color:var(--text-muted);">student@virtulab.ke</span>

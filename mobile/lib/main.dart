@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'core/theme/stem_theme.dart';
 import 'core/storage/local_storage.dart';
 import 'features/auth/presentation/screens/auth_screen.dart';
@@ -14,72 +15,101 @@ void main() async {
   runApp(const ProviderScope(child: VirtuLabApp()));
 }
 
-class VirtuLabApp extends StatefulWidget {
+final routerProvider = Provider<GoRouter>((ref) {
+  return GoRouter(
+    initialLocation: '/',
+    redirect: (context, state) async {
+      final user = await LocalStorage.getUser();
+      final isAuthenticated = user != null;
+      final isAuthRoute = state.matchedLocation == '/auth';
+
+      if (!isAuthenticated && !isAuthRoute) {
+        return '/auth';
+      }
+      if (isAuthenticated && (isAuthRoute || state.matchedLocation == '/')) {
+        return '/dashboard';
+      }
+      return null;
+    },
+    routes: [
+      GoRoute(
+        path: '/',
+        builder: (context, state) => const Scaffold(
+          body: Center(child: CircularProgressIndicator()),
+        ),
+      ),
+      GoRoute(
+        path: '/auth',
+        builder: (context, state) => AuthScreen(
+          onAuthenticated: () => context.go('/dashboard'),
+        ),
+      ),
+      GoRoute(
+        path: '/dashboard',
+        builder: (context, state) => StudentDashboardScreen(
+          onOpenTitration: () => context.push('/titration'),
+          onOpenQualitative: () => context.push('/qualitative'),
+          onOpenMockExam: () => context.push('/mock_exam'),
+          onLogout: () async {
+            await LocalStorage.clearAuth();
+            if (context.mounted) {
+              context.go('/auth');
+            }
+          },
+        ),
+      ),
+      GoRoute(
+        path: '/titration',
+        builder: (context, state) => TitrationLabScreen(
+          onBack: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/dashboard');
+            }
+          },
+        ),
+      ),
+      GoRoute(
+        path: '/qualitative',
+        builder: (context, state) => QualitativeLabScreen(
+          onBack: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/dashboard');
+            }
+          },
+        ),
+      ),
+      GoRoute(
+        path: '/mock_exam',
+        builder: (context, state) => CompositeMockExamScreen(
+          onBack: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/dashboard');
+            }
+          },
+        ),
+      ),
+    ],
+  );
+});
+
+class VirtuLabApp extends ConsumerWidget {
   const VirtuLabApp({super.key});
 
   @override
-  State<VirtuLabApp> createState() => _VirtuLabAppState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final router = ref.watch(routerProvider);
 
-class _VirtuLabAppState extends State<VirtuLabApp> {
-  bool _isAuthenticated = false;
-  String _currentRoute = 'dashboard'; // 'dashboard', 'titration', 'qualitative', 'mock_exam'
-
-  @override
-  void initState() {
-    super.initState();
-    _checkInitialAuth();
-  }
-
-  Future<void> _checkInitialAuth() async {
-    final user = await LocalStorage.getUser();
-    if (user != null) {
-      setState(() => _isAuthenticated = true);
-    }
-  }
-
-  void _navigateTo(String route) {
-    setState(() => _currentRoute = route);
-  }
-
-  void _onLogout() async {
-    await LocalStorage.clearAuth();
-    setState(() {
-      _isAuthenticated = false;
-      _currentRoute = 'dashboard';
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'VirtuLab Kenya',
       debugShowCheckedModeBanner: false,
       theme: StemTheme.darkTheme,
-      home: !_isAuthenticated
-          ? AuthScreen(
-              onAuthenticated: () => setState(() => _isAuthenticated = true),
-            )
-          : _buildCurrentScreen(),
+      routerConfig: router,
     );
-  }
-
-  Widget _buildCurrentScreen() {
-    switch (_currentRoute) {
-      case 'titration':
-        return TitrationLabScreen(onBack: () => _navigateTo('dashboard'));
-      case 'qualitative':
-        return QualitativeLabScreen(onBack: () => _navigateTo('dashboard'));
-      case 'mock_exam':
-        return CompositeMockExamScreen(onBack: () => _navigateTo('dashboard'));
-      case 'dashboard':
-      default:
-        return StudentDashboardScreen(
-          onOpenTitration: () => _navigateTo('titration'),
-          onOpenQualitative: () => _navigateTo('qualitative'),
-          onOpenMockExam: () => _navigateTo('mock_exam'),
-          onLogout: _onLogout,
-        );
-    }
   }
 }

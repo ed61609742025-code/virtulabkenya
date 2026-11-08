@@ -43,6 +43,45 @@
 
   var t = localStorage.getItem('vlk_theme') || 'light';
   document.documentElement.setAttribute('data-theme', t);
+
+  window.switchTeacherTab = function switchTeacherTab(tabId) {
+    document.querySelectorAll('.tab-pane').forEach(function(el) { el.classList.remove('active'); });
+    document.querySelectorAll('.sidebar-nav-btn').forEach(function(el) { el.classList.remove('active'); });
+
+    var pane = document.getElementById(tabId);
+    if (pane) pane.classList.add('active');
+
+    var btnMap = {
+      'paneOverview': 'btnTabOverview',
+      'paneAssignments': 'btnTabAssignments',
+      'paneAiAssistant': 'btnTabAiAssistant',
+      'paneTelemetry': 'btnTabTelemetry',
+      'paneStudents': 'btnTabStudents',
+      'paneTitration': 'btnTabTitration',
+      'paneQualitative': 'btnTabQualitative',
+      'paneOrganic': 'btnTabOrganic',
+      'paneSolubility': 'btnTabSolubility',
+      'paneEnergy': 'btnTabEnergy',
+      'paneRates': 'btnTabRates',
+      'paneGas': 'btnTabGas',
+      'paneComposite': 'btnTabComposite',
+      'paneLeaderboard': 'btnTabLeaderboard',
+      'paneSettings': 'btnTabSettings'
+    };
+
+    var btnId = btnMap[tabId];
+    if (btnId) {
+      var btn = document.getElementById(btnId);
+      if (btn) btn.classList.add('active');
+    }
+
+    if (tabId === 'paneComposite' && typeof window.loadTeacherCompositeSessions === 'function') {
+      window.loadTeacherCompositeSessions();
+    }
+    if (tabId === 'paneStudents' && typeof window.loadStudents === 'function') {
+      window.loadStudents();
+    }
+  };
 </script>
 <meta name="theme-color" content="#0F172A">
 <meta name="mobile-web-app-capable" content="yes">
@@ -156,6 +195,13 @@
       <span style="display:flex;align-items:center;gap:8px;">
         <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
         <span>Class Overview</span>
+      </span>
+    </button>
+    <button class="sidebar-nav-btn" id="btnTabTelemetry" onclick="switchTeacherTab('paneTelemetry')">
+      <span style="display:flex;align-items:center;gap:8px;">
+        <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#10B981;box-shadow:0 0 8px #10B981;"></span>
+        <span>Live Lab Telemetry</span>
+        <span class="pill pill-success" id="sidebarLivePill" style="font-size:0.62rem;padding:1px 6px;margin-left:auto;">LIVE</span>
       </span>
     </button>
     <button class="sidebar-nav-btn" id="btnTabStudents" onclick="switchTeacherTab('paneStudents')">
@@ -275,6 +321,20 @@
         <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Class Performance Overview
       </h2>
       <div id="statStrip" class="stat-strip"></div>
+      
+      <!-- Live Classroom Pulse Banner in Overview -->
+      <div style="background:linear-gradient(135deg, rgba(16,185,129,0.08), rgba(59,130,246,0.06)); border:1px solid rgba(16,185,129,0.3); border-radius:12px; padding:14px 18px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#10B981;box-shadow:0 0 10px #10B981;"></span>
+          <div>
+            <div style="font-size:0.95rem; font-weight:800; color:var(--heading-color);">Real-Time Laboratory Telemetry Active</div>
+            <div style="font-size:0.8rem; color:var(--text-muted);" id="overviewTelemetrySub">Monitoring active student simulation benches, apparatus sensor states &amp; safety alerts.</div>
+          </div>
+        </div>
+        <button class="btn btn-sm btn-primary" onclick="switchTeacherTab('paneTelemetry')" style="background:#10B981; border:none; font-weight:700;">
+          ⚡ Open Live Telemetry Stream &rarr;
+        </button>
+      </div>
       <div class="charts-row">
         <div class="chart-card">
           <h3>Accuracy Over Time <span style="font-weight:400;font-size:0.68rem;color:var(--text-muted);">last 30 days</span></h3>
@@ -283,6 +343,120 @@
         <div class="chart-card">
           <h3>By Practical Type</h3>
           <div id="typeChartWrap"><canvas id="typeChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Pane: Live Laboratory Activity & Telemetry Monitor -->
+    <div id="paneTelemetry" class="tab-pane">
+      <div class="roster-header-bar" style="margin-bottom:18px;">
+        <div>
+          <h2 class="section-title" style="margin:0 0 4px 0; display:flex; align-items:center; gap:8px;">
+            <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#10B981;box-shadow:0 0 10px #10B981;"></span>
+            Real-Time Laboratory Activity &amp; Live Telemetry
+          </h2>
+          <p class="hint" style="margin:0;">Live apparatus telemetry feeds, active student benches, chemical reaction telemetry, safety alarms, and instructor interventions.</p>
+        </div>
+        <div class="roster-header-actions">
+          <button class="btn btn-sm btn-outline" id="btnToggleTelemetryPoll" onclick="toggleTelemetryPolling()">
+            ⏸ Pause Auto-Refresh
+          </button>
+          <button class="btn btn-sm btn-primary" onclick="loadLiveTelemetry(true)">
+            🔄 Refresh Stream
+          </button>
+          <button class="btn btn-sm" onclick="triggerSimulatedClassFeed()" title="Populate simulated KCSE chemistry benches for live demonstration">
+            ⚡ Demo Class Sim
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Telemetry Metric Strip -->
+      <div class="roster-stat-strip" style="margin-bottom:20px;">
+        <div class="stat-card">
+          <div class="stat-num" id="statLiveStudents" style="color:var(--green-accent);">0</div>
+          <div class="stat-label">Active Students in Lab</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="statLiveBenches" style="color:var(--blue-accent);">0</div>
+          <div class="stat-label">Active Lab Benches</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="statLiveSafety" style="color:var(--amber-accent);">0</div>
+          <div class="stat-label">Active Safety Alerts</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="statLiveCompliance" style="color:var(--heading-color);">100%</div>
+          <div class="stat-label">Protocol Compliance Rate</div>
+        </div>
+      </div>
+
+      <!-- Active Benches Grid -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <h3 style="margin:0; font-size:1.05rem; font-weight:800; color:var(--heading-color); display:flex; align-items:center; gap:6px;">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            Live Practical Benches &amp; Apparatus Rigs
+          </h3>
+          <span style="font-size:0.75rem; color:var(--text-muted);" id="telemetryLastSync">Syncing live…</span>
+        </div>
+
+        <div id="telemetryBenchesGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(340px, 1fr)); gap:16px;">
+          <div class="empty" style="grid-column:1/-1; padding:36px;">Connecting to laboratory telemetry stream…</div>
+        </div>
+      </div>
+
+      <!-- Live Safety & Chemistry Event Stream -->
+      <div>
+        <h3 style="margin:0 0 12px 0; font-size:1.05rem; font-weight:800; color:var(--heading-color); display:flex; align-items:center; gap:6px;">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Real-Time Laboratory Event Stream &amp; Safety Alarms
+        </h3>
+        <div id="telemetryEventStream" style="background:var(--card-bg, #fff); border:1px solid var(--border-color); border-radius:12px; max-height:260px; overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:8px;">
+          <div style="font-size:0.82rem; color:var(--text-muted); text-align:center; padding:16px;">No safety incidents logged in recent laboratory sessions.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Teacher Live Intervention -->
+    <div id="modalIntervention" class="modal-backdrop" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:9999; align-items:center; justify-content:center; padding:16px;">
+      <div class="modal-card" style="background:var(--card-bg, #fff); border-radius:14px; max-width:500px; width:100%; box-shadow:0 12px 32px rgba(0,0,0,0.25); border:1px solid var(--border-color); padding:24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+          <h3 style="margin:0; font-size:1.12rem; font-weight:800; color:var(--heading-color); display:flex; align-items:center; gap:6px;">
+            📢 Intervene at Bench
+          </h3>
+          <button type="button" class="btn btn-sm btn-icon" onclick="closeInterventionModal()">✕</button>
+        </div>
+        <p style="font-size:0.84rem; color:var(--text-muted); margin-top:0;">Send real-time instructor guidance or safety corrections directly to the student's active practical workbench.</p>
+        <input type="hidden" id="interveneStudentId" value="">
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div>
+            <label style="font-size:0.82rem; font-weight:700; color:var(--heading-color); display:block; margin-bottom:4px;">Recipient Student &amp; Bench</label>
+            <input type="text" id="interveneStudentName" class="form-control" readonly style="background:var(--bg-card-subtle, rgba(0,0,0,0.03)); font-weight:700;">
+          </div>
+          <div>
+            <label style="font-size:0.82rem; font-weight:700; color:var(--heading-color); display:block; margin-bottom:4px;">Guidance Notice Type</label>
+            <select id="interveneType" class="form-control">
+              <option value="guidance">💡 Instructor Tip / Technique</option>
+              <option value="caution">⚠️ Safety Warning / Caution</option>
+              <option value="stopcock_lock">🛑 Check Apparatus &amp; Slow Down</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:0.82rem; font-weight:700; color:var(--heading-color); display:block; margin-bottom:4px;">Message to Student *</label>
+            <textarea id="interveneMsg" class="form-control" rows="3" placeholder="e.g. Slow down your stopcock near the pale pink endpoint! Add dropwise and swirl."></textarea>
+          </div>
+          <div>
+            <span style="font-size:0.75rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">Quick Instruction Templates:</span>
+            <div style="display:flex; flex-wrap:wrap; gap:6px;">
+              <button type="button" class="btn btn-sm btn-outline" style="font-size:0.72rem; padding:3px 8px;" onclick="setInterventionPreset('Slow down stopcock — add dropwise near endpoint!')">Dropwise endpoint</button>
+              <button type="button" class="btn btn-sm btn-outline" style="font-size:0.72rem; padding:3px 8px;" onclick="setInterventionPreset('Stir thoroughly with thermometer before recording final temperature.')">Stir calorimeter</button>
+              <button type="button" class="btn btn-sm btn-outline" style="font-size:0.72rem; padding:3px 8px;" onclick="setInterventionPreset('Observe initial precipitate before adding excess reagent.')">Qualitative excess</button>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+          <button type="button" class="btn" onclick="closeInterventionModal()">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="sendInterventionSubmit()">Send Guidance</button>
         </div>
       </div>
     </div>
@@ -921,91 +1095,293 @@
 
     <!-- Tab Pane 3: Students -->
     <div id="paneStudents" class="tab-pane">
-      <div class="roster-header-bar">
-        <div>
-          <h2 class="section-title" style="margin:0 0 4px 0;">
-            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Class Roster &amp; Student Performance
-          </h2>
-          <p class="hint" style="margin:0;">Manage enrolled students, sync class rosters, review practical trial metrics, and issue credentials.</p>
-        </div>
-        <div class="roster-header-actions">
-          <div class="teacher-code-badge">
-            <span class="tc-label">Class Code:</span>
-            <code id="teacherCodeRosterPill" class="tc-code">—</code>
-            <button class="btn btn-sm" onclick="copyTeacherCode()" title="Copy Teacher Code">
-              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:middle;margin-right:4px;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy
+      <!-- Sub-Tabs Navigation for Student Management -->
+      <div class="student-subnav-pills" style="display:flex; gap:10px; margin-bottom:18px; border-bottom:1px solid var(--border-color); padding-bottom:12px; flex-wrap:wrap;">
+        <button type="button" class="btn btn-sm btn-primary" id="subtabBtnRoster" onclick="switchStudentSubTab('roster')">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;margin-right:6px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Student Roster &amp; Profiles
+        </button>
+        <button type="button" class="btn btn-sm btn-outline" id="subtabBtnAttendance" onclick="switchStudentSubTab('attendance')">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;margin-right:6px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Practical Lab Attendance
+        </button>
+        <button type="button" class="btn btn-sm btn-outline" id="subtabBtnWorkgroups" onclick="switchStudentSubTab('workgroups')">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;margin-right:6px;"><path d="M18 21a8 8 0 0 0-16 0"/><circle cx="10" cy="8" r="5"/><path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"/></svg>
+          Lab Workgroups &amp; Benches
+        </button>
+      </div>
+
+      <!-- 1. Sub-View: Student Roster -->
+      <div id="studentSubViewRoster">
+        <div class="roster-header-bar">
+          <div>
+            <h2 class="section-title" style="margin:0 0 4px 0;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Class Roster &amp; Student Performance
+            </h2>
+            <p class="hint" style="margin:0;">Manage enrolled students, sync class rosters, review practical trial metrics, and issue credentials.</p>
+          </div>
+          <div class="roster-header-actions">
+            <div class="teacher-code-badge">
+              <span class="tc-label">Class Code:</span>
+              <code id="teacherCodeRosterPill" class="tc-code">—</code>
+              <button class="btn btn-sm" onclick="copyTeacherCode()" title="Copy Teacher Code">
+                <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:middle;margin-right:4px;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy
+              </button>
+            </div>
+            <button class="btn btn-primary" onclick="openBulkImportModal()">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Bulk Import CSV / Excel
+            </button>
+            <button class="btn" onclick="downloadCsvTemplate()" title="Download a pre-formatted CSV template">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Template
+            </button>
+            <button class="btn" onclick="exportClassRosterCSV()" title="Export current student roster to CSV">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export Roster
             </button>
           </div>
-          <button class="btn btn-primary" onclick="openBulkImportModal()">
-            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Bulk Import CSV / Excel
-          </button>
-          <button class="btn" onclick="downloadCsvTemplate()" title="Download a pre-formatted CSV template">
-            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Template
-          </button>
-          <button class="btn" onclick="exportClassRosterCSV()" title="Export current student roster to CSV">
-            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export Roster
-          </button>
         </div>
-      </div>
 
-      <!-- Quick Roster Stat Strip -->
-      <div class="roster-stat-strip" id="rosterStatStrip">
-        <div class="stat-card">
-          <div class="stat-num" id="statTotalStudents">0</div>
-          <div class="stat-label">Enrolled Students</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-num" id="statFormBreakdown" style="font-size:0.95rem; display:flex; gap:6px; justify-content:center; align-items:center; flex-wrap:wrap;">
-            <span title="Form 1" class="form-stat-pill">F1: <b id="statF1">0</b></span>
-            <span title="Form 2" class="form-stat-pill">F2: <b id="statF2">0</b></span>
-            <span title="Form 3" class="form-stat-pill">F3: <b id="statF3">0</b></span>
-            <span title="Form 4" class="form-stat-pill">F4: <b id="statF4">0</b></span>
+        <!-- Quick Roster Stat Strip -->
+        <div class="roster-stat-strip" id="rosterStatStrip">
+          <div class="stat-card">
+            <div class="stat-num" id="statTotalStudents">0</div>
+            <div class="stat-label">Enrolled Students</div>
           </div>
-          <div class="stat-label">Form Breakdown</div>
+          <div class="stat-card">
+            <div class="stat-num" id="statFormBreakdown" style="font-size:0.95rem; display:flex; gap:6px; justify-content:center; align-items:center; flex-wrap:wrap;">
+              <span title="Form 1" class="form-stat-pill">F1: <b id="statF1">0</b></span>
+              <span title="Form 2" class="form-stat-pill">F2: <b id="statF2">0</b></span>
+              <span title="Form 3" class="form-stat-pill">F3: <b id="statF3">0</b></span>
+              <span title="Form 4" class="form-stat-pill">F4: <b id="statF4">0</b></span>
+            </div>
+            <div class="stat-label">Form Breakdown</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="statClassAccuracy" style="color:var(--green-accent);">0%</div>
+            <div class="stat-label">Class Avg Accuracy</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="statTotalPracticals" style="color:var(--blue-accent);">0</div>
+            <div class="stat-label">Practicals Completed</div>
+          </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-num" id="statClassAccuracy" style="color:var(--green-accent);">0%</div>
-          <div class="stat-label">Class Avg Accuracy</div>
+
+        <!-- Roster Search & Filter Toolbar -->
+        <div class="roster-filter-toolbar">
+          <div class="search-input-wrap">
+            <span class="search-icon" style="display:inline-flex;align-items:center;justify-content:center;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </span>
+            <input type="text" id="rosterSearchInput" class="roster-search-input" placeholder="Search students by name or email..." oninput="filterRoster()">
+            <button type="button" id="rosterSearchClear" class="search-clear-btn" onclick="clearRosterSearch()" style="display:none;">✕</button>
+          </div>
+          <div class="filter-controls">
+            <select id="rosterFormFilter" class="filter-select" onchange="filterRoster()">
+              <option value="">All Forms (Form 1 – 4)</option>
+              <option value="Form 1">Form 1</option>
+              <option value="Form 2">Form 2</option>
+              <option value="Form 3">Form 3</option>
+              <option value="Form 4">Form 4</option>
+            </select>
+            <select id="rosterSortFilter" class="filter-select" onchange="filterRoster()">
+              <option value="name_asc">Sort: Name (A → Z)</option>
+              <option value="name_desc">Sort: Name (Z → A)</option>
+              <option value="practicals_desc">Sort: Most Practicals Done</option>
+              <option value="accuracy_desc">Sort: Highest Accuracy</option>
+              <option value="recent_active">Sort: Recently Active</option>
+            </select>
+            <button class="btn btn-sm" onclick="loadStudents()" title="Refresh Roster">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:middle;margin-right:4px;"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>Refresh
+            </button>
+          </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-num" id="statTotalPracticals" style="color:var(--blue-accent);">0</div>
-          <div class="stat-label">Practicals Completed</div>
+
+        <!-- Enriched Student List Container -->
+        <div id="studentsList" class="roster-student-list">
+          <div class="empty">Loading student roster…</div>
         </div>
       </div>
 
-      <!-- Roster Search & Filter Toolbar -->
-      <div class="roster-filter-toolbar">
-        <div class="search-input-wrap">
-          <span class="search-icon" style="display:inline-flex;align-items:center;justify-content:center;">
-            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          </span>
-          <input type="text" id="rosterSearchInput" class="roster-search-input" placeholder="Search students by name or email..." oninput="filterRoster()">
-          <button type="button" id="rosterSearchClear" class="search-clear-btn" onclick="clearRosterSearch()" style="display:none;">✕</button>
+      <!-- 2. Sub-View: Practical Lab Attendance -->
+      <div id="studentSubViewAttendance" style="display:none;">
+        <div class="roster-header-bar">
+          <div>
+            <h2 class="section-title" style="margin:0 0 4px 0;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Practical Session Attendance Register
+            </h2>
+            <p class="hint" style="margin:0;">Take roll call for practical sessions, mark attendance status, log laboratory attendance records, and export reports.</p>
+          </div>
+          <div class="roster-header-actions">
+            <button class="btn btn-outline btn-sm" onclick="markAllAttendance('present')">
+              ✓ Mark All Present
+            </button>
+            <button class="btn btn-primary btn-sm" id="btnSaveAttendance" onclick="saveAttendanceRegister()">
+              💾 Save Register
+            </button>
+            <button class="btn btn-sm" onclick="exportAttendanceCSV()" title="Export Attendance Register CSV">
+              📥 Export CSV
+            </button>
+          </div>
         </div>
-        <div class="filter-controls">
-          <select id="rosterFormFilter" class="filter-select" onchange="filterRoster()">
-            <option value="">All Forms (Form 1 – 4)</option>
-            <option value="Form 1">Form 1</option>
-            <option value="Form 2">Form 2</option>
-            <option value="Form 3">Form 3</option>
-            <option value="Form 4">Form 4</option>
-          </select>
-          <select id="rosterSortFilter" class="filter-select" onchange="filterRoster()">
-            <option value="name_asc">Sort: Name (A → Z)</option>
-            <option value="name_desc">Sort: Name (Z → A)</option>
-            <option value="practicals_desc">Sort: Most Practicals Done</option>
-            <option value="accuracy_desc">Sort: Highest Accuracy</option>
-            <option value="recent_active">Sort: Recently Active</option>
-          </select>
-          <button class="btn btn-sm" onclick="loadStudents()" title="Refresh Roster">
+
+        <!-- Attendance Filter Toolbar -->
+        <div class="roster-filter-toolbar" style="margin-bottom:14px;">
+          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <label style="font-size:0.82rem; font-weight:700; color:var(--heading-color);">Date:</label>
+            <input type="date" id="attDateInput" class="filter-select" onchange="loadAttendanceRegister()" style="padding:6px 10px;">
+
+            <label style="font-size:0.82rem; font-weight:700; color:var(--heading-color); margin-left:8px;">Practical Module:</label>
+            <select id="attPracticalSelect" class="filter-select" onchange="loadAttendanceRegister()">
+              <option value="general">General Chemistry Practical</option>
+              <option value="titration">Volumetric Titration</option>
+              <option value="qualitative">Qualitative Analysis</option>
+              <option value="organic">Organic Chemistry</option>
+              <option value="solubility">Solubility Curves</option>
+              <option value="energy">Thermochemistry / Energy</option>
+              <option value="rates">Reaction Rates</option>
+              <option value="gas">Gas Preparation</option>
+              <option value="kcseComposite">KCSE Composite Mock</option>
+            </select>
+
+            <label style="font-size:0.82rem; font-weight:700; color:var(--heading-color); margin-left:8px;">Form:</label>
+            <select id="attFormFilter" class="filter-select" onchange="loadAttendanceRegister()">
+              <option value="">All Forms</option>
+              <option value="Form 1">Form 1</option>
+              <option value="Form 2">Form 2</option>
+              <option value="Form 3">Form 3</option>
+              <option value="Form 4">Form 4</option>
+            </select>
+          </div>
+          <div>
+            <span id="attStatsBadge" class="pill pill-info" style="font-size:0.82rem; padding:6px 12px;">Roll: 0 Students</span>
+          </div>
+        </div>
+
+        <!-- Attendance Records Container -->
+        <div id="attendanceContainer" style="background:var(--card-bg, #fff); border:1px solid var(--border-color); border-radius:12px; overflow:hidden;">
+          <div class="empty" style="padding:32px;">Loading attendance register…</div>
+        </div>
+      </div>
+
+      <!-- 3. Sub-View: Lab Workgroups & Benches -->
+      <div id="studentSubViewWorkgroups" style="display:none;">
+        <div class="roster-header-bar">
+          <div>
+            <h2 class="section-title" style="margin:0 0 4px 0;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;"><path d="M18 21a8 8 0 0 0-16 0"/><circle cx="10" cy="8" r="5"/><path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"/></svg>Practical Lab Workgroups &amp; Benches
+            </h2>
+            <p class="hint" style="margin:0;">Organize students into bench teams, assign laboratory station duties (Team Lead, Lab Tech, Recorder), or auto-distribute classes.</p>
+          </div>
+          <div class="roster-header-actions">
+            <button class="btn btn-outline btn-sm" onclick="openAutoAssignModal()">
+              ⚡ Auto-Assign Benches
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="openCreateWorkgroupModal()">
+              ➕ Create Workgroup
+            </button>
+          </div>
+        </div>
+
+        <div class="roster-filter-toolbar" style="margin-bottom:16px;">
+          <div style="display:flex; gap:10px; align-items:center;">
+            <label style="font-size:0.82rem; font-weight:700; color:var(--heading-color);">Filter Form:</label>
+            <select id="wgFormFilter" class="filter-select" onchange="loadWorkgroups()">
+              <option value="">All Forms</option>
+              <option value="Form 1">Form 1</option>
+              <option value="Form 2">Form 2</option>
+              <option value="Form 3">Form 3</option>
+              <option value="Form 4">Form 4</option>
+            </select>
+          </div>
+          <button class="btn btn-sm" onclick="loadWorkgroups()" title="Refresh Workgroups">
             <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:middle;margin-right:4px;"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>Refresh
           </button>
         </div>
-      </div>
 
-      <!-- Enriched Student List Container -->
-      <div id="studentsList" class="roster-student-list">
-        <div class="empty">Loading student roster…</div>
+        <!-- Workgroups Grid -->
+        <div id="workgroupsGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:16px;">
+          <div class="empty" style="grid-column:1/-1; padding:32px;">Loading lab workgroups…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Create / Edit Lab Workgroup -->
+    <div id="modalWorkgroup" class="modal-backdrop" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:9999; align-items:center; justify-content:center; padding:16px;">
+      <div class="modal-card" style="background:var(--card-bg, #fff); border-radius:14px; max-width:550px; width:100%; max-height:90vh; overflow-y:auto; box-shadow:0 12px 32px rgba(0,0,0,0.25); border:1px solid var(--border-color); padding:24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <h3 id="modalWgTitle" style="margin:0; font-size:1.15rem; font-weight:800; color:var(--heading-color);">Create Lab Workgroup</h3>
+          <button type="button" class="btn btn-sm btn-icon" onclick="closeWorkgroupModal()" style="font-size:1.1rem; line-height:1;">✕</button>
+        </div>
+        <input type="hidden" id="wgEditId" value="">
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div>
+            <label style="font-size:0.82rem; font-weight:700; color:var(--heading-color); display:block; margin-bottom:4px;">Workgroup / Bench Name *</label>
+            <input type="text" id="wgNameInput" class="form-control" placeholder="e.g. Lab Bench 1: Burette Station">
+          </div>
+          <div>
+            <label style="font-size:0.82rem; font-weight:700; color:var(--heading-color); display:block; margin-bottom:4px;">Form</label>
+            <select id="wgFormSelect" class="form-control" onchange="renderWgMemberSelectors()">
+              <option value="Form 4">Form 4</option>
+              <option value="Form 3">Form 3</option>
+              <option value="Form 2">Form 2</option>
+              <option value="Form 1">Form 1</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:0.82rem; font-weight:700; color:var(--heading-color); display:block; margin-bottom:4px;">Description / Apparatus Rig</label>
+            <input type="text" id="wgDescInput" class="form-control" placeholder="e.g. Redox titration bench with 50ml burettes & conical flasks">
+          </div>
+          <div>
+            <label style="font-size:0.82rem; font-weight:700; color:var(--heading-color); display:block; margin-bottom:6px;">Assign Members &amp; Duties</label>
+            <div id="wgMembersPicker" style="max-height:220px; overflow-y:auto; border:1px solid var(--border-color); border-radius:8px; padding:8px; display:flex; flex-direction:column; gap:6px;">
+              <!-- Student check rows rendered dynamically -->
+            </div>
+          </div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+          <button type="button" class="btn" onclick="closeWorkgroupModal()">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="saveWorkgroupModal()">Save Workgroup</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Auto-Assign Lab Benches -->
+    <div id="modalAutoAssign" class="modal-backdrop" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:9999; align-items:center; justify-content:center; padding:16px;">
+      <div class="modal-card" style="background:var(--card-bg, #fff); border-radius:14px; max-width:480px; width:100%; box-shadow:0 12px 32px rgba(0,0,0,0.25); border:1px solid var(--border-color); padding:24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <h3 style="margin:0; font-size:1.15rem; font-weight:800; color:var(--heading-color);">⚡ Auto-Assign Lab Benches</h3>
+          <button type="button" class="btn btn-sm btn-icon" onclick="closeAutoAssignModal()" style="font-size:1.1rem; line-height:1;">✕</button>
+        </div>
+        <p style="font-size:0.86rem; color:var(--text-muted); margin-top:0;">Automatically distribute students into lab bench workgroups with balanced roles (Team Lead, Lab Tech, Data Recorder, Safety Officer).</p>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div>
+            <label style="font-size:0.82rem; font-weight:700; color:var(--heading-color); display:block; margin-bottom:4px;">Target Form</label>
+            <select id="autoAssignForm" class="form-control">
+              <option value="">All Enrolled Students</option>
+              <option value="Form 4" selected>Form 4</option>
+              <option value="Form 3">Form 3</option>
+              <option value="Form 2">Form 2</option>
+              <option value="Form 1">Form 1</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:0.82rem; font-weight:700; color:var(--heading-color); display:block; margin-bottom:4px;">Students per Bench</label>
+            <select id="autoAssignSize" class="form-control">
+              <option value="2">2 Students (Pairs)</option>
+              <option value="3">3 Students</option>
+              <option value="4" selected>4 Students (Recommended for KCSE)</option>
+              <option value="5">5 Students</option>
+              <option value="6">6 Students</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:0.82rem; font-weight:700; color:var(--heading-color); display:block; margin-bottom:4px;">Bench Naming Prefix</label>
+            <input type="text" id="autoAssignPrefix" class="form-control" value="Lab Bench" placeholder="e.g. Lab Bench, Station, Practical Group">
+          </div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+          <button type="button" class="btn" onclick="closeAutoAssignModal()">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="executeAutoAssign()">Run Auto-Assignment</button>
+        </div>
       </div>
     </div>
 
@@ -1097,6 +1473,9 @@
           <p class="hint" style="margin:0;">Full-scale national mock exam submissions with volumetric titration, inorganic salts, and organic qualitative analysis.</p>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button type="button" class="btn btn-secondary" onclick="openSupervisorCalibrationModal()" style="font-size:0.8rem; padding:7px 14px; border-color:var(--amber-accent); color:var(--amber-accent);">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:middle;margin-right:4px;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>⚙️ Calibrate Supervisor Titre
+          </button>
           <button type="button" class="btn btn-secondary" onclick="exportTeacherCompositeCsv()" style="font-size:0.8rem; padding:7px 14px;">
             <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:middle;margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export All CSV
           </button>
@@ -1194,6 +1573,116 @@
 
       <!-- Candidate Submissions Ledger Box -->
       <div id="compositeSessionsBox"><div class="empty">Loading composite exam sessions…</div></div>
+    </div>
+
+    <!-- Teacher KNEC Supervisor Titre Calibration Modal -->
+    <div id="supervisorCalibrationModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(6px); z-index:20000; align-items:center; justify-content:center; padding:16px;">
+      <div style="background:var(--card-bg); border:1px solid var(--card-border); border-radius:16px; max-width:760px; width:100%; max-height:92vh; overflow-y:auto; padding:24px; box-shadow:var(--shadow-lg); color:var(--text-main);">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid var(--card-border); padding-bottom:14px; margin-bottom:16px;">
+          <div>
+            <span style="background:var(--amber-accent); color:#fff; font-size:0.68rem; font-weight:800; padding:2px 8px; border-radius:4px; font-family:var(--font-mono);">KNEC PRACTICAL STANDARDS</span>
+            <h3 style="font-size:1.2rem; font-weight:800; margin-top:4px; color:var(--heading-color);">⚙️ Supervisor Titre &amp; Marking Scheme Calibration</h3>
+            <div style="font-size:0.8rem; color:var(--text-muted);">Calibrate School Supervisor morning values (KCSE 233/3) and synchronize candidate cohort scores.</div>
+          </div>
+          <button type="button" class="btn btn-secondary" onclick="closeSupervisorCalibrationModal()" style="padding:4px 10px; font-size:0.85rem;">✕ Close</button>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          <!-- Assignment Selector -->
+          <div style="background:var(--bg-dark); border:1px solid var(--card-border); border-radius:10px; padding:12px;">
+            <label style="display:block; font-size:0.8rem; font-weight:700; margin-bottom:6px; color:var(--heading-color);">Select Practical Assignment to Calibrate</label>
+            <select id="calibAssignmentSelect" class="form-control" onchange="onCalibrationAssignmentChange()" style="font-size:0.85rem; padding:8px 12px; width:100%;">
+              <option value="">-- Choose an Assignment --</option>
+            </select>
+          </div>
+
+          <!-- Quantitative Titration Calibration (Question 1) -->
+          <div style="background:var(--bg-dark); border:1px solid var(--card-border); border-radius:10px; padding:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span style="font-weight:800; font-size:0.85rem; color:var(--cyan-accent); text-transform:uppercase;">🧪 Question 1: Volumetric Analysis (Table 1)</span>
+              <span class="badge" style="background:rgba(56,189,248,0.12); color:#0284C7; font-size:0.7rem; font-weight:700;">Table 1 (5 Marks)</span>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div>
+                <label style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-muted); margin-bottom:4px;">Supervisor Titre (V_t in cm³)</label>
+                <input type="number" id="calibSupervisorTitre" class="form-control" step="0.05" min="1.0" max="50.0" value="20.00" style="font-family:var(--font-mono); font-size:0.9rem; font-weight:700; padding:8px 12px;">
+                <span style="font-size:0.7rem; color:var(--text-muted);">Morning teacher titration value. Strict 2 d.p.</span>
+              </div>
+              <div>
+                <label style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-muted); margin-bottom:4px;">KNEC Accuracy Tolerance</label>
+                <select id="calibTolerance" class="form-control" style="font-size:0.85rem; padding:8px 12px;">
+                  <option value="0.20">±0.20 cm³ (Standard KCSE Window)</option>
+                  <option value="0.10">±0.10 cm³ (Strict Marking Scheme)</option>
+                </select>
+                <span style="font-size:0.7rem; color:var(--text-muted);">±0.10 cm³ = 1.0 mk; ±0.20 cm³ = 0.5 mk</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Qualitative Analysis Calibration (Questions 2 & 3) -->
+          <div style="background:var(--bg-dark); border:1px solid var(--card-border); border-radius:10px; padding:14px;">
+            <div style="font-weight:800; font-size:0.85rem; color:var(--amber-accent); text-transform:uppercase; margin-bottom:10px;">
+              🔬 Questions 2 &amp; 3: Qualitative Chemistry Standards
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+              <div>
+                <label style="display:block; font-size:0.76rem; font-weight:700; color:var(--text-muted); margin-bottom:4px;">True Cation</label>
+                <select id="calibTrueCation" class="form-control" style="font-size:0.82rem; padding:6px 10px;">
+                  <option value="Fe2+">Fe²⁺ (Iron II)</option>
+                  <option value="Fe3+">Fe³⁺ (Iron III)</option>
+                  <option value="Al3+">Al³⁺ (Aluminium)</option>
+                  <option value="Zn2+">Zn²⁺ (Zinc)</option>
+                  <option value="Pb2+">Pb²⁺ (Lead)</option>
+                  <option value="Cu2+">Cu²⁺ (Copper II)</option>
+                  <option value="Ca2+">Ca²⁺ (Calcium)</option>
+                  <option value="NH4+">NH₄⁺ (Ammonium)</option>
+                </select>
+              </div>
+              <div>
+                <label style="display:block; font-size:0.76rem; font-weight:700; color:var(--text-muted); margin-bottom:4px;">True Anion</label>
+                <select id="calibTrueAnion" class="form-control" style="font-size:0.82rem; padding:6px 10px;">
+                  <option value="SO4 2-">SO₄²⁻ (Sulphate)</option>
+                  <option value="SO3 2-">SO₃²⁻ (Sulphite)</option>
+                  <option value="CO3 2-">CO₃²⁻ (Carbonate)</option>
+                  <option value="Cl-">Cl⁻ (Chloride)</option>
+                  <option value="NO3-">NO₃⁻ (Nitrate)</option>
+                </select>
+              </div>
+              <div>
+                <label style="display:block; font-size:0.76rem; font-weight:700; color:var(--text-muted); margin-bottom:4px;">Organic Group</label>
+                <select id="calibTrueOrg" class="form-control" style="font-size:0.82rem; padding:6px 10px;">
+                  <option value="Alkanol">R-OH (Alkanol / Alcohol)</option>
+                  <option value="Carboxylic Acid">R-COOH (Carboxylic Acid)</option>
+                  <option value="Alkene">C=C (Alkene / Unsaturated)</option>
+                  <option value="Saturated Hydrocarbon">C-C (Saturated Hydrocarbon)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div>
+            <label style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-muted); margin-bottom:4px;">Examiner Observation Guidelines &amp; Notes</label>
+            <textarea id="calibNotes" class="form-control" rows="2" placeholder="e.g. Solution A turns pale green; indicator end point sharp faint pink at 20.10 cm³..." style="font-size:0.82rem; padding:8px;"></textarea>
+          </div>
+
+          <!-- Status Message Strip -->
+          <div id="calibStatusMsg" style="display:none; padding:10px 14px; border-radius:8px; font-size:0.82rem; font-weight:700;"></div>
+        </div>
+
+        <!-- Action Strip -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px; border-top:1px solid var(--card-border); padding-top:14px; flex-wrap:wrap; gap:10px;">
+          <button type="button" class="btn btn-secondary" onclick="closeSupervisorCalibrationModal()">Cancel</button>
+          <div style="display:flex; gap:10px;">
+            <button type="button" class="btn btn-secondary" id="btnSyncScores" onclick="syncSupervisorScores()" style="border-color:var(--cyan-accent); color:var(--cyan-accent); font-weight:700;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>🔄 Re-evaluate &amp; Sync Cohort Scores
+            </button>
+            <button type="button" class="btn btn-primary" id="btnSaveCalibration" onclick="saveSupervisorCalibration()" style="font-weight:800; background:linear-gradient(135deg, #0284C7, #0369A1);">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Save Calibration
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Interactive Teacher Marked Script Review Modal -->

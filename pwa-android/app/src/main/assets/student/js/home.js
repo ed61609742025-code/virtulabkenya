@@ -1,180 +1,135 @@
 /**
  * VirtuLab Kenya — Student Home Workstation Script
  */
+
 // Tab switching handler
-    function switchStudentSubTab(tabId, isUserGesture = true) {
-      const tabs = ['benches', 'reference', 'achievements', 'research'];
-      if (!tabs.includes(tabId)) tabId = 'benches';
+function switchStudentSubTab(tabId, isUserGesture = true) {
+  if (tabId === 'reference') {
+    window.location.href = 'reference.html';
+    return;
+  }
+  if (tabId === 'achievements') {
+    window.location.href = 'history.html';
+    return;
+  }
+  const tabs = ['benches', 'research'];
+  if (!tabs.includes(tabId)) tabId = 'benches';
 
-      if (isUserGesture && window.BrilliantUI) {
-        window.BrilliantUI.audio.playClick();
-        window.BrilliantUI.vibrate(10);
-      }
+  if (isUserGesture && window.BrilliantUI) {
+    window.BrilliantUI.audio.playClick();
+    window.BrilliantUI.vibrate(10);
+  }
 
-      tabs.forEach(t => {
-        const btn = document.getElementById(`tabBtn_${t}`);
-        const mBtn = document.getElementById(`mTabBtn_${t}`);
-        const panel = document.getElementById(`panel_${t}`);
+  tabs.forEach(t => {
+    const btn = document.getElementById(`tabBtn_${t}`);
+    const mBtn = document.getElementById(`mTabBtn_${t}`);
+    const panel = document.getElementById(`panel_${t}`);
 
-        const isActive = (t === tabId);
-        if (btn) {
-          btn.classList.toggle('active', isActive);
-          btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
-        }
-        if (mBtn) {
-          mBtn.classList.toggle('active', isActive);
-          mBtn.setAttribute('aria-selected', isActive ? 'true' : 'false');
-        }
-        if (panel) panel.classList.toggle('active', isActive);
-      });
-
-      // Auto-scroll active subtab button into view on mobile
-      const activeBtn = document.getElementById(`tabBtn_${tabId}`);
-      if (activeBtn && typeof activeBtn.scrollIntoView === 'function' && window.innerWidth <= 768) {
-        try {
-          activeBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-        } catch (err) {}
-      }
-
-      // Update URL hash without jumping
-      history.replaceState(null, null, `#${tabId}`);
-
-      // Resize and re-align charts if switching to achievements tab
-      if (tabId === 'achievements') {
-        if (typeof window.ensureChartJs === 'function') {
-          window.ensureChartJs(() => {
-            if (typeof window.resizeStudentCharts === 'function') {
-              setTimeout(window.resizeStudentCharts, 60);
-            }
-          });
-        } else if (typeof window.resizeStudentCharts === 'function') {
-          setTimeout(window.resizeStudentCharts, 60);
-        }
-      }
+    const isActive = (t === tabId);
+    if (btn) {
+      btn.classList.toggle('active', isActive);
+      btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
     }
-
-    // Toggle user profile dropdown / mobile bottom sheet
-    function toggleUserDropdown(e) {
-      if (e) e.stopPropagation();
-      const dropdown = document.getElementById('userDropdown');
-      const backdrop = document.getElementById('userBackdrop');
-      if (dropdown) {
-        const isHidden = dropdown.style.display === 'none' || dropdown.style.display === '';
-        dropdown.style.display = isHidden ? 'block' : 'none';
-        if (backdrop) {
-          backdrop.style.display = isHidden ? 'block' : 'none';
-        }
-        // Sync avatar initials into sheet
-        const mainAvatar = document.getElementById('heroStudentAvatar');
-        const sheetAvatar = document.getElementById('sheetStudentAvatar');
-        if (mainAvatar && sheetAvatar) {
-          sheetAvatar.textContent = mainAvatar.textContent || 'ST';
-        }
-        if (isHidden && window.innerWidth <= 768) {
-          document.body.style.overflow = 'hidden';
-        } else {
-          document.body.style.overflow = '';
-        }
-      }
+    if (mBtn) {
+      mBtn.classList.toggle('active', isActive);
+      mBtn.setAttribute('aria-selected', isActive ? 'true' : 'false');
     }
+    if (panel) panel.classList.toggle('active', isActive);
+  });
 
-    function closeUserDropdown() {
-      const dropdown = document.getElementById('userDropdown');
-      const backdrop = document.getElementById('userBackdrop');
-      if (dropdown) dropdown.style.display = 'none';
-      if (backdrop) backdrop.style.display = 'none';
-      document.body.style.overflow = '';
+  // Auto-scroll active subtab button into view on mobile
+  const activeBtn = document.getElementById(`tabBtn_${tabId}`);
+  if (activeBtn && typeof activeBtn.scrollIntoView === 'function' && window.innerWidth <= 768) {
+    try {
+      activeBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    } catch (err) {}
+  }
+
+  // Update URL hash without jumping
+  // Smooth scroll into target panel if clicked by user
+  if (isUserGesture && tabId === 'research') {
+    const researchPanel = document.getElementById('panel_research');
+    if (researchPanel) {
+      setTimeout(() => {
+        researchPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
     }
-
-    // Toggle password update panel
-    function togglePasswordPanel() {
-      const wrap = document.getElementById('passwordPanelWrap');
-      if (wrap) {
-        wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
-        if (wrap.style.display === 'block') {
-          wrap.scrollIntoView({ behavior: 'smooth' });
-          // Populate hidden username field from JWT so the browser password
-          // manager knows which account this credential change belongs to.
-          try {
-            const tok = localStorage.getItem('vlk_token') || sessionStorage.getItem('vlk_token');
-            if (tok) {
-              const payload = JSON.parse(atob(tok.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
-              const emailField = document.getElementById('pwUsername');
-              if (emailField && payload.email) emailField.value = payload.email;
-            }
-          } catch (e) { /* non-fatal */ }
-        }
-      }
-      closeUserDropdown();
+  } else if (isUserGesture && tabId === 'benches') {
+    const dashboardTop = document.querySelector('.candidate-hero-bar');
+    if (dashboardTop) {
+      setTimeout(() => {
+        dashboardTop.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
     }
+  }
 
-    // Close user dropdown on outer click
-    document.addEventListener('click', (e) => {
-      const userDropdown = document.getElementById('userDropdown');
-      const userMenuBtn = document.getElementById('userMenuBtn');
-      const bnavProfile = document.getElementById('bnav-profile');
-      if (userDropdown && userDropdown.style.display === 'block') {
-        const clickedInside = userDropdown.contains(e.target) || 
-                              (userMenuBtn && userMenuBtn.contains(e.target)) ||
-                              (bnavProfile && bnavProfile.contains(e.target));
-        if (!clickedInside) {
-          closeUserDropdown();
+  // Update URL hash without jumping
+  history.replaceState(null, null, "#" + tabId);
+}
+
+// Redirect helpers for Profile & Settings
+function toggleUserDropdown(e) {
+  if (e) e.stopPropagation();
+  window.location.href = 'profile.html';
+}
+
+function closeUserDropdown() {}
+
+function togglePasswordPanel() {
+  window.location.href = 'profile.html#securitySection';
+}
+
+function toggleTeacherLinkPanel() {
+  window.location.href = 'profile.html#classroomSection';
+}
+
+// Focus assignments section helper
+function focusAssignmentsSection(e) {
+  if (e) e.preventDefault();
+  switchStudentSubTab('benches', !!e);
+  const targetEl = document.getElementById('zone_assignments');
+  if (targetEl) {
+    targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  history.replaceState(null, null, '#assignments');
+}
+
+// Handle initial tab hash on page load
+window.addEventListener('DOMContentLoaded', () => {
+  const hash = window.location.hash.replace('#', '');
+  if (hash === 'assignments') {
+    focusAssignmentsSection();
+  } else if (hash === 'reference') {
+    window.location.href = 'reference.html';
+  } else if (hash === 'achievements') {
+    window.location.href = 'history.html';
+  } else if (hash && ['benches', 'research'].includes(hash)) {
+    switchStudentSubTab(hash, false);
+  }
+
+  // Smooth scroll for quick-jump navigation
+  document.querySelectorAll('.quick-jump-chip').forEach(chip => {
+    chip.addEventListener('click', (e) => {
+      const targetId = chip.getAttribute('href');
+      if (targetId === '#assignments') {
+        focusAssignmentsSection(e);
+      } else if (targetId && targetId.startsWith('#')) {
+        const targetEl = document.querySelector(targetId);
+        if (targetEl) {
+          e.preventDefault();
+          targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       }
     });
-
-    // Close overlays on Escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeUserDropdown();
-      }
-    });
-
-    // Focus assignments section helper
-    function focusAssignmentsSection(e) {
-      if (e) e.preventDefault();
-      switchStudentSubTab('benches', !!e);
-      const targetEl = document.getElementById('zone_assignments');
-      if (targetEl) {
-        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-      const dropdown = document.getElementById('userDropdown');
-      if (dropdown) dropdown.style.display = 'none';
-      history.replaceState(null, null, '#assignments');
-    }
-    window.focusAssignmentsSection = focusAssignmentsSection;
-
-    // Handle initial tab hash on page load
-    window.addEventListener('DOMContentLoaded', () => {
-      const hash = window.location.hash.replace('#', '');
-      if (hash === 'assignments') {
-        focusAssignmentsSection();
-      } else if (hash && ['benches', 'reference', 'achievements', 'research'].includes(hash)) {
-        switchStudentSubTab(hash, false);
-      }
-
-      // Smooth scroll for quick-jump navigation
-      document.querySelectorAll('.quick-jump-chip').forEach(chip => {
-        chip.addEventListener('click', (e) => {
-          const targetId = chip.getAttribute('href');
-          if (targetId === '#assignments') {
-            focusAssignmentsSection(e);
-          } else if (targetId && targetId.startsWith('#')) {
-            const targetEl = document.querySelector(targetId);
-            if (targetEl) {
-              e.preventDefault();
-              targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-          }
-        });
-      });
-    });
+  });
+});
 
 // Ensure globally accessible for inline HTML onclick handlers
 window.switchStudentSubTab = switchStudentSubTab;
 window.toggleUserDropdown = toggleUserDropdown;
 window.closeUserDropdown = closeUserDropdown;
 window.togglePasswordPanel = togglePasswordPanel;
+window.toggleTeacherLinkPanel = toggleTeacherLinkPanel;
 window.focusAssignmentsSection = focusAssignmentsSection;
 
 function dismissStudyTip() {
@@ -228,6 +183,7 @@ function initStudyTipState() {
     }
   } catch(e) {}
 }
+
 if (document.readyState === 'loading') {
   window.addEventListener('DOMContentLoaded', initStudyTipState);
 } else {
@@ -235,20 +191,235 @@ if (document.readyState === 'loading') {
 }
 
 // Highlight active bottom nav item based on current page
-    (function() {
-      const page = window.location.pathname.split('/').pop() || 'home.html';
-      const map = {
-        'home.html': 'bnav-home',
-        'lab.html': 'bnav-lab',
-        'mock_exams.html': 'bnav-exams',
-        'composite_exam.html': 'bnav-exams',
-        'history.html': 'bnav-history'
-      };
-      const activeId = map[page];
-      if (activeId) {
-        document.querySelectorAll('.vlk-bottom-nav-item').forEach(el => el.classList.remove('active'));
-        const el = document.getElementById(activeId);
-        if (el) el.classList.add('active');
-      }
-    })();
+(function() {
+  const page = window.location.pathname.split('/').pop() || 'home.html';
+  const map = {
+    'home.html': 'bnav-home',
+    'lab.html': 'bnav-lab',
+    'mock_exams.html': 'bnav-exams',
+    'composite_exam.html': 'bnav-exams',
+    'reference.html': 'bnav-reference',
+    'history.html': 'bnav-history',
+    'profile.html': 'bnav-profile'
+  };
+  const activeId = map[page];
+  if (activeId) {
+    document.querySelectorAll('.vlk-bottom-nav-item').forEach(el => el.classList.remove('active'));
+    const el = document.getElementById(activeId);
+    if (el) el.classList.add('active');
+  }
+})();
 
+
+// Dropdown and Mobile Navigation Drawer controls
+function toggleLabBenchesDropdown(e) {
+  if (e) {
+    e.stopPropagation();
+    e.preventDefault();
+  }
+  const dd = document.getElementById('labBenchesDropdown');
+  const trigger = document.getElementById('labBenchesTrigger');
+  if (!dd) return;
+  const isOpen = dd.classList.toggle('open');
+  if (trigger) trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+}
+
+function closeLabBenchesDropdown() {
+  const dd = document.getElementById('labBenchesDropdown');
+  const trigger = document.getElementById('labBenchesTrigger');
+  if (dd) dd.classList.remove('open');
+  if (trigger) trigger.setAttribute('aria-expanded', 'false');
+}
+
+function openMobileNavDrawer() {
+  const drawer = document.getElementById('vlkMobileDrawer');
+  const backdrop = document.getElementById('vlkMobileDrawerBackdrop');
+  const toggleBtn = document.getElementById('mobileNavToggleBtn');
+  if (!drawer) return;
+
+  drawer.classList.add('active');
+  if (backdrop) backdrop.classList.add('active');
+  if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
+
+  drawer.removeAttribute('aria-hidden');
+  drawer.removeAttribute('inert');
+  drawer.inert = false;
+  document.body.style.overflow = 'hidden';
+
+  try {
+    const rawUser = localStorage.getItem('vlk_user');
+    if (rawUser) {
+      const u = JSON.parse(rawUser);
+      const nameEl = document.getElementById('drawerStudentName');
+      const avatarEl = document.getElementById('drawerStudentAvatar');
+      if (nameEl && u.name) nameEl.textContent = u.name;
+      if (avatarEl && window.__studentInitials) avatarEl.textContent = window.__studentInitials;
+    }
+  } catch (err) {}
+
+  setTimeout(() => {
+    const closeBtn = drawer.querySelector('.vlk-drawer-close-btn');
+    if (closeBtn) closeBtn.focus();
+  }, 50);
+}
+
+function closeMobileNavDrawer(e) {
+  if (e && typeof e.stopPropagation === 'function') {
+    e.stopPropagation();
+    e.preventDefault();
+  }
+  const drawer = document.getElementById('vlkMobileDrawer');
+  const backdrop = document.getElementById('vlkMobileDrawerBackdrop');
+  const toggleBtn = document.getElementById('mobileNavToggleBtn');
+  if (!drawer) return;
+
+  drawer.classList.remove('active');
+  if (backdrop) backdrop.classList.remove('active');
+
+  // Return focus to toggle button before marking drawer hidden
+  if (toggleBtn) {
+    toggleBtn.setAttribute('aria-expanded', 'false');
+    toggleBtn.focus();
+  } else if (document.activeElement && drawer.contains(document.activeElement)) {
+    document.activeElement.blur();
+  }
+
+  drawer.setAttribute('aria-hidden', 'true');
+  drawer.setAttribute('inert', '');
+  drawer.inert = true;
+  document.body.style.overflow = '';
+}
+
+function toggleMobileNavDrawer(e) {
+  if (e && typeof e.stopPropagation === 'function') {
+    e.stopPropagation();
+    e.preventDefault();
+  }
+  const drawer = document.getElementById('vlkMobileDrawer');
+  if (!drawer) return;
+  if (drawer.classList.contains('active')) {
+    closeMobileNavDrawer(e);
+  } else {
+    openMobileNavDrawer();
+  }
+}
+
+document.addEventListener('click', (e) => {
+  const dd = document.getElementById('labBenchesDropdown');
+  if (dd && !dd.contains(e.target)) {
+    closeLabBenchesDropdown();
+  }
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeLabBenchesDropdown();
+    closeMobileNavDrawer();
+  }
+});
+
+window.toggleLabBenchesDropdown = toggleLabBenchesDropdown;
+window.closeLabBenchesDropdown = closeLabBenchesDropdown;
+window.toggleMobileNavDrawer = toggleMobileNavDrawer;
+window.closeMobileNavDrawer = closeMobileNavDrawer;
+if (window.VLK) {
+  window.VLK.toggleLabBenchesDropdown = toggleLabBenchesDropdown;
+  window.VLK.toggleMobileNavDrawer = toggleMobileNavDrawer;
+}
+
+// ── Mobile Student Home Workstation Enhancements ──
+function initMobileStudentWorkstation() {
+  // 1. Personalized Greeting & School Identity
+  try {
+    const rawUser = localStorage.getItem('vlk_user') || sessionStorage.getItem('vlk_user');
+    if (rawUser) {
+      const u = JSON.parse(rawUser);
+      if (u) {
+        const greetingEl = document.getElementById('studentGreetingName');
+        if (greetingEl && u.name) {
+          const firstName = u.name.trim().split(/\s+/)[0];
+          greetingEl.textContent = firstName || u.name;
+        }
+
+        const schoolEl = document.getElementById('candidateSchoolBadge');
+        if (schoolEl) {
+          const schoolName = u.school_name || u.school_code || (u.admission_number ? `Adm: ${u.admission_number}` : 'VirtuLab KCSE Candidate');
+          schoolEl.textContent = schoolName;
+        }
+
+        const formEl = document.getElementById('candidateFormBadge');
+        if (formEl) {
+          const formName = u.grade || u.form || 'Form 4 Candidate';
+          formEl.textContent = formName.toString().toLowerCase().includes('form') ? formName : `Form ${formName} Candidate`;
+        }
+      }
+    }
+  } catch (err) {}
+
+  // 2. Real-time Online / Offline PWA Connectivity Watcher
+  function updateNetworkState() {
+    const isOnline = navigator.onLine;
+    const netPill = document.getElementById('heroNetPill');
+    const netDot = document.getElementById('netDot');
+    const netText = document.getElementById('heroNetText');
+
+    if (netPill && netDot && netText) {
+      if (isOnline) {
+        netPill.classList.remove('offline');
+        netDot.className = 'net-dot online';
+        netText.textContent = 'Online';
+      } else {
+        netPill.classList.add('offline');
+        netDot.className = 'net-dot offline';
+        netText.textContent = 'Offline Ready';
+      }
+    }
+  }
+
+  window.addEventListener('online', updateNetworkState);
+  window.addEventListener('offline', updateNetworkState);
+  updateNetworkState();
+
+  // 3. Synchronize Big 4 "Resume Lab" Action with Active Bench Registry
+  function syncResumeActionCard() {
+    try {
+      const resumeCard = document.getElementById('mqaResumeCard');
+      const resumeTitle = document.getElementById('mqaResumeTitle');
+      const resumeSub = document.getElementById('mqaResumeSub');
+      const mainResumeTitle = document.getElementById('resumeTitle');
+      const mainResumeLaunchBtn = document.getElementById('resumeLaunchBtn');
+
+      if (mainResumeTitle && resumeTitle && mainResumeTitle.textContent.trim()) {
+        const t = mainResumeTitle.textContent.trim();
+        resumeTitle.textContent = t.length > 28 ? t.substring(0, 26) + '…' : t;
+      }
+      if (mainResumeLaunchBtn && resumeCard && mainResumeLaunchBtn.getAttribute('href')) {
+        resumeCard.setAttribute('href', mainResumeLaunchBtn.getAttribute('href'));
+      }
+    } catch (e) {}
+  }
+
+  // Poll once shortly after dashboard data loads
+  setTimeout(syncResumeActionCard, 800);
+  setTimeout(syncResumeActionCard, 2400);
+  // 4. Standalone Mode / PWA Install Button Visibility
+  try {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                         window.navigator.standalone === true;
+    const installBtn = document.getElementById('drawerInstallAppBtn');
+    if (installBtn && isStandalone) {
+      installBtn.style.display = 'none';
+    }
+    window.addEventListener('appinstalled', () => {
+      const b = document.getElementById('drawerInstallAppBtn');
+      if (b) b.style.display = 'none';
+    });
+  } catch (e) {}
+
+}
+
+if (document.readyState === 'loading') {
+  window.addEventListener('DOMContentLoaded', initMobileStudentWorkstation);
+} else {
+  initMobileStudentWorkstation();
+}

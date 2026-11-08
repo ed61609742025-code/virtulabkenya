@@ -136,6 +136,38 @@
   box-sizing: border-box;
 }
 
+
+/* ── Ambient Laboratory Glow (Pneumatic Trough & Effervescence Auras) ── */
+[data-theme="light"] body {
+  background-color: #F5F8FB;
+  background-image:
+    radial-gradient(circle 650px at 15% 0%, rgba(124, 58, 237, 0.08) 0%, transparent 70%),
+    radial-gradient(circle 750px at 85% 15%, rgba(2, 132, 199, 0.09) 0%, transparent 65%),
+    radial-gradient(circle 700px at 50% 90%, rgba(16, 185, 129, 0.07) 0%, transparent 65%);
+  background-size: 100% 100%;
+  background-attachment: fixed;
+}
+
+[data-theme="dark"] body {
+  background-color: #070D18;
+  background-image:
+    radial-gradient(circle 750px at 15% 0%, rgba(168, 85, 247, 0.12) 0%, transparent 65%),
+    radial-gradient(circle 800px at 85% 15%, rgba(56, 189, 248, 0.12) 0%, transparent 65%),
+    radial-gradient(circle 750px at 50% 95%, rgba(16, 185, 129, 0.08) 0%, transparent 65%);
+  background-size: 100% 100%;
+  background-attachment: fixed;
+}
+
+[data-theme="green"] body {
+  background-color: #041208;
+  background-image:
+    radial-gradient(circle 750px at 15% 0%, rgba(52, 211, 153, 0.14) 0%, transparent 65%),
+    radial-gradient(circle 600px at 85% 20%, rgba(124, 58, 237, 0.09) 0%, transparent 60%),
+    radial-gradient(circle 800px at 50% 90%, rgba(5, 150, 105, 0.10) 0%, transparent 65%);
+  background-size: 100% 100%;
+  background-attachment: fixed;
+}
+
 html, body {
   background-color: var(--bg-dark);
   color: var(--text-main);

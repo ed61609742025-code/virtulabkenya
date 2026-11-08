@@ -2,8 +2,8 @@ import 'package:dio/dio.dart';
 import '../storage/local_storage.dart';
 
 class ApiClient {
-  static const String defaultBaseUrl = 'http://10.0.2.2:3000'; // Standard Android emulator localhost
-  // Note: Use http://localhost:3000 for iOS simulator / web / local desktop
+  static const String defaultBaseUrl = 'https://virtulab-web.onrender.com';
+  static const String devEmulatorBaseUrl = 'http://10.0.2.2:3000';
   
   final Dio dio;
 
@@ -11,8 +11,8 @@ class ApiClient {
       : dio = Dio(
           BaseOptions(
             baseUrl: baseUrl,
-            connectTimeout: const Duration(seconds: 10),
-            receiveTimeout: const Duration(seconds: 10),
+            connectTimeout: const Duration(seconds: 15),
+            receiveTimeout: const Duration(seconds: 15),
             headers: {'Content-Type': 'application/json'},
           ),
         ) {

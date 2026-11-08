@@ -1,5 +1,171 @@
+/* Minimalist Command Bar & Student Profile Link Styles */
+.minimalist-hero-bar {
+  padding: 16px 22px !important;
+  margin-bottom: 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+  gap: 16px !important;
+  border-radius: 18px !important;
+}
+
+.mini-hero-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.mini-hero-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.mini-hero-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--cyan-accent);
+  background: rgba(2, 132, 199, 0.12);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 2px 8px;
+  text-transform: uppercase;
+}
+
+.mini-hero-syllabus {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.mini-hero-title {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: var(--heading-color);
+  letter-spacing: -0.025em;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.mini-hero-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.mini-metric-card {
+  padding: 8px 14px !important;
+  border-radius: 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  cursor: pointer;
+}
+
+.mini-metric-card .metric-val {
+  font-size: 0.96rem !important;
+  font-weight: 800 !important;
+}
+
+.mini-metric-card .metric-lbl {
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  color: var(--text-muted) !important;
+}
+
+.nav-avatar-link {
+  text-decoration: none !important;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #0284C7 0%, #2563EB 100%);
+  color: #FFFFFF !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
+  border: 1.5px solid var(--cyan-accent);
+  transition: transform 0.15s ease;
+}
+
+.nav-avatar-link:hover {
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .minimalist-hero-bar {
+    padding: 12px 14px !important;
+    gap: 12px !important;
+  }
+  .mini-hero-title {
+    font-size: 1.15rem !important;
+  }
+  .mini-hero-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .mini-metric-card {
+    padding: 6px 10px !important;
+  }
+}
+
+.hero-warmup-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.84rem;
+  font-weight: 800;
+  text-decoration: none;
+  background: var(--acad-oxford, #0B2545);
+  color: #FFFFFF !important;
+  border: 1.5px solid transparent;
+  box-shadow: 0 2px 8px rgba(11, 37, 69, 0.2);
+  transition: all 0.16s ease;
+  white-space: nowrap;
+}
+
+[data-theme="dark"] .hero-warmup-btn {
+  background: #0284C7;
+  color: #FFFFFF !important;
+  box-shadow: 0 2px 10px rgba(2, 132, 199, 0.35);
+}
+
+[data-theme="green"] .hero-warmup-btn {
+  background: #059669;
+  color: #FFFFFF !important;
+  box-shadow: 0 2px 10px rgba(5, 150, 105, 0.35);
+}
+
+.hero-warmup-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+
+.hero-warmup-btn:active {
+  transform: translateY(0);
+}
+
+.hero-lvl-short {
+  display: none;
+}
+
+.hero-lvl-full {
+  display: inline;
+}
+
 /* ============================================================
-   VirtuLab Kenya — Student Academic Workstation Stylesheet
    Scholarly, authoritative design system for KCSE Chemistry candidates
    ============================================================ */
 
@@ -177,47 +343,41 @@ html, body {
   padding-bottom: 80px;
 }
 
+/* ── Molecular Dot Matrix Lattice Canvas (Linear/Brilliant.org Style) ── */
 [data-theme="light"] body {
-  background-color: #EEF3F8;
+  background-color: #F8FAFC;
   background-image: 
-    /* Ambient Science Vignette: Cyan anchor for logo/quiz & Warm amber for streaks */
-    radial-gradient(circle 800px at 5% 0%, rgba(2, 132, 199, 0.12) 0%, transparent 70%),
-    radial-gradient(circle 600px at 95% 10%, rgba(245, 158, 11, 0.07) 0%, transparent 60%),
-    radial-gradient(circle 700px at 50% 100%, rgba(16, 185, 129, 0.07) 0%, transparent 65%),
-    /* Major Scientific Grid Lines (64px) */
-    linear-gradient(to right, rgba(2, 132, 199, 0.035) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(2, 132, 199, 0.035) 1px, transparent 1px),
-    /* Minor Millimeter Sub-grid (16px) */
-    linear-gradient(to right, rgba(15, 23, 42, 0.015) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(15, 23, 42, 0.015) 1px, transparent 1px);
-  background-size: 100% 100%, 100% 100%, 100% 100%, 64px 64px, 64px 64px, 16px 16px, 16px 16px;
+    /* Ambient Science Vignette: Soft Cyan Apex Glow */
+    radial-gradient(circle 800px at 50% 0%, rgba(2, 132, 199, 0.08) 0%, transparent 65%),
+    /* Warm streak accent aura in top-right */
+    radial-gradient(circle 500px at 95% 15%, rgba(245, 158, 11, 0.05) 0%, transparent 60%),
+    /* Molecular Lattice Dot Matrix (24px spacing) */
+    radial-gradient(circle, rgba(2, 132, 199, 0.04) 1.5px, transparent 1.5px);
+  background-size: 100% 100%, 100% 100%, 24px 24px;
   background-attachment: fixed;
 }
 
 [data-theme="dark"] body {
   background-color: #070E18;
   background-image: 
-    radial-gradient(circle 800px at 10% 10%, rgba(56, 189, 248, 0.12) 0%, transparent 55%),
-    radial-gradient(circle 700px at 90% 15%, rgba(129, 140, 248, 0.09) 0%, transparent 50%),
-    radial-gradient(circle 700px at 50% 100%, rgba(16, 185, 129, 0.07) 0%, transparent 60%),
-    linear-gradient(to right, rgba(56, 189, 248, 0.045) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(56, 189, 248, 0.045) 1px, transparent 1px),
-    linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
-  background-size: 100% 100%, 100% 100%, 100% 100%, 64px 64px, 64px 64px, 16px 16px, 16px 16px;
+    /* Ambient Science Vignette: Luminous Electric Cyan Apex Glow */
+    radial-gradient(circle 850px at 50% 0%, rgba(56, 189, 248, 0.12) 0%, transparent 65%),
+    /* Warm amber streak glow */
+    radial-gradient(circle 500px at 95% 15%, rgba(245, 158, 11, 0.06) 0%, transparent 60%),
+    /* Phosphor Molecular Dot Matrix (24px spacing) */
+    radial-gradient(circle, rgba(56, 189, 248, 0.045) 1.5px, transparent 1.5px);
+  background-size: 100% 100%, 100% 100%, 24px 24px;
   background-attachment: fixed;
 }
 
 [data-theme="green"] body {
   background-color: #05130A;
   background-image: 
-    radial-gradient(circle 800px at 20% 15%, rgba(52, 211, 153, 0.1) 0%, transparent 50%),
-    radial-gradient(circle 700px at 80% 25%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
-    linear-gradient(to right, rgba(52, 211, 153, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(52, 211, 153, 0.04) 1px, transparent 1px),
-    linear-gradient(to right, rgba(255, 255, 255, 0.012) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.012) 1px, transparent 1px);
-  background-size: 100% 100%, 100% 100%, 64px 64px, 64px 64px, 16px 16px, 16px 16px;
+    /* Emerald Luminescence Apex Glow */
+    radial-gradient(circle 850px at 50% 0%, rgba(52, 211, 153, 0.12) 0%, transparent 65%),
+    /* Emerald Molecular Dot Matrix (24px spacing) */
+    radial-gradient(circle, rgba(52, 211, 153, 0.045) 1.5px, transparent 1.5px);
+  background-size: 100% 100%, 24px 24px;
   background-attachment: fixed;
 }
 
@@ -289,7 +449,7 @@ html, body {
 .nav-brand-academic {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
   text-decoration: none;
   color: var(--heading-color);
   min-width: 0;
@@ -322,7 +482,7 @@ html, body {
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   flex-shrink: 0;
   min-width: 0;
 }
@@ -891,10 +1051,10 @@ html, body {
 }
 
 .practice-text-desc {
-  font-size: 0.82rem;
+  font-size: 0.86rem;
   font-weight: 500;
   color: var(--text-muted);
-  line-height: 1.45;
+  line-height: 1.55;
 }
 
 /* ── 10. ASSIGNMENTS & HOMEWORK GRID ── */
@@ -3791,18 +3951,60 @@ html, body {
   transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
   overflow: hidden;
+  background: var(--card-bg, #FFFFFF);
+  border: 1px solid var(--card-border, #E2E8F0);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+}
+
+[data-theme="dark"] .guidance-card {
+  background: #0F1A2E;
+  border-color: rgba(56, 189, 248, 0.16);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="green"] .guidance-card {
+  background: #0C2114;
+  border-color: rgba(52, 211, 153, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
 }
 
 .guidance-card:hover {
   transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
 }
 
-/* Study Tip Card - Warm Amber Glow */
+[data-theme="dark"] .guidance-card:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+}
+
+/* Study Tip Card - Clean Warning Diagnostic Accent */
 .tip-card {
-  background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 55%, #FFFFFF 100%);
-  border: 1.5px solid #FDE68A;
-  border-left: 5px solid #F59E0B;
-  box-shadow: 0 6px 18px rgba(245, 158, 11, 0.12);
+  background: var(--card-bg, #FFFFFF);
+  border: 1px solid var(--card-border, #E2E8F0);
+  border-left: 3.5px solid #F59E0B;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+}
+
+[data-theme="dark"] .tip-card {
+  background: #0F1A2E;
+  border: 1px solid rgba(56, 189, 248, 0.16);
+  border-left: 3.5px solid #F59E0B;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+/* Recommended Practical Card - Clean Primary Revision Accent */
+.rec-card {
+  background: var(--card-bg, #FFFFFF);
+  border: 1px solid var(--card-border, #E2E8F0);
+  border-left: 3.5px solid #2563EB;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+}
+
+[data-theme="dark"] .rec-card {
+  background: #0F1A2E;
+  border: 1px solid rgba(56, 189, 248, 0.16);
+  border-left: 3.5px solid #38BDF8;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
 }
 
 .tip-card .guidance-title {
@@ -7186,4 +7388,1595 @@ html, body {
   background: rgba(245, 158, 11, 0.12);
   color: #F59E0B;
   border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════ */
+/* PHASE 1: GOAL-FOCUSED RESUME EXPERIMENT HERO & 3-METRIC PROGRESS PULSE */
+/* ═════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Continue Last Experiment Hero Card ── */
+
+/* Resume Hero Conical Flask Watermark SVG */
+.resume-flask-watermark {
+  position: absolute;
+  right: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 140px;
+  height: 140px;
+  opacity: 0.14;
+  color: var(--cyan-accent);
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.resume-hero-card:hover .resume-flask-watermark {
+  opacity: 0.22;
+  transform: translateY(-50%) scale(1.05);
+}
+
+.resume-hero-left,
+.resume-hero-right {
+  position: relative;
+  z-index: 1;
+}
+
+.resume-hero-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  background: var(--card-bg, #FFFFFF);
+  border: 1px solid var(--card-border, #E2E8F0);
+  border-radius: 18px;
+  padding: 24px 28px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .resume-hero-card {
+  background: #0F1A2E;
+  border-color: rgba(56, 189, 248, 0.16);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="green"] .resume-hero-card {
+  background: #0C2114;
+  border-color: rgba(52, 211, 153, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+.resume-hero-card:hover {
+  border-color: var(--cyan-accent);
+  box-shadow: 0 8px 30px rgba(2, 132, 199, 0.12);
+}
+
+[data-theme="dark"] .resume-hero-card:hover {
+  box-shadow: 0 8px 30px rgba(56, 189, 248, 0.18);
+}
+
+.resume-hero-left {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.resume-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.resume-badge-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(2, 132, 199, 0.12);
+  color: var(--cyan-accent);
+  border: 1px solid rgba(2, 132, 199, 0.28);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 999px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+[data-theme="dark"] .resume-badge-primary {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: rgba(56, 189, 248, 0.35);
+}
+
+[data-theme="green"] .resume-badge-primary {
+  color: #34D399;
+  background: rgba(52, 211, 153, 0.15);
+  border-color: rgba(52, 211, 153, 0.35);
+}
+
+.resume-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+  animation: resumePulseAnimation 2s infinite ease-in-out;
+}
+
+@keyframes resumePulseAnimation {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.5; }
+}
+
+.resume-syllabus-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--card-bg-hover, rgba(0,0,0,0.04));
+  border: 1px solid var(--card-border);
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.resume-topic-pill {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--green-accent, #059669);
+  background: rgba(16, 185, 129, 0.1);
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.resume-title {
+  font-family: 'Outfit', 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: var(--heading-color);
+  letter-spacing: -0.025em;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.resume-desc {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.90rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0;
+  max-width: 640px;
+}
+
+.resume-progress-container {
+  margin-top: 6px;
+  max-width: 460px;
+}
+
+.resume-progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  font-size: 0.75rem;
+}
+
+.resume-progress-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.resume-status-highlight {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--cyan-accent);
+}
+
+.resume-progress-pct {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  color: var(--heading-color);
+}
+
+.resume-progress-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(148, 163, 184, 0.2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.resume-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0284C7 0%, #10B981 100%);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.resume-hero-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.resume-icon-badge {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%);
+  border: 1px solid var(--card-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cyan-accent);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.resume-icon-badge .resume-svg-icon {
+  width: 28px;
+  height: 28px;
+}
+
+.resume-hero-card:hover .resume-icon-badge {
+  transform: scale(1.08) rotate(4deg);
+}
+
+.resume-action-btns {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-resume-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 10px 22px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0284C7 0%, #2563EB 100%);
+  color: #FFFFFF !important;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 800;
+  text-decoration: none !important;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+  border: 1.5px solid transparent;
+  transition: all 0.16s ease;
+  white-space: nowrap;
+}
+
+[data-theme="green"] .btn-resume-primary {
+  background: linear-gradient(135deg, #059669 0%, #10B981 100%);
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35);
+}
+
+.btn-resume-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.45);
+  filter: brightness(1.08);
+}
+
+.btn-resume-primary:active {
+  transform: translateY(0);
+}
+
+.btn-resume-primary .btn-play-icon {
+  font-size: 0.8rem;
+  color: #F8FAFC;
+}
+
+.btn-resume-primary .btn-arrow {
+  font-size: 1.05rem;
+  transition: transform 0.16s ease;
+}
+
+.btn-resume-primary:hover .btn-arrow {
+  transform: translateX(3px);
+}
+
+.btn-resume-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text-main) !important;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.84rem;
+  font-weight: 700;
+  text-decoration: none !important;
+  border: 1.5px solid var(--card-border);
+  transition: all 0.16s ease;
+  white-space: nowrap;
+}
+
+.btn-resume-secondary:hover {
+  border-color: var(--cyan-accent);
+  color: var(--cyan-accent) !important;
+  background: var(--card-bg-hover);
+  transform: translateY(-1px);
+}
+
+/* ── 2. Today's Progress 3-Metric Pulse Strip ── */
+.todays-pulse-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.pulse-card {
+  position: relative;
+  background: var(--card-bg, #FFFFFF);
+  border: 1px solid var(--card-border, #E2E8F0);
+  border-radius: 14px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  cursor: pointer;
+  user-select: none;
+}
+
+[data-theme="dark"] .pulse-card {
+  background: #0F1A2E;
+  border-color: rgba(56, 189, 248, 0.16);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="green"] .pulse-card {
+  background: #0C2114;
+  border-color: rgba(52, 211, 153, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+.pulse-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--cyan-accent);
+  box-shadow: var(--shadow-md);
+}
+
+.pulse-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.pulse-card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pulse-icon-box {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pulse-icon-flame {
+  background: rgba(245, 158, 11, 0.14);
+  color: #D97706;
+}
+
+[data-theme="dark"] .pulse-icon-flame {
+  color: #F59E0B;
+}
+
+.pulse-icon-award {
+  background: rgba(2, 132, 199, 0.12);
+  color: var(--cyan-accent);
+}
+
+.pulse-card-value-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pulse-card-val {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: var(--heading-color);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.pulse-sub-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+.pulse-sub-chip.streak-chip {
+  background: rgba(245, 158, 11, 0.14);
+  color: #D97706;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+[data-theme="dark"] .pulse-sub-chip.streak-chip {
+  color: #F59E0B;
+}
+
+.pulse-card-target-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.pulse-bar-wrap {
+  width: 100%;
+  height: 6px;
+  background: rgba(148, 163, 184, 0.2);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 2px 0;
+}
+
+.pulse-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.pulse-bar-fill.xp-fill {
+  background: linear-gradient(90deg, #0284C7 0%, #38BDF8 100%);
+}
+
+.pulse-bar-fill.readiness-fill {
+  background: linear-gradient(90deg, #D97706 0%, #10B981 100%);
+}
+
+.pulse-card-sub {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+/* ── 3-Tier Colored Mastery Indicators ── */
+.pulse-mastery-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.70rem;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+/* 🟢 Mastered (80–100%) */
+.pulse-mastery-chip.chip-mastered {
+  color: #059669;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+[data-theme="dark"] .pulse-mastery-chip.chip-mastered {
+  color: #10B981;
+  background: rgba(16, 185, 129, 0.2);
+  border-color: rgba(16, 185, 129, 0.45);
+}
+
+/* 🟡 Improving (50–79%) */
+.pulse-mastery-chip.chip-improving {
+  color: #D97706;
+  background: rgba(245, 158, 11, 0.14);
+  border: 1px solid rgba(245, 158, 11, 0.38);
+}
+
+[data-theme="dark"] .pulse-mastery-chip.chip-improving {
+  color: #F59E0B;
+  background: rgba(245, 158, 11, 0.2);
+  border-color: rgba(245, 158, 11, 0.45);
+}
+
+/* 🔴 Needs Practice (<50%) */
+.pulse-mastery-chip.chip-practice {
+  color: #DC2626;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+[data-theme="dark"] .pulse-mastery-chip.chip-practice {
+  color: #EF4444;
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.45);
+}
+
+/* ── Responsive Adaptations ── */
+@media (max-width: 960px) {
+  .todays-pulse-strip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .pulse-card.pulse-readiness-card {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 860px) {
+  .resume-hero-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+    padding: 20px;
+  }
+  .resume-hero-right {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .resume-icon-badge {
+    width: 48px;
+    height: 48px;
+  }
+  .resume-action-btns {
+    flex: 1;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 640px) {
+  .todays-pulse-strip {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .pulse-card.pulse-readiness-card {
+    grid-column: auto;
+  }
+  .resume-hero-card {
+    padding: 16px;
+    border-radius: 14px;
+  }
+  .resume-title {
+    font-size: 1.2rem;
+  }
+  .resume-hero-right {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .resume-icon-badge {
+    display: none;
+  }
+  .resume-action-btns {
+    flex-direction: column;
+    width: 100%;
+  }
+  .btn-resume-primary,
+  .btn-resume-secondary {
+    width: 100%;
+    min-height: 48px;
+  }
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════ */
+/* PHASE 2: VISUAL SYLLABUS ROADMAP & MEANINGFUL XP REWARDS            */
+/* ═════════════════════════════════════════════════════════════════════ */
+
+/* ── 2. Meaningful XP Rewards in Pulse Card ── */
+.pulse-xp-reward-preview {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--card-border);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--amber-accent, #D97706);
+  line-height: 1.3;
+}
+
+[data-theme="dark"] .pulse-xp-reward-preview {
+  color: #F59E0B;
+}
+
+.pulse-xp-reward-preview .reward-gift-icon {
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+/* ── 3. Enhanced Modal Milestone Perk Cards ── */
+.xp-tier-reward-highlight {
+  margin-top: 6px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  font-size: 0.78rem;
+  color: var(--amber-accent, #D97706);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+}
+
+[data-theme="dark"] .xp-tier-reward-highlight {
+  color: #FBBF24;
+  background: rgba(245, 158, 11, 0.12);
+}
+
+.xp-tier-card.tier-completed .xp-tier-reward-highlight {
+  color: #059669;
+  background: rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.25);
+}
+
+[data-theme="dark"] .xp-tier-card.tier-completed .xp-tier-reward-highlight {
+  color: #34D399;
+}
+
+/* ═════════════════════════════════════════════════════════════════════ */
+/* PERSONALIZED MWALIMU AI TUTOR & VISUAL MASTERY CHARTS              */
+/* ═════════════════════════════════════════════════════════════════════ */
+
+/* ── Mwalimu AI Identity in Study Tip Card ── */
+.mwalimu-tutor-identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mwalimu-ai-avatar {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.15) 0%, rgba(99, 102, 241, 0.2) 100%);
+  border: 1.5px solid var(--cyan-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cyan-accent);
+  flex-shrink: 0;
+}
+
+[data-theme="dark"] .mwalimu-ai-avatar {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(129, 140, 248, 0.25) 100%);
+  border-color: #38BDF8;
+  color: #38BDF8;
+}
+
+.mwalimu-pulse-spark {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #10B981;
+  border: 2px solid var(--card-bg);
+  box-shadow: 0 0 8px #10B981;
+  animation: resumePulseAnimation 2s infinite ease-in-out;
+}
+
+.mwalimu-identity-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.mwalimu-name {
+  font-family: 'Outfit', 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--heading-color);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.mwalimu-badge-tag {
+  font-size: 0.62rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 900;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(2, 132, 199, 0.14);
+  color: var(--cyan-accent);
+  letter-spacing: 0.04em;
+}
+
+.mwalimu-source-line {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.70rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* AI Diagnostic Banner */
+.mwalimu-diagnostic-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(2, 132, 199, 0.07);
+  border: 1px solid rgba(2, 132, 199, 0.2);
+  margin-top: 4px;
+  margin-bottom: 2px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.78rem;
+  color: var(--heading-color);
+  line-height: 1.4;
+}
+
+[data-theme="dark"] .mwalimu-diagnostic-banner {
+  background: rgba(56, 189, 248, 0.1);
+  border-color: rgba(56, 189, 248, 0.25);
+}
+
+.mwalimu-diagnostic-banner .diagnostic-beacon-icon {
+  font-size: 0.92rem;
+  flex-shrink: 0;
+  line-height: 1.2;
+}
+
+/* ── Pulse Card Circular Radial Mastery Meter ── */
+.pulse-readiness-body {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 6px;
+  margin-bottom: 8px;
+}
+
+.pulse-radial-gauge {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+}
+
+.radial-gauge-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.radial-gauge-track {
+  stroke: rgba(148, 163, 184, 0.2);
+}
+
+.radial-gauge-fill {
+  stroke: #EF4444;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.6s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.3s ease;
+}
+
+.radial-gauge-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.radial-gauge-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: var(--heading-color);
+}
+
+.pulse-readiness-info-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.pulse-charts-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--cyan-accent);
+  margin-top: 4px;
+  transition: gap 0.15s ease;
+}
+
+.pulse-card.pulse-readiness-card:hover .pulse-charts-cta {
+  gap: 7px;
+}
+
+/* ── 5-Discipline Mini-Bar Visualizer on Card 3 ── */
+.pulse-mini-disciplines {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--card-border);
+  margin-top: 4px;
+}
+
+.mini-disc-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.mini-disc-bar-track {
+  width: 100%;
+  height: 24px;
+  background: rgba(148, 163, 184, 0.15);
+  border-radius: 4px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  padding: 1px;
+}
+
+.mini-disc-bar-fill {
+  width: 100%;
+  border-radius: 3px;
+  transition: height 0.4s ease;
+}
+
+.mini-disc-bar-fill.disc-volumetric {
+  background: linear-gradient(180deg, #38BDF8 0%, #0284C7 100%);
+}
+.mini-disc-bar-fill.disc-qualitative {
+  background: linear-gradient(180deg, #FBBF24 0%, #D97706 100%);
+}
+.mini-disc-bar-fill.disc-rates {
+  background: linear-gradient(180deg, #A78BFA 0%, #7C3AED 100%);
+}
+.mini-disc-bar-fill.disc-energy {
+  background: linear-gradient(180deg, #FB7185 0%, #E11D48 100%);
+}
+.mini-disc-bar-fill.disc-organic {
+  background: linear-gradient(180deg, #34D399 0%, #059669 100%);
+}
+
+.mini-disc-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+/* ── PERFORMANCE MASTERY MODAL ── */
+.mastery-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(6px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: modalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mastery-modal-card {
+  width: 100%;
+  max-width: 720px;
+  max-height: 90vh;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border-strong);
+  border-radius: 20px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalScaleUp 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mastery-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--card-border);
+  background: var(--card-bg);
+  flex-shrink: 0;
+}
+
+.mastery-modal-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mastery-modal-icon-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(2, 132, 199, 0.12);
+  border: 1px solid rgba(2, 132, 199, 0.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cyan-accent);
+}
+
+.mastery-modal-title {
+  font-family: 'Outfit', 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.12rem;
+  font-weight: 800;
+  color: var(--heading-color);
+  margin: 0;
+}
+
+.mastery-modal-sub {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+.mastery-modal-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.mastery-modal-close-btn:hover {
+  background: var(--card-bg-hover);
+  color: var(--heading-color);
+}
+
+.mastery-modal-body {
+  padding: 20px 22px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 3-Card KPI Strip in Modal */
+.mastery-kpi-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr;
+  gap: 12px;
+}
+
+.mastery-kpi-card {
+  background: var(--card-bg-hover);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.readiness-kpi-card {
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.08) 0%, var(--card-bg-hover) 100%);
+  border-color: rgba(2, 132, 199, 0.28);
+}
+
+.mastery-kpi-radial-wrap {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+}
+
+.mastery-radial-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.mastery-radial-track {
+  stroke: rgba(148, 163, 184, 0.2);
+}
+
+.mastery-radial-fill {
+  stroke: #EF4444;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.6s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.3s ease;
+}
+
+.mastery-radial-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.mastery-radial-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: var(--heading-color);
+  line-height: 1;
+}
+
+.mastery-radial-sub {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+
+.mastery-kpi-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.mastery-kpi-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.mastery-kpi-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.mastery-kpi-target {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+.mastery-kpi-icon-box {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mastery-kpi-icon-box.icon-cyan {
+  background: rgba(2, 132, 199, 0.14);
+  color: var(--cyan-accent);
+}
+
+.mastery-kpi-icon-box.icon-green {
+  background: rgba(16, 185, 129, 0.14);
+  color: #10B981;
+}
+
+.mastery-kpi-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--heading-color);
+  line-height: 1.1;
+}
+
+.mastery-kpi-label {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.mastery-kpi-progress-wrap {
+  width: 100%;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.2);
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.mastery-kpi-progress-fill {
+  height: 100%;
+  background: var(--cyan-accent);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.mastery-kpi-progress-fill.accuracy-fill {
+  background: linear-gradient(90deg, #10B981 0%, #059669 100%);
+}
+
+.mastery-kpi-foot {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.66rem;
+  color: var(--text-muted);
+}
+
+/* Modal Section Titles */
+.mastery-section-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.mastery-section-title {
+  font-family: 'Outfit', 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--heading-color);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mastery-section-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.70rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* Discipline Mastery Items */
+.discipline-mastery-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.discipline-mastery-item {
+  background: var(--card-bg-hover);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: border-color 0.15s ease;
+}
+
+.discipline-mastery-item:hover {
+  border-color: var(--cyan-accent);
+}
+
+.discipline-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.discipline-item-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.discipline-item-icon {
+  font-size: 1rem;
+}
+
+.discipline-item-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--heading-color);
+}
+
+.discipline-paper-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.66rem;
+  color: var(--text-muted);
+  background: rgba(148, 163, 184, 0.15);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.discipline-bar-wrap {
+  width: 100%;
+  height: 6px;
+  background: rgba(148, 163, 184, 0.2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.discipline-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.discipline-item-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+/* 7-Day Trajectory Area Chart Container */
+.trajectory-chart-container {
+  background: var(--card-bg-hover);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.trajectory-svg-wrap {
+  width: 100%;
+  height: 130px;
+}
+
+.trajectory-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Coach Verdict Box */
+.mastery-coach-verdict {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.08) 0%, rgba(16, 185, 129, 0.08) 100%);
+  border: 1px solid rgba(2, 132, 199, 0.25);
+}
+
+.mastery-coach-verdict .verdict-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.mastery-coach-verdict .verdict-title {
+  font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: var(--heading-color);
+  margin-bottom: 2px;
+}
+
+.mastery-coach-verdict .verdict-body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.mastery-modal-footer {
+  padding: 14px 22px;
+  border-top: 1px solid var(--card-border);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  background: var(--card-bg);
+  flex-shrink: 0;
+}
+
+@media (max-width: 680px) {
+  .mastery-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+  .readiness-kpi-card {
+    justify-content: flex-start;
+  }
+}
+
+
+@media (max-width: 768px) {
+  .resume-flask-watermark {
+    width: 95px !important;
+    height: 95px !important;
+    right: 12px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    opacity: 0.10 !important;
+  }
+}
+
+
+/* ── Clean SaaS Typography & 4-Color Semantic Tokens (Refinement Package) ── */
+.resume-syllabus-tag,
+.rec-meta-pill {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #64748B !important;
+  background: var(--card-bg-hover, #F8FAFC) !important;
+  border: 1px solid var(--card-border) !important;
+}
+
+[data-theme="dark"] .resume-syllabus-tag,
+[data-theme="dark"] .rec-meta-pill {
+  color: #94A3B8 !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.btn-resume-primary,
+.rec-cta-btn,
+.tip-action-btn {
+  background: #2563EB !important;
+  color: #FFFFFF !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25) !important;
+}
+
+.btn-resume-primary:hover,
+.rec-cta-btn:hover,
+.tip-action-btn:hover {
+  background: #1D4ED8 !important;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important;
+}
+
+.pulse-xp-reward-preview {
+  margin-top: 8px;
+  padding: 6px 10px;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #B45309;
+  line-height: 1.35;
+}
+
+[data-theme="dark"] .pulse-xp-reward-preview {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.35);
+  color: #FBBF24;
+}
+
+.pulse-xp-reward-preview strong {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+
+/* ============================================================
+   HIGH-CONTRAST DARK & GREEN THEME BUTTONS ACCESSIBILITY
+   ============================================================ */
+
+/* 1. Filter Chips */
+[data-theme="dark"] .filter-chip {
+  background: #111A2E;
+  border-color: rgba(56, 189, 248, 0.28);
+  color: #F8FAFC !important;
+  font-weight: 750;
+}
+[data-theme="dark"] .filter-chip:hover {
+  background: rgba(56, 189, 248, 0.16);
+  border-color: #38BDF8;
+  color: #38BDF8 !important;
+}
+[data-theme="dark"] .filter-chip.active {
+  background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important;
+  border-color: #38BDF8 !important;
+  color: #FFFFFF !important;
+  font-weight: 800;
+  box-shadow: 0 2px 10px rgba(2, 132, 199, 0.45);
+}
+
+[data-theme="green"] .filter-chip {
+  background: #0C2114;
+  border-color: rgba(52, 211, 153, 0.3);
+  color: #ECFDF5 !important;
+  font-weight: 750;
+}
+[data-theme="green"] .filter-chip:hover {
+  background: rgba(52, 211, 153, 0.18);
+  border-color: #34D399;
+  color: #34D399 !important;
+}
+[data-theme="green"] .filter-chip.active {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  border-color: #34D399 !important;
+  color: #FFFFFF !important;
+  font-weight: 800;
+  box-shadow: 0 2px 10px rgba(5, 150, 105, 0.45);
+}
+
+/* 2. Pathway & Grid View Toggles */
+[data-theme="dark"] .pathway-view-toggle {
+  background: #0B1322 !important;
+  border-color: rgba(56, 189, 248, 0.25) !important;
+}
+[data-theme="dark"] .view-toggle-btn {
+  color: #CBD5E1 !important;
+  font-weight: 700;
+}
+[data-theme="dark"] .view-toggle-btn:hover {
+  color: #38BDF8 !important;
+  background: rgba(56, 189, 248, 0.12);
+}
+[data-theme="dark"] .view-toggle-btn.active {
+  background: #162540 !important;
+  color: #38BDF8 !important;
+  border: 1px solid rgba(56, 189, 248, 0.35) !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="green"] .pathway-view-toggle {
+  background: #081C10 !important;
+  border-color: rgba(52, 211, 153, 0.25) !important;
+}
+[data-theme="green"] .view-toggle-btn {
+  color: #A7F3D0 !important;
+  font-weight: 700;
+}
+[data-theme="green"] .view-toggle-btn:hover {
+  color: #34D399 !important;
+  background: rgba(52, 211, 153, 0.14);
+}
+[data-theme="green"] .view-toggle-btn.active {
+  background: #12301D !important;
+  color: #34D399 !important;
+  border: 1px solid rgba(52, 211, 153, 0.35) !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+/* 3. Theme Selector Chips */
+[data-theme="dark"] .theme-btn-chip {
+  color: #CBD5E1 !important;
+}
+[data-theme="dark"] .theme-btn-chip:hover {
+  color: #F8FAFC !important;
+  background: rgba(56, 189, 248, 0.14);
+}
+[data-theme="dark"] .theme-btn-chip.active {
+  background: #162540 !important;
+  color: #38BDF8 !important;
+  border-color: rgba(56, 189, 248, 0.4) !important;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
+}
+
+[data-theme="green"] .theme-btn-chip {
+  color: #A7F3D0 !important;
+}
+[data-theme="green"] .theme-btn-chip:hover {
+  color: #FFFFFF !important;
+  background: rgba(52, 211, 153, 0.16);
+}
+[data-theme="green"] .theme-btn-chip.active {
+  background: #12301D !important;
+  color: #34D399 !important;
+  border-color: rgba(52, 211, 153, 0.4) !important;
+  box-shadow: 0 0 10px rgba(52, 211, 153, 0.25);
+}
+
+/* 4. Action Buttons (Resume Lab Secondary, Reset Lab, Next Tip, Secondary Buttons) */
+[data-theme="dark"] .btn-resume-secondary {
+  background: #162540 !important;
+  border: 1.5px solid rgba(56, 189, 248, 0.3) !important;
+  color: #F8FAFC !important;
+  font-weight: 750 !important;
+}
+[data-theme="dark"] .btn-resume-secondary:hover {
+  border-color: #38BDF8 !important;
+  color: #38BDF8 !important;
+  background: rgba(56, 189, 248, 0.15) !important;
+}
+
+[data-theme="green"] .btn-resume-secondary {
+  background: #12301D !important;
+  border: 1.5px solid rgba(52, 211, 153, 0.3) !important;
+  color: #ECFDF5 !important;
+  font-weight: 750 !important;
+}
+[data-theme="green"] .btn-resume-secondary:hover {
+  border-color: #34D399 !important;
+  color: #34D399 !important;
+  background: rgba(52, 211, 153, 0.15) !important;
+}
+
+[data-theme="dark"] .rec-cycle-chip {
+  background: #162540 !important;
+  border-color: rgba(56, 189, 248, 0.25) !important;
+  color: #F8FAFC !important;
+}
+[data-theme="dark"] .rec-cycle-chip:hover {
+  border-color: #38BDF8 !important;
+  color: #38BDF8 !important;
+}
+
+[data-theme="green"] .rec-cycle-chip {
+  background: #12301D !important;
+  border-color: rgba(52, 211, 153, 0.25) !important;
+  color: #ECFDF5 !important;
+}
+[data-theme="green"] .rec-cycle-chip:hover {
+  border-color: #34D399 !important;
+  color: #34D399 !important;
+}
+
+[data-theme="dark"] .btn-secondary,
+[data-theme="dark"] .btn-outline {
+  background: #162540 !important;
+  border: 1.5px solid rgba(56, 189, 248, 0.3) !important;
+  color: #F8FAFC !important;
+  font-weight: 700 !important;
+}
+[data-theme="dark"] .btn-secondary:hover,
+[data-theme="dark"] .btn-outline:hover {
+  background: rgba(56, 189, 248, 0.16) !important;
+  border-color: #38BDF8 !important;
+  color: #38BDF8 !important;
+}
+
+[data-theme="green"] .btn-secondary,
+[data-theme="green"] .btn-outline {
+  background: #12301D !important;
+  border: 1.5px solid rgba(52, 211, 153, 0.3) !important;
+  color: #ECFDF5 !important;
+  font-weight: 700 !important;
+}
+[data-theme="green"] .btn-secondary:hover,
+[data-theme="green"] .btn-outline:hover {
+  background: rgba(52, 211, 153, 0.16) !important;
+  border-color: #34D399 !important;
+  color: #34D399 !important;
 }

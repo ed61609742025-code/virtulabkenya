@@ -790,7 +790,21 @@ const Auth = {
   async getAuthConfig() {
     return apiRequest('GET', '/auth/config');
   },
+  async googleStudentAuth(credentialOrPayload) {
+    const payload = typeof credentialOrPayload === 'string'
+      ? { credential: credentialOrPayload }
+      : (credentialOrPayload && typeof credentialOrPayload === 'object' ? credentialOrPayload : { credential: credentialOrPayload });
+    const data = await apiRequest('POST', '/auth/student/google', payload);
+    if (data.token) {
+      setToken(data.token);
+      setUser(data.user);
+    }
+    return data;
+  },
   async studentGoogleAuth(payload) {
+    return this.googleStudentAuth(payload);
+  },
+  async googleStudentComplete(payload) {
     const data = await apiRequest('POST', '/auth/student/google', payload);
     if (data.token) {
       setToken(data.token);
@@ -951,6 +965,41 @@ const Students = {
   },
   async unlink(id) {
     return apiRequest('POST', '/students/' + id + '/unlink');
+  },
+  async getAttendance(params = {}) {
+    const qs = new URLSearchParams();
+    if (params.date) qs.set('date', params.date);
+    if (params.practicalType) qs.set('practicalType', params.practicalType);
+    if (params.form) qs.set('form', params.form);
+    const query = qs.toString();
+    return apiRequest('GET', '/students/attendance' + (query ? '?' + query : ''));
+  },
+  async saveAttendance(payload) {
+    return apiRequest('POST', '/students/attendance', payload);
+  },
+  async getAttendanceSummary(params = {}) {
+    const qs = new URLSearchParams();
+    if (params.form) qs.set('form', params.form);
+    const query = qs.toString();
+    return apiRequest('GET', '/students/attendance/summary' + (query ? '?' + query : ''));
+  },
+  async getWorkgroups(params = {}) {
+    const qs = new URLSearchParams();
+    if (params.form) qs.set('form', params.form);
+    const query = qs.toString();
+    return apiRequest('GET', '/students/workgroups' + (query ? '?' + query : ''));
+  },
+  async createWorkgroup(payload) {
+    return apiRequest('POST', '/students/workgroups', payload);
+  },
+  async updateWorkgroup(id, payload) {
+    return apiRequest('PUT', '/students/workgroups/' + id, payload);
+  },
+  async deleteWorkgroup(id) {
+    return apiRequest('DELETE', '/students/workgroups/' + id);
+  },
+  async autoAssignWorkgroups(payload) {
+    return apiRequest('POST', '/students/workgroups/auto-assign', payload);
   }
 };
 
@@ -1097,6 +1146,23 @@ const Research = {
   }
 };
 
+
+// ── Real-Time Laboratory Telemetry API ───────────────────────
+const Telemetry = {
+  async getLive() {
+    return apiRequest('GET', '/telemetry/live');
+  },
+  async sendHeartbeat(payload) {
+    return apiRequest('POST', '/telemetry/heartbeat', payload);
+  },
+  async intervene(payload) {
+    return apiRequest('POST', '/telemetry/intervene', payload);
+  },
+  async simulateFeed() {
+    return apiRequest('POST', '/telemetry/simulate-feed');
+  }
+};
+
 // Top-level API convenience object
 const API = {
   saveGasSession: (data) => Gas.save(data),
@@ -1117,6 +1183,7 @@ if (typeof window !== 'undefined') {
   window.Gas = Gas;
   window.Research = Research;
   window.API = API;
+  window.Telemetry = Telemetry;
 }
 
 // ── System Admin Portal API ─────────────────────────────────
@@ -1244,6 +1311,24 @@ const Composite = {
   async getTeacherSessions() {
     return apiRequest('GET', '/composite/teacher');
   },
+  async getSummary() {
+    return apiRequest('GET', '/composite/teacher/summary');
+  },
+  async getSession(id) {
+    return apiRequest('GET', '/composite/session/' + id);
+  },
+  async calibrate(data) {
+    return apiRequest('POST', '/composite/calibrate', data);
+  },
+  async getCalibration(assignmentId) {
+    return apiRequest('GET', '/composite/calibrate/' + assignmentId);
+  },
+  async getBenchmarks() {
+    return apiRequest('GET', '/composite/benchmarks');
+  },
+  async syncScores(assignmentId) {
+    return apiRequest('POST', '/composite/sync-scores', { assignmentId });
+  },
   async exportCsv(assignmentId, filename) {
     return downloadFile('/composite/export/' + assignmentId, filename);
   }
@@ -1311,7 +1396,7 @@ function requireTeacherLogin() {
   const token = getToken();
   const payload = decodeTokenPayload(token);
   const role = payload?.role || user?.role;
-  if (!isLoggedIn() || role !== 'teacher') {
+  if (!isLoggedIn() || (role !== 'teacher' && role !== 'admin')) {
     clearToken();
     const path = (window.location.pathname || '').toLowerCase();
     if (!path.endsWith('/teacher/login.html') && !path.endsWith('login.html')) {

@@ -22,7 +22,7 @@ window.copyTeacherCode = copyTeacherCode;
 
 async function initTeacherProfile() {
   if (currentUser) {
-    if (currentUser.role && currentUser.role !== 'teacher') {
+    if (currentUser.role && currentUser.role !== 'teacher' && currentUser.role !== 'admin') {
       clearToken();
       window.location.href = `/teacher/login.html?mismatch=${encodeURIComponent(currentUser.role)}`;
       return;
@@ -35,7 +35,7 @@ async function initTeacherProfile() {
       ? await Auth.me()
       : (typeof apiRequest === 'function' ? await apiRequest('GET', '/auth/me') : null);
     if (res && res.user) {
-      if (res.user.role && res.user.role !== 'teacher') {
+      if (res.user.role && res.user.role !== 'teacher' && res.user.role !== 'admin') {
         clearToken();
         window.location.href = `/teacher/login.html?mismatch=${encodeURIComponent(res.user.role)}`;
         return;
@@ -2283,7 +2283,7 @@ let currentPage = 1;
       loadTeacherAssignments();
       loadSubmittedAssignments();
     } catch (err) {
-      if (err.message && err.message.includes('requires a teacher account')) {
+      if (err.message && (err.message.includes('requires a teacher account') || err.message.includes('requires a teacher or admin account'))) {
         msg.innerHTML = `
           <div class="msg msg-err" style="display:flex; flex-direction:column; gap:8px; padding:12px 14px; text-align:left;">
             <div>❌ <b>Session Mismatch:</b> Your browser currently has a <b>Student</b> session active.</div>
@@ -3196,6 +3196,789 @@ let currentPage = 1;
   window.clearRosterSearch = clearRosterSearch;
   window.unlinkStudent = unlinkStudent;
   window.loadStudents = loadStudents;
+
+  /* ── Student Management Sub-Tabs (Roster, Attendance, Workgroups) ── */
+  let currentStudentSubTab = 'roster';
+  let attendanceRegisterData = [];
+  let currentWorkgroupsList = [];
+
+  function switchStudentSubTab(tab) {
+    currentStudentSubTab = tab;
+    const btnRoster = document.getElementById('subtabBtnRoster');
+    const btnAttendance = document.getElementById('subtabBtnAttendance');
+    const btnWorkgroups = document.getElementById('subtabBtnWorkgroups');
+
+    const viewRoster = document.getElementById('studentSubViewRoster');
+    const viewAttendance = document.getElementById('studentSubViewAttendance');
+    const viewWorkgroups = document.getElementById('studentSubViewWorkgroups');
+
+    if (btnRoster) btnRoster.className = tab === 'roster' ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline';
+    if (btnAttendance) btnAttendance.className = tab === 'attendance' ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline';
+    if (btnWorkgroups) btnWorkgroups.className = tab === 'workgroups' ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline';
+
+    if (viewRoster) viewRoster.style.display = tab === 'roster' ? 'block' : 'none';
+    if (viewAttendance) viewAttendance.style.display = tab === 'attendance' ? 'block' : 'none';
+    if (viewWorkgroups) viewWorkgroups.style.display = tab === 'workgroups' ? 'block' : 'none';
+
+    if (tab === 'attendance') {
+      const dateInput = document.getElementById('attDateInput');
+      if (dateInput && !dateInput.value) {
+        dateInput.value = new Date().toISOString().split('T')[0];
+      }
+      loadAttendanceRegister();
+    } else if (tab === 'workgroups') {
+      loadWorkgroups();
+    }
+  }
+
+  /* ── Practical Lab Attendance ── */
+  async function loadAttendanceRegister() {
+    const container = document.getElementById('attendanceContainer');
+    const dateInput = document.getElementById('attDateInput');
+    const practicalSelect = document.getElementById('attPracticalSelect');
+    const formFilter = document.getElementById('attFormFilter');
+    const badge = document.getElementById('attStatsBadge');
+
+    const date = dateInput ? dateInput.value : '';
+    const practicalType = practicalSelect ? practicalSelect.value : 'general';
+    const form = formFilter ? formFilter.value : '';
+
+    if (container) {
+      container.innerHTML = '<div class="empty" style="padding:28px;">Loading attendance records…</div>';
+    }
+
+    try {
+      const res = await Students.getAttendance({ date, practicalType, form });
+      attendanceRegisterData = res.records || [];
+
+      if (badge) {
+        const total = attendanceRegisterData.length;
+        const present = attendanceRegisterData.filter(r => r.status === 'present').length;
+        const late = attendanceRegisterData.filter(r => r.status === 'late').length;
+        const absent = attendanceRegisterData.filter(r => r.status === 'absent').length;
+        const pct = total > 0 ? Math.round(((present + late) / total) * 100) : 100;
+        badge.textContent = `Present: ${present}/${total} (${pct}%) • Late: ${late} • Absent: ${absent}`;
+      }
+
+      renderAttendanceRegisterTable();
+    } catch (err) {
+      if (container) {
+        container.innerHTML = '<div class="empty" style="padding:28px; color:var(--red-accent);">Could not load attendance: ' + escapeHtml(err.message) + '</div>';
+      }
+    }
+  }
+
+  function renderAttendanceRegisterTable() {
+    const container = document.getElementById('attendanceContainer');
+    if (!container) return;
+
+    if (!attendanceRegisterData || attendanceRegisterData.length === 0) {
+      container.innerHTML = `
+        <div class="empty" style="padding:32px 20px;">
+          <div style="font-size:1.8rem; margin-bottom:8px;">📋</div>
+          <div style="font-weight:700; color:var(--heading-color);">No students found for this class / form</div>
+          <p style="margin:4px 0 0 0; color:var(--text-muted); font-size:0.84rem;">Ensure you have students enrolled or change the form filter above.</p>
+        </div>
+      `;
+      return;
+    }
+
+    let rowsHtml = attendanceRegisterData.map((rec, idx) => {
+      const status = rec.status === 'unrecorded' ? 'present' : rec.status;
+      return `
+        <tr style="border-bottom:1px solid var(--border-color);">
+          <td style="padding:10px 14px; font-weight:700; font-size:0.86rem; color:var(--heading-color);">
+            ${escapeHtml(rec.student_name)}
+            <div style="font-size:0.75rem; font-weight:400; color:var(--text-muted);">${escapeHtml(rec.student_email)}</div>
+          </td>
+          <td style="padding:10px 14px; font-size:0.84rem;">
+            <span class="pill pill-muted" style="font-size:0.75rem;">${escapeHtml(rec.form || 'Form 4')}</span>
+          </td>
+          <td style="padding:10px 14px;">
+            <div class="status-btn-group" style="display:flex; gap:6px;">
+              <button type="button" class="btn btn-sm ${status === 'present' ? 'btn-primary' : 'btn-outline'}" 
+                onclick="setStudentAttendanceStatus(${idx}, 'present')" style="padding:4px 8px; font-size:0.75rem; ${status === 'present' ? 'background:var(--green-accent); border-color:var(--green-accent); color:#fff;' : ''}">
+                ✓ Present
+              </button>
+              <button type="button" class="btn btn-sm ${status === 'late' ? 'btn-primary' : 'btn-outline'}" 
+                onclick="setStudentAttendanceStatus(${idx}, 'late')" style="padding:4px 8px; font-size:0.75rem; ${status === 'late' ? 'background:var(--amber-accent); border-color:var(--amber-accent); color:#fff;' : ''}">
+                ⏱ Late
+              </button>
+              <button type="button" class="btn btn-sm ${status === 'absent' ? 'btn-primary' : 'btn-outline'}" 
+                onclick="setStudentAttendanceStatus(${idx}, 'absent')" style="padding:4px 8px; font-size:0.75rem; ${status === 'absent' ? 'background:var(--red-accent); border-color:var(--red-accent); color:#fff;' : ''}">
+                ✕ Absent
+              </button>
+              <button type="button" class="btn btn-sm ${status === 'excused' ? 'btn-primary' : 'btn-outline'}" 
+                onclick="setStudentAttendanceStatus(${idx}, 'excused')" style="padding:4px 8px; font-size:0.75rem; ${status === 'excused' ? 'background:#8B5CF6; border-color:#8B5CF6; color:#fff;' : ''}">
+                🛡 Excused
+              </button>
+            </div>
+          </td>
+          <td style="padding:10px 14px;">
+            <input type="text" class="form-control form-control-sm" value="${escapeHtml(rec.remarks || '')}" 
+              placeholder="e.g. Completed trial 1" 
+              oninput="attendanceRegisterData[${idx}].remarks = this.value"
+              style="font-size:0.8rem; padding:4px 8px; min-width:140px;">
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    container.innerHTML = `
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; text-align:left;">
+          <thead>
+            <tr style="background:var(--bg-card-subtle, rgba(0,0,0,0.02)); border-bottom:1px solid var(--border-color); font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">
+              <th style="padding:10px 14px;">Student Name</th>
+              <th style="padding:10px 14px;">Form</th>
+              <th style="padding:10px 14px;">Attendance Status</th>
+              <th style="padding:10px 14px;">Laboratory Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsHtml}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  function setStudentAttendanceStatus(index, newStatus) {
+    if (attendanceRegisterData[index]) {
+      attendanceRegisterData[index].status = newStatus;
+      renderAttendanceRegisterTable();
+
+      const badge = document.getElementById('attStatsBadge');
+      if (badge) {
+        const total = attendanceRegisterData.length;
+        const present = attendanceRegisterData.filter(r => r.status === 'present').length;
+        const late = attendanceRegisterData.filter(r => r.status === 'late').length;
+        const absent = attendanceRegisterData.filter(r => r.status === 'absent').length;
+        const pct = total > 0 ? Math.round(((present + late) / total) * 100) : 100;
+        badge.textContent = `Present: ${present}/${total} (${pct}%) • Late: ${late} • Absent: ${absent}`;
+      }
+    }
+  }
+
+  function markAllAttendance(status) {
+    if (!attendanceRegisterData || attendanceRegisterData.length === 0) return;
+    for (const rec of attendanceRegisterData) {
+      rec.status = status;
+    }
+    renderAttendanceRegisterTable();
+    const badge = document.getElementById('attStatsBadge');
+    if (badge) {
+      const total = attendanceRegisterData.length;
+      badge.textContent = `All ${total} Marked ${status.toUpperCase()}`;
+    }
+  }
+
+  async function saveAttendanceRegister() {
+    const btn = document.getElementById('btnSaveAttendance');
+    const dateInput = document.getElementById('attDateInput');
+    const practicalSelect = document.getElementById('attPracticalSelect');
+
+    const date = dateInput ? dateInput.value : '';
+    const practicalType = practicalSelect ? practicalSelect.value : 'general';
+
+    if (!attendanceRegisterData || attendanceRegisterData.length === 0) {
+      alert('No students to save in attendance register.');
+      return;
+    }
+
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Saving…';
+    }
+
+    try {
+      const records = attendanceRegisterData.map(r => ({
+        studentId: r.student_id,
+        status: r.status === 'unrecorded' ? 'present' : r.status,
+        remarks: r.remarks || ''
+      }));
+
+      const res = await Students.saveAttendance({ date, practicalType, records });
+      alert(`✓ Practical attendance saved successfully (${res.savedCount || records.length} records updated)!`);
+    } catch (err) {
+      alert('Could not save attendance register: ' + (err.message || 'Server error'));
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = '💾 Save Register';
+      }
+    }
+  }
+
+  function exportAttendanceCSV() {
+    if (!attendanceRegisterData || attendanceRegisterData.length === 0) {
+      alert('No attendance data available to export.');
+      return;
+    }
+
+    const date = document.getElementById('attDateInput')?.value || new Date().toISOString().split('T')[0];
+    const practical = document.getElementById('attPracticalSelect')?.value || 'general';
+
+    const headers = ['Student ID', 'Student Name', 'Email', 'Form', 'Date', 'Practical Module', 'Status', 'Remarks'];
+    const rows = attendanceRegisterData.map(r => [
+      r.student_id,
+      `"${(r.student_name || '').replace(/"/g, '""')}"`,
+      `"${(r.student_email || '').replace(/"/g, '""')}"`,
+      `"${(r.form || '').replace(/"/g, '""')}"`,
+      date,
+      practical,
+      r.status === 'unrecorded' ? 'present' : r.status,
+      `"${(r.remarks || '').replace(/"/g, '""')}"`
+    ]);
+
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `VirtuLab_Attendance_${practical}_${date}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  /* ── Practical Lab Workgroups / Benches ── */
+  async function loadWorkgroups() {
+    const grid = document.getElementById('workgroupsGrid');
+    const formFilter = document.getElementById('wgFormFilter')?.value || '';
+
+    if (grid) {
+      grid.innerHTML = '<div class="empty" style="grid-column:1/-1; padding:32px;">Loading lab workgroups…</div>';
+    }
+
+    try {
+      const res = await Students.getWorkgroups({ form: formFilter });
+      currentWorkgroupsList = res.workgroups || [];
+      renderWorkgroupsGrid();
+    } catch (err) {
+      if (grid) {
+        grid.innerHTML = '<div class="empty" style="grid-column:1/-1; padding:32px; color:var(--red-accent);">Could not load workgroups: ' + escapeHtml(err.message) + '</div>';
+      }
+    }
+  }
+
+  function renderWorkgroupsGrid() {
+    const grid = document.getElementById('workgroupsGrid');
+    if (!grid) return;
+
+    if (!currentWorkgroupsList || currentWorkgroupsList.length === 0) {
+      grid.innerHTML = `
+        <div class="empty" style="grid-column:1/-1; padding:36px 20px;">
+          <div style="font-size:2rem; margin-bottom:8px;">🔬</div>
+          <div style="font-weight:700; color:var(--heading-color); font-size:1.05rem;">No lab workgroups configured yet</div>
+          <p style="margin:6px 0 16px 0; color:var(--text-muted); font-size:0.86rem; max-width:440px; margin-left:auto; margin-right:auto;">
+            Organize students into bench units to assign apparatus, track group titrations, and simulate collaborative laboratory experiments.
+          </p>
+          <div style="display:flex; justify-content:center; gap:10px;">
+            <button class="btn btn-outline" onclick="openAutoAssignModal()">⚡ Auto-Assign Benches</button>
+            <button class="btn btn-primary" onclick="openCreateWorkgroupModal()">➕ Create Workgroup</button>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    grid.innerHTML = currentWorkgroupsList.map(wg => {
+      const members = wg.members || [];
+      const memberRows = members.map(m => {
+        const roleIcon = m.role === 'Team Lead' ? '👑' : (m.role === 'Lab Technician' ? '🔬' : (m.role === 'Data Recorder' ? '📝' : '👤'));
+        return `
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px dashed var(--border-color); font-size:0.82rem;">
+            <span style="font-weight:600; color:var(--heading-color);">${escapeHtml(m.student_name)}</span>
+            <span class="pill pill-info" style="font-size:0.7rem; padding:2px 8px;">${roleIcon} ${escapeHtml(m.role || 'Member')}</span>
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <div class="workgroup-card" style="background:var(--card-bg, #fff); border:1px solid var(--border-color); border-radius:12px; padding:18px; box-shadow:0 2px 8px rgba(0,0,0,0.04); display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+              <div>
+                <h3 style="margin:0; font-size:1.02rem; font-weight:800; color:var(--heading-color);">${escapeHtml(wg.name)}</h3>
+                <span class="pill pill-muted" style="font-size:0.72rem; margin-top:4px; display:inline-block;">${escapeHtml(wg.form || 'Form 4')}</span>
+              </div>
+              <span class="badge-count" style="display:inline-block; font-size:0.75rem; font-weight:700;">${members.length} Members</span>
+            </div>
+            ${wg.description ? `<p style="font-size:0.8rem; color:var(--text-muted); margin:4px 0 12px 0;">${escapeHtml(wg.description)}</p>` : ''}
+            <div style="margin-top:10px; max-height:160px; overflow-y:auto;">
+              ${memberRows.length > 0 ? memberRows : '<div style="font-size:0.78rem; color:var(--text-muted); padding:6px 0;">No members assigned yet</div>'}
+            </div>
+          </div>
+          <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:16px; padding-top:10px; border-top:1px solid var(--border-color);">
+            <button class="btn btn-sm btn-outline" onclick="openCreateWorkgroupModal(${JSON.stringify(wg).replace(/"/g, '&quot;')})">Edit</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteWorkgroup(${wg.id}, '${escapeHtml(wg.name)}')">Delete</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function openCreateWorkgroupModal(existingGroup = null) {
+    const modal = document.getElementById('modalWorkgroup');
+    const title = document.getElementById('modalWgTitle');
+    const editId = document.getElementById('wgEditId');
+    const nameInput = document.getElementById('wgNameInput');
+    const formSelect = document.getElementById('wgFormSelect');
+    const descInput = document.getElementById('wgDescInput');
+
+    if (!modal) return;
+
+    if (existingGroup) {
+      title.textContent = 'Edit Lab Workgroup';
+      editId.value = existingGroup.id;
+      nameInput.value = existingGroup.name || '';
+      formSelect.value = existingGroup.form || 'Form 4';
+      descInput.value = existingGroup.description || '';
+    } else {
+      title.textContent = 'Create Lab Workgroup';
+      editId.value = '';
+      nameInput.value = `Lab Bench ${currentWorkgroupsList.length + 1}`;
+      formSelect.value = 'Form 4';
+      descInput.value = '';
+    }
+
+    renderWgMemberSelectors(existingGroup ? (existingGroup.members || []) : []);
+    modal.style.display = 'flex';
+  }
+
+  function closeWorkgroupModal() {
+    const modal = document.getElementById('modalWorkgroup');
+    if (modal) modal.style.display = 'none';
+  }
+
+  function renderWgMemberSelectors(selectedMembers = []) {
+    const picker = document.getElementById('wgMembersPicker');
+    const formSelect = document.getElementById('wgFormSelect');
+    if (!picker) return;
+
+    const targetForm = formSelect ? formSelect.value : 'Form 4';
+    const students = (classStudentsList || []).filter(s => (s.form || '').toLowerCase() === targetForm.toLowerCase() || !targetForm);
+
+    if (students.length === 0) {
+      picker.innerHTML = '<div style="font-size:0.8rem; color:var(--text-muted); padding:8px;">No students found enrolled in ' + escapeHtml(targetForm) + '</div>';
+      return;
+    }
+
+    const selectedMap = new Map();
+    for (const sm of selectedMembers) {
+      selectedMap.set(sm.student_id || sm.studentId || sm.id, sm.role || 'Member');
+    }
+
+    picker.innerHTML = students.map(s => {
+      const isChecked = selectedMap.has(s.id);
+      const role = selectedMap.get(s.id) || 'Member';
+      return `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:4px 6px; background:var(--bg-card-subtle, rgba(0,0,0,0.02)); border-radius:6px; font-size:0.82rem;">
+          <label style="display:flex; align-items:center; gap:8px; cursor:pointer; flex:1; margin:0;">
+            <input type="checkbox" class="wg-student-check" value="${s.id}" ${isChecked ? 'checked' : ''} onchange="toggleWgRoleSelect(this, ${s.id})">
+            <span><b>${escapeHtml(s.name)}</b> <span style="font-size:0.75rem; color:var(--text-muted);">(${escapeHtml(s.form || '')})</span></span>
+          </label>
+          <select id="wgRoleSelect_${s.id}" class="filter-select" style="padding:2px 6px; font-size:0.75rem; width:130px; ${isChecked ? '' : 'display:none;'}">
+            <option value="Team Lead" ${role === 'Team Lead' ? 'selected' : ''}>👑 Team Lead</option>
+            <option value="Lab Technician" ${role === 'Lab Technician' ? 'selected' : ''}>🔬 Lab Tech</option>
+            <option value="Data Recorder" ${role === 'Data Recorder' ? 'selected' : ''}>📝 Recorder</option>
+            <option value="Safety Officer" ${role === 'Safety Officer' ? 'selected' : ''}>🛡 Safety Officer</option>
+            <option value="Member" ${role === 'Member' ? 'selected' : ''}>👤 Member</option>
+          </select>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function toggleWgRoleSelect(checkbox, studentId) {
+    const sel = document.getElementById(`wgRoleSelect_${studentId}`);
+    if (sel) sel.style.display = checkbox.checked ? 'inline-block' : 'none';
+  }
+
+  async function saveWorkgroupModal() {
+    const editId = document.getElementById('wgEditId')?.value;
+    const name = document.getElementById('wgNameInput')?.value;
+    const form = document.getElementById('wgFormSelect')?.value;
+    const description = document.getElementById('wgDescInput')?.value;
+
+    if (!name || !name.trim()) {
+      alert('Please enter a workgroup name.');
+      return;
+    }
+
+    const checks = document.querySelectorAll('.wg-student-check:checked');
+    const members = [];
+    checks.forEach(chk => {
+      const studentId = parseInt(chk.value, 10);
+      const roleSel = document.getElementById(`wgRoleSelect_${studentId}`);
+      const role = roleSel ? roleSel.value : 'Member';
+      members.push({ studentId, role });
+    });
+
+    try {
+      if (editId) {
+        await Students.updateWorkgroup(editId, { name, form, description, members });
+        alert('✓ Workgroup updated successfully!');
+      } else {
+        await Students.createWorkgroup({ name, form, description, members });
+        alert('✓ Workgroup created successfully!');
+      }
+      closeWorkgroupModal();
+      await loadWorkgroups();
+    } catch (err) {
+      alert('Could not save workgroup: ' + (err.message || 'Server error'));
+    }
+  }
+
+  async function deleteWorkgroup(id, name) {
+    if (!confirm(`Are you sure you want to delete "${name}"? Assigned students will be released back to the general bench pool.`)) return;
+    try {
+      await Students.deleteWorkgroup(id);
+      alert('✓ Workgroup deleted successfully.');
+      await loadWorkgroups();
+    } catch (err) {
+      alert('Could not delete workgroup: ' + (err.message || 'Server error'));
+    }
+  }
+
+  function openAutoAssignModal() {
+    const modal = document.getElementById('modalAutoAssign');
+    if (modal) modal.style.display = 'flex';
+  }
+
+  function closeAutoAssignModal() {
+    const modal = document.getElementById('modalAutoAssign');
+    if (modal) modal.style.display = 'none';
+  }
+
+  async function executeAutoAssign() {
+    const form = document.getElementById('autoAssignForm')?.value || null;
+    const groupSize = document.getElementById('autoAssignSize')?.value || 4;
+    const namingPrefix = document.getElementById('autoAssignPrefix')?.value || 'Lab Bench';
+
+    try {
+      const res = await Students.autoAssignWorkgroups({ form, groupSize, namingPrefix });
+      alert(`✓ Successfully auto-assigned ${res.totalStudentsAssigned} students into ${res.groupsCreated} lab benches!`);
+      closeAutoAssignModal();
+      await loadWorkgroups();
+    } catch (err) {
+      alert('Auto-assign failed: ' + (err.message || 'Server error'));
+    }
+  }
+
+  window.switchStudentSubTab = switchStudentSubTab;
+  window.loadAttendanceRegister = loadAttendanceRegister;
+  window.renderAttendanceRegisterTable = renderAttendanceRegisterTable;
+  window.setStudentAttendanceStatus = setStudentAttendanceStatus;
+  window.markAllAttendance = markAllAttendance;
+  window.saveAttendanceRegister = saveAttendanceRegister;
+  window.exportAttendanceCSV = exportAttendanceCSV;
+  window.loadWorkgroups = loadWorkgroups;
+  window.openCreateWorkgroupModal = openCreateWorkgroupModal;
+  window.closeWorkgroupModal = closeWorkgroupModal;
+  window.renderWgMemberSelectors = renderWgMemberSelectors;
+  window.toggleWgRoleSelect = toggleWgRoleSelect;
+  window.saveWorkgroupModal = saveWorkgroupModal;
+  window.deleteWorkgroup = deleteWorkgroup;
+  window.openAutoAssignModal = openAutoAssignModal;
+  window.closeAutoAssignModal = closeAutoAssignModal;
+  window.executeAutoAssign = executeAutoAssign;
+
+  /* ── Real-Time Laboratory Activity & Telemetry Monitor ── */
+  let telemetryPollTimer = null;
+  let isTelemetryPolling = false;
+  let lastTelemetryData = null;
+
+  function startTelemetryPolling() {
+    stopTelemetryPolling();
+    isTelemetryPolling = true;
+    updateTelemetryToggleBtn();
+    loadLiveTelemetry();
+    telemetryPollTimer = setInterval(() => {
+      loadLiveTelemetry();
+    }, 3500);
+  }
+
+  function stopTelemetryPolling() {
+    isTelemetryPolling = false;
+    if (telemetryPollTimer) {
+      clearInterval(telemetryPollTimer);
+      telemetryPollTimer = null;
+    }
+    updateTelemetryToggleBtn();
+  }
+
+  function toggleTelemetryPolling() {
+    if (isTelemetryPolling) {
+      stopTelemetryPolling();
+    } else {
+      startTelemetryPolling();
+    }
+  }
+
+  function updateTelemetryToggleBtn() {
+    const btn = document.getElementById('btnToggleTelemetryPoll');
+    if (btn) {
+      btn.textContent = isTelemetryPolling ? '⏸ Pause Auto-Refresh' : '▶ Resume Auto-Refresh';
+      btn.className = isTelemetryPolling ? 'btn btn-sm btn-outline' : 'btn btn-sm btn-success';
+    }
+  }
+
+  async function loadLiveTelemetry(manual = false) {
+    const grid = document.getElementById('telemetryBenchesGrid');
+    const syncTime = document.getElementById('telemetryLastSync');
+    const statStudents = document.getElementById('statLiveStudents');
+    const statBenches = document.getElementById('statLiveBenches');
+    const statSafety = document.getElementById('statLiveSafety');
+    const statCompliance = document.getElementById('statLiveCompliance');
+    const sidebarPill = document.getElementById('sidebarLivePill');
+    const overviewSub = document.getElementById('overviewTelemetrySub');
+
+    try {
+      const data = await Telemetry.getLive();
+      lastTelemetryData = data;
+
+      const m = data.metrics || { activeStudents: 0, activeBenches: 0, safetyAlertCount: 0, protocolCompliancePct: 100 };
+      if (statStudents) statStudents.textContent = m.activeStudents;
+      if (statBenches) statBenches.textContent = m.activeBenches;
+      if (statSafety) {
+        statSafety.textContent = m.safetyAlertCount;
+        statSafety.style.color = m.safetyAlertCount > 0 ? 'var(--red-accent)' : 'var(--green-accent)';
+      }
+      if (statCompliance) statCompliance.textContent = m.protocolCompliancePct + '%';
+
+      if (sidebarPill) {
+        sidebarPill.textContent = m.activeStudents > 0 ? `${m.activeStudents} LIVE` : 'LIVE';
+        sidebarPill.style.background = m.activeStudents > 0 ? 'var(--green-accent)' : 'var(--text-muted)';
+      }
+
+      if (overviewSub) {
+        overviewSub.textContent = m.activeStudents > 0
+          ? `Currently tracking ${m.activeStudents} student(s) across ${m.activeBenches} active practical bench(es) with ${m.safetyAlertCount} safety alert(s).`
+          : 'Monitoring active student simulation benches, apparatus sensor states & safety alerts.';
+      }
+
+      if (syncTime) {
+        syncTime.textContent = 'Last pulse: ' + new Date().toLocaleTimeString();
+      }
+
+      renderTelemetryBenches(data.benches || []);
+      renderTelemetryIncidents(data.recentIncidents || []);
+    } catch (err) {
+      if (manual && grid) {
+        grid.innerHTML = '<div class="empty" style="grid-column:1/-1; padding:32px; color:var(--red-accent);">Telemetry stream error: ' + escapeHtml(err.message) + '</div>';
+      }
+    }
+  }
+
+  function renderTelemetryBenches(benches) {
+    const grid = document.getElementById('telemetryBenchesGrid');
+    if (!grid) return;
+
+    if (!benches || benches.length === 0) {
+      grid.innerHTML = `
+        <div class="empty" style="grid-column:1/-1; padding:36px 20px;">
+          <div style="font-size:2.2rem; margin-bottom:8px;">📡</div>
+          <div style="font-weight:700; color:var(--heading-color); font-size:1.05rem;">No active laboratory telemetry feeds right now</div>
+          <p style="margin:6px 0 16px 0; color:var(--text-muted); font-size:0.86rem; max-width:440px; margin-left:auto; margin-right:auto;">
+            When students launch practical simulations (Titration, Qualitative, Organic, Thermochemistry), their apparatus telemetry appears here live.
+          </p>
+          <button class="btn btn-primary btn-sm" onclick="triggerSimulatedClassFeed()">
+            ⚡ Launch Demo Class Telemetry
+          </button>
+        </div>
+      `;
+      return;
+    }
+
+    grid.innerHTML = benches.map(b => {
+      const apparatus = b.apparatus_state || {};
+      const alerts = Array.isArray(b.safety_alerts) ? b.safety_alerts : [];
+      const hasSafetyIssue = alerts.length > 0;
+      const mod = (b.practical_type || 'titration').toLowerCase();
+
+      // Module-specific telemetry widget
+      let apparatusWidget = '';
+      if (mod === 'titration') {
+        const dispensed = parseFloat(apparatus.buretteVolumeDispensed || 0);
+        const target = parseFloat(apparatus.targetEquivalence || 20);
+        const pct = Math.min(100, Math.round((dispensed / 50.0) * 100));
+        const ph = apparatus.currentPH || '7.00';
+        const dps = apparatus.dropRateDps || 0;
+
+        apparatusWidget = `
+          <div style="background:var(--bg-card-subtle, rgba(0,0,0,0.02)); border-radius:8px; padding:10px; margin-top:8px;">
+            <div style="display:flex; justify-content:space-between; font-size:0.78rem; font-weight:700; margin-bottom:4px;">
+              <span>Burette Level: ${dispensed.toFixed(2)} / 50 cm³</span>
+              <span style="color:var(--blue-accent);">pH ${ph}</span>
+            </div>
+            <div style="width:100%; height:6px; background:var(--border-color); border-radius:3px; overflow:hidden;">
+              <div style="width:${pct}%; height:100%; background:var(--blue-accent); transition:width 0.4s ease;"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:0.74rem; color:var(--text-muted); margin-top:6px;">
+              <span>Drop Rate: ${dps} dps</span>
+              <span>Color: ${escapeHtml(apparatus.flaskColor || 'Clear')}</span>
+            </div>
+          </div>
+        `;
+      } else if (mod === 'qualitative') {
+        apparatusWidget = `
+          <div style="background:var(--bg-card-subtle, rgba(0,0,0,0.02)); border-radius:8px; padding:10px; margin-top:8px; font-size:0.78rem;">
+            <div style="font-weight:700; color:var(--heading-color); margin-bottom:2px;">${escapeHtml(apparatus.unknownSalt || 'Salt Sample')}</div>
+            <div style="color:var(--text-muted);">Reagent: <b>${escapeHtml(apparatus.reagentAdded || 'None')}</b></div>
+            <div style="color:var(--blue-accent); margin-top:3px; font-style:italic;">"${escapeHtml(apparatus.precipitate || 'Awaiting observation')}"</div>
+          </div>
+        `;
+      } else if (mod === 'energy') {
+        const liveT = apparatus.currentTempLive || apparatus.initialTempT1 || 20;
+        const deltaT = apparatus.deltaT || 0;
+        apparatusWidget = `
+          <div style="background:var(--bg-card-subtle, rgba(0,0,0,0.02)); border-radius:8px; padding:10px; margin-top:8px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <span style="font-size:1.15rem; font-weight:800; color:var(--amber-accent);">${liveT}°C</span>
+                <span style="font-size:0.75rem; color:var(--text-muted); margin-left:6px;">(ΔT: +${deltaT}°C)</span>
+              </div>
+              <span class="pill pill-muted" style="font-size:0.7rem;">${escapeHtml(apparatus.enthalpyDeltaHKJ || '0')} kJ/mol</span>
+            </div>
+            <div style="font-size:0.74rem; color:var(--text-muted); margin-top:4px;">${escapeHtml(apparatus.reaction || 'Enthalpy reaction')}</div>
+          </div>
+        `;
+      } else {
+        apparatusWidget = `
+          <div style="background:var(--bg-card-subtle, rgba(0,0,0,0.02)); border-radius:8px; padding:8px 10px; margin-top:8px; font-size:0.76rem; color:var(--text-muted);">
+            <div>Status: <b>${escapeHtml(b.status || 'Active')}</b></div>
+            <div style="margin-top:2px;">Practical: ${escapeHtml(b.practical_type || 'General')}</div>
+          </div>
+        `;
+      }
+
+      // Elapsed calculation
+      const elapsedMins = Math.floor((b.elapsed_seconds || 0) / 60);
+      const elapsedSecs = (b.elapsed_seconds || 0) % 60;
+      const elapsedStr = `${elapsedMins}m ${elapsedSecs < 10 ? '0' : ''}${elapsedSecs}s`;
+
+      return `
+        <div class="telemetry-bench-card" style="background:var(--card-bg, #fff); border:1px solid ${hasSafetyIssue ? 'var(--red-accent)' : 'var(--border-color)'}; border-radius:12px; padding:16px; box-shadow:0 2px 10px rgba(0,0,0,0.04); display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px;">
+              <div>
+                <div style="font-size:0.72rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">${escapeHtml(b.effective_bench_name || b.bench_name)}</div>
+                <div style="font-size:0.98rem; font-weight:800; color:var(--heading-color);">${escapeHtml(b.student_name)}</div>
+                <div style="font-size:0.74rem; color:var(--text-muted);">${escapeHtml(b.form || 'Form 4')} • ${escapeHtml(b.student_role || 'Operator')}</div>
+              </div>
+              <span class="pill ${hasSafetyIssue ? 'pill-danger' : 'pill-success'}" style="font-size:0.68rem; padding:3px 8px;">
+                ${hasSafetyIssue ? '⚠️ Alert' : '● Live Pulse'}
+              </span>
+            </div>
+
+            ${apparatusWidget}
+
+            ${alerts.map(a => `
+              <div style="margin-top:8px; background:rgba(239,68,68,0.1); border-left:3px solid var(--red-accent); padding:5px 8px; border-radius:4px; font-size:0.75rem; color:var(--red-accent);">
+                <b>${escapeHtml(a.title || 'Safety Warning')}:</b> ${escapeHtml(a.message || '')}
+              </div>
+            `).join('')}
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding-top:10px; border-top:1px solid var(--border-color);">
+            <span style="font-size:0.74rem; color:var(--text-muted);">⏱ Elapsed: ${elapsedStr}</span>
+            <button class="btn btn-sm btn-primary" onclick="openInterventionModal(${b.student_id}, '${escapeHtml(b.student_name).replace(/'/g, "\\'")}')" style="font-size:0.75rem; padding:3px 10px;">
+              📢 Intervene
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderTelemetryIncidents(incidents) {
+    const box = document.getElementById('telemetryEventStream');
+    if (!box) return;
+
+    if (!incidents || incidents.length === 0) {
+      box.innerHTML = '<div style="font-size:0.82rem; color:var(--text-muted); text-align:center; padding:16px;">✓ No laboratory safety protocol incidents recorded in the current session.</div>';
+      return;
+    }
+
+    box.innerHTML = incidents.map(inc => {
+      const time = inc.created_at ? new Date(inc.created_at).toLocaleTimeString() : 'Recent';
+      const isDanger = inc.severity === 'danger' || inc.severity === 'critical';
+      return `
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 12px; background:var(--bg-card-subtle, rgba(0,0,0,0.02)); border-left:3px solid ${isDanger ? 'var(--red-accent)' : 'var(--amber-accent)'}; border-radius:6px; font-size:0.82rem;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-weight:700; color:var(--heading-color);">[${time}]</span>
+            <span style="color:var(--heading-color); font-weight:600;">${escapeHtml(inc.student_name)}:</span>
+            <span style="color:${isDanger ? 'var(--red-accent)' : 'var(--heading-color)'};">${escapeHtml(inc.title)} — ${escapeHtml(inc.description || '')}</span>
+          </div>
+          <span class="pill ${isDanger ? 'pill-danger' : 'pill-warning'}" style="font-size:0.7rem;">${escapeHtml(inc.practical_type)}</span>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function openInterventionModal(studentId, studentName) {
+    const modal = document.getElementById('modalIntervention');
+    const idInput = document.getElementById('interveneStudentId');
+    const nameInput = document.getElementById('interveneStudentName');
+    const msgInput = document.getElementById('interveneMsg');
+
+    if (!modal) return;
+    if (idInput) idInput.value = studentId;
+    if (nameInput) nameInput.value = studentName;
+    if (msgInput) msgInput.value = '';
+
+    modal.style.display = 'flex';
+  }
+
+  function closeInterventionModal() {
+    const modal = document.getElementById('modalIntervention');
+    if (modal) modal.style.display = 'none';
+  }
+
+  function setInterventionPreset(text) {
+    const msg = document.getElementById('interveneMsg');
+    if (msg) msg.value = text;
+  }
+
+  async function sendInterventionSubmit() {
+    const studentId = document.getElementById('interveneStudentId')?.value;
+    const message = document.getElementById('interveneMsg')?.value;
+    const interventionType = document.getElementById('interveneType')?.value || 'guidance';
+
+    if (!message || !message.trim()) {
+      alert('Please enter an intervention message for the student.');
+      return;
+    }
+
+    try {
+      await Telemetry.intervene({ studentId, message, interventionType });
+      alert('✓ Guidance dispatch sent! The student will see your instructor tip in real time.');
+      closeInterventionModal();
+    } catch (err) {
+      alert('Could not deliver intervention: ' + (err.message || 'Server error'));
+    }
+  }
+
+  async function triggerSimulatedClassFeed() {
+    try {
+      const res = await Telemetry.simulateFeed();
+      alert('✓ ' + (res.message || 'Simulated chemistry laboratory feeds initiated!'));
+      await loadLiveTelemetry();
+    } catch (err) {
+      alert('Simulation trigger note: ' + (err.message || 'Server error'));
+    }
+  }
+
+  window.startTelemetryPolling = startTelemetryPolling;
+  window.stopTelemetryPolling = stopTelemetryPolling;
+  window.toggleTelemetryPolling = toggleTelemetryPolling;
+  window.loadLiveTelemetry = loadLiveTelemetry;
+  window.openInterventionModal = openInterventionModal;
+  window.closeInterventionModal = closeInterventionModal;
+  window.setInterventionPreset = setInterventionPreset;
+  window.sendInterventionSubmit = sendInterventionSubmit;
+  window.triggerSimulatedClassFeed = triggerSimulatedClassFeed;
 
   /* ── Student Performance Drill-Down Modal ── */
   async function openStudentDrilldown(studentId) {

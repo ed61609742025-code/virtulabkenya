@@ -232,3 +232,28 @@
   border-radius: 12px;
   margin-bottom: 6px;
 }
+
+/* Mobile Viewport Optimizations (< 768px) */
+@media (max-width: 768px) {
+  .vlk-ai-widget-container {
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    right: 12px;
+    z-index: 8500;
+  }
+
+  .vlk-ai-fab {
+    width: 44px;
+    height: 44px;
+    font-size: 1.15rem;
+    box-shadow: 0 4px 14px rgba(124, 58, 237, 0.4);
+  }
+
+  .vlk-ai-panel {
+    bottom: 54px;
+    right: 0;
+    width: calc(100vw - 24px);
+    max-width: 360px;
+    max-height: 72vh;
+  }
+}
+

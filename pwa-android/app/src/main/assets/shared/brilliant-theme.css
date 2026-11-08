@@ -50,6 +50,8 @@
   
   --b-nav-bg: rgba(255, 255, 255, 0.92);
   --b-nav-border: #E2E8F0;
+  --bottom-nav-bg: #FFFFFF;
+  --bottom-nav-border: #E2E8F0;
   --b-focus-ring: 0 0 0 3px rgba(2, 132, 199, 0.4);
 }
 
@@ -99,6 +101,8 @@
   
   --b-nav-bg: rgba(17, 29, 51, 0.94);
   --b-nav-border: #1E3357;
+  --bottom-nav-bg: #0B1322;
+  --bottom-nav-border: #1E2D4A;
   --b-focus-ring: 0 0 0 3px rgba(56, 189, 248, 0.45);
 }
 
@@ -148,6 +152,8 @@
   
   --b-nav-bg: rgba(14, 36, 22, 0.94);
   --b-nav-border: #1B442B;
+  --bottom-nav-bg: #091C10;
+  --bottom-nav-border: #1E4D2B;
   --b-focus-ring: 0 0 0 3px rgba(52, 211, 153, 0.45);
 }
 
@@ -595,6 +601,23 @@
   }
 }
 
+/* Suppress obsolete .b-mobile-bottom-nav whenever standard .vlk-bottom-nav is in the DOM */
+body:has(.vlk-bottom-nav) .b-mobile-bottom-nav,
+.vlk-bottom-nav ~ .b-mobile-bottom-nav,
+.vlk-bottom-nav + .b-mobile-bottom-nav,
+body.has-bottom-nav .vlk-bottom-nav ~ .b-mobile-bottom-nav {
+  display: none !important;
+}
+
+/* Auto-hide bottom nav bar on scroll down, reappear on scroll up (X / Twitter style) */
+.vlk-bottom-nav.nav-hidden,
+.mobile-bottom-nav.nav-hidden,
+.b-mobile-bottom-nav.nav-hidden {
+  transform: translate3d(0, calc(100% + 24px), 0) !important;
+  -webkit-transform: translate3d(0, calc(100% + 24px), 0) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
 
 /* ── 8. MOBILE THERMAL & GPU BATTERY OPTIMIZATION ── */
 @media (max-width: 768px) {

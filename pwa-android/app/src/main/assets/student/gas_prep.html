@@ -28,11 +28,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="/shared/vlk-icons.js?v=164"></script>
+<script src="/shared/vlk-icons.js?v=167"></script>
 <link rel="stylesheet" href="/shared/style.css">
 <link rel="stylesheet" href="/shared/brilliant-theme.css">
 <link rel="stylesheet" href="/shared/tutorial-engine.css">
-<link rel="stylesheet" href="/student/css/gas-prep.css?v=152">
+<link rel="stylesheet" href="/student/css/gas-prep.css?v=174">
 <link rel="stylesheet" href="/shared/ai-tutor.css">
 <link rel="stylesheet" href="/shared/pwa-installer.css">
 </head>
@@ -73,21 +73,11 @@
         <span id="sessionTimerText" class="tabular-nums">00:00</span>
       </div>
 
-      <!-- Guided Tutorial Button -->
-      <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm" onclick="TutorialEngine.start('gas_prep')" style="padding:4px 8px; font-size:0.75rem; white-space:nowrap; display:inline-flex; align-items:center; gap:4px;">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg> <span class="btn-text-full">Guided Tutorial</span><span class="btn-text-short">Tutorial</span>
-      </button>
-
       <!-- Study Mode Toggle -->
       <div class="theme-toggle-group">
         <button type="button" class="theme-btn-chip active" id="btnModePractice" onclick="setStudyMode('practice')" style="display:inline-flex; align-items:center; gap:4px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> <span class="btn-text-full">Practice</span></button>
         <button type="button" class="theme-btn-chip" id="btnModeExam" onclick="setStudyMode('exam')" style="display:inline-flex; align-items:center; gap:4px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg> <span class="btn-text-full">Exam</span></button>
       </div>
-
-      <!-- Quick Reagent Safety SDS Button -->
-      <button type="button" class="nav-btn nav-btn-safety" onclick="openCurrentGasSafety()" title="View Chemical Safety Data Sheets" style="padding:4px 8px; font-size:0.75rem; display:inline-flex; align-items:center; gap:4px;">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> <span class="btn-text-full">SDS Hazards</span><span class="btn-text-short">SDS</span>
-      </button>
 
       <!-- Settings Dropdown -->
       <div style="position:relative;">
@@ -202,9 +192,6 @@
 
 <!-- MAIN WORKBENCH LAYOUT -->
 <main class="gas-workbench-layout">
-
-  <!-- Interactive Step-by-Step Tutorial Container -->
-  <div id="tutorialDrawer" style="display:none; grid-column: 1 / -1; margin-bottom: 14px;"></div>
 
   <!-- Prescribed Continuous Assessment Banner (Shown when assignmentId is present) -->
   <div id="assignmentHeaderBanner" style="display:none; grid-column: 1 / -1; background:rgba(6,182,212,0.15); border:1.5px solid var(--cyan-accent); border-radius:12px; padding:12px 18px; margin-bottom:14px; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
@@ -1246,7 +1233,7 @@
 <script src="/shared/tutorial-engine.js"></script>
 <script src="/shared/ai-tutor.js"></script>
 <script src="/shared/gas-prep-bench-core.js"></script>
-<script src="/student/js/gas-prep-engine.js?v=152"></script>
+<script src="/student/js/gas-prep-engine.js?v=167"></script>
 
 <script>
   const urlParams = new URLSearchParams(window.location.search);
@@ -1307,13 +1294,6 @@
         }
       }).catch(err => console.warn('Could not fetch gas assignment banner info:', err.message));
     }
-  }
-
-  if (window.TutorialEngine) {
-    window.TutorialEngine.init({
-      discipline: 'gas_prep',
-      containerId: 'tutorialDrawer'
-    });
   }
 
   if (window.AITutor) {
@@ -1415,9 +1395,6 @@
       btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
     });
     localStorage.setItem('vlk_lang', lang);
-    if (window.TutorialEngine && typeof TutorialEngine.setLanguage === 'function') {
-      TutorialEngine.setLanguage(lang);
-    }
   }
 
   function openCurrentGasSafety() {

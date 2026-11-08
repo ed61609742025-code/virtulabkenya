@@ -1020,23 +1020,27 @@
 </div>
 
 <!-- Mobile & Tablet Bottom Navigation Dock Bar -->
-<nav class="mobile-bottom-nav">
-  <button class="bottom-tab-item" onclick="window.location.href='home.html'">
-    <span class="bottom-tab-icon">🧪</span>
-    <span>Workbenches</span>
-  </button>
-  <button class="bottom-tab-item" onclick="window.location.href='reference.html'">
-    <span class="bottom-tab-icon">📚</span>
+<nav class="vlk-bottom-nav mobile-bottom-nav" aria-label="Mobile Bottom Navigation" id="vlkBottomNav">
+  <a href="home.html" class="vlk-bottom-nav-item" aria-label="Home" id="bnav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9.5l9-7 9 7v10.5a1.5 1.5 0 0 1-1.5 1.5h-4.5a1 1 0 0 1-1-1v-5a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v5a1 1 0 0 1-1 1h-4.5A1.5 1.5 0 0 1 3 20V9.5z"/></svg>
+    <span>Home</span>
+  </a>
+  <a href="lab.html" class="vlk-bottom-nav-item" aria-label="Lab" id="bnav-lab">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.5L5.5 18a2 2 0 0 0 1.7 3h9.6a2 2 0 0 0 1.7-3L14 9.5V2M8.5 2h7"/></svg>
+    <span>Lab</span>
+  </a>
+  <a href="reference.html" class="vlk-bottom-nav-item" aria-label="Revision" id="bnav-reference">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
     <span>Revision</span>
-  </button>
-  <button class="bottom-tab-item" onclick="window.location.href='home.html#achievements'">
-    <span class="bottom-tab-icon">🏆</span>
-    <span>Badges</span>
-  </button>
-  <button class="bottom-tab-item active" onclick="window.location.href='history.html'">
-    <span class="bottom-tab-icon">📊</span>
-    <span>Analytics</span>
-  </button>
+  </a>
+  <a href="history.html" class="vlk-bottom-nav-item active" aria-label="History" id="bnav-history">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+    <span>History</span>
+  </a>
+  <a href="profile.html" class="vlk-bottom-nav-item" aria-label="Profile" id="bnav-profile">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span>Me</span>
+  </a>
 </nav>
 
 <!-- ══════════════════════════════════════

@@ -39,6 +39,8 @@
   --btn-gradient-primary: #0284C7;
   --btn-gradient-success: #059669;
   --btn-gradient-purple: #7C3AED;
+  --bottom-nav-bg: #FFFFFF;
+  --bottom-nav-border: #E2E8F0;
 }
 
 /* ── SLATE BLUE DARK MODE ── */
@@ -71,6 +73,8 @@
   --btn-gradient-primary: #0284C7;
   --btn-gradient-success: #059669;
   --btn-gradient-purple: #8B5CF6;
+  --bottom-nav-bg: #0B1322;
+  --bottom-nav-border: #1E2D4A;
 }
 
 /* ── LAB GREEN MODE ── */
@@ -103,6 +107,8 @@
   --btn-gradient-primary: #059669;
   --btn-gradient-success: #059669;
   --btn-gradient-purple: #8B5CF6;
+  --bottom-nav-bg: #091C10;
+  --bottom-nav-border: #1E4D2B;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }

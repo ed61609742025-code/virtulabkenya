@@ -129,7 +129,14 @@
                           (window.location.pathname === '/' || window.location.pathname.endsWith('/index.html'));
     
     // Avoid double injection if hardcoded or already inserted
-    if (document.getElementById('vlkBrilliantBottomNav') || document.querySelector('.mobile-bottom-nav')) return;
+    if (
+      document.getElementById('vlkBrilliantBottomNav') ||
+      document.getElementById('vlkBottomNav') ||
+      document.querySelector('.vlk-bottom-nav') ||
+      document.querySelector('.mobile-bottom-nav') ||
+      document.querySelector('.b-mobile-bottom-nav') ||
+      document.body.classList.contains('no-bottom-nav')
+    ) return;
     
     if (isStudentPage) {
       document.body.classList.add('has-bottom-nav');
@@ -155,24 +162,24 @@
         },
         {
           id: 'nav-revision',
-          href: `${basePath}home.html#reference`,
+          href: `${basePath}reference.html`,
           icon: '📚',
           label: 'Revision',
-          match: ['#reference']
-        },
-        {
-          id: 'nav-badges',
-          href: `${basePath}home.html#achievements`,
-          icon: '🏆',
-          label: 'Badges',
-          match: ['#achievements']
+          match: ['reference.html']
         },
         {
           id: 'nav-analytics',
           href: `${basePath}history.html`,
           icon: '📊',
-          label: 'Analytics',
+          label: 'History',
           match: ['history.html', 'certificate.html']
+        },
+        {
+          id: 'nav-profile',
+          href: `${basePath}profile.html`,
+          icon: '👤',
+          label: 'Me',
+          match: ['profile.html']
         }
       ];
 
@@ -231,19 +238,104 @@
     });
   }
 
+  // ── 7. Dynamic Scroll-Hide / Show for Mobile Bottom Navigation (Twitter / X style) ──
+  function initScrollAwareBottomNav() {
+    let lastScrollY = Math.max(0, window.pageYOffset || document.documentElement.scrollTop || 0);
+    let ticking = false;
+    const scrollThreshold = 10; // Threshold in px to prevent micro-jitter
+
+    function updateNavVisibility() {
+      const currentScrollY = Math.max(0, window.pageYOffset || document.documentElement.scrollTop || (document.body ? document.body.scrollTop : 0) || 0);
+      const navElements = document.querySelectorAll('.vlk-bottom-nav, .mobile-bottom-nav, .b-mobile-bottom-nav');
+      if (!navElements.length) return;
+
+      const diff = currentScrollY - lastScrollY;
+
+      // Always show when close to the top of the page (within first 60px)
+      if (currentScrollY <= 60) {
+        navElements.forEach(el => el.classList.remove('nav-hidden'));
+        lastScrollY = currentScrollY;
+        return;
+      }
+
+      // Always show when reaching the very bottom of the document
+      const windowHeight = window.innerHeight;
+      const docHeight = Math.max(
+        document.body.scrollHeight,
+        document.documentElement.scrollHeight,
+        document.body.offsetHeight,
+        document.documentElement.offsetHeight
+      );
+      if (windowHeight + currentScrollY >= docHeight - 35) {
+        navElements.forEach(el => el.classList.remove('nav-hidden'));
+        lastScrollY = currentScrollY;
+        return;
+      }
+
+      // Check scroll direction once beyond the threshold
+      if (Math.abs(diff) >= scrollThreshold) {
+        if (diff > 0) {
+          // Scrolling down the page (reading downward) -> slide down to hide
+          navElements.forEach(el => el.classList.add('nav-hidden'));
+        } else {
+          // Scrolling up the page (back to top) -> slide up to show
+          navElements.forEach(el => el.classList.remove('nav-hidden'));
+        }
+        lastScrollY = currentScrollY;
+      }
+    }
+
+    function onScroll() {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          updateNavVisibility();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    // Show nav on resize or orientation change
+    window.addEventListener('resize', () => {
+      const navElements = document.querySelectorAll('.vlk-bottom-nav, .mobile-bottom-nav, .b-mobile-bottom-nav');
+      navElements.forEach(el => el.classList.remove('nav-hidden'));
+    }, { passive: true });
+
+    // Hide bottom nav when soft keyboard pops up on mobile form inputs
+    window.addEventListener('focusin', (e) => {
+      if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable)) {
+        const navElements = document.querySelectorAll('.vlk-bottom-nav, .mobile-bottom-nav, .b-mobile-bottom-nav');
+        navElements.forEach(el => el.classList.add('nav-hidden'));
+      }
+    }, { passive: true });
+
+    window.addEventListener('focusout', () => {
+      const navElements = document.querySelectorAll('.vlk-bottom-nav, .mobile-bottom-nav, .b-mobile-bottom-nav');
+      navElements.forEach(el => el.classList.remove('nav-hidden'));
+    }, { passive: true });
+  }
+
   // ── Public API ───────────────────────────────────────────────
   window.BrilliantUI = {
     audio: BrilliantAudio,
     vibrate: triggerHaptic,
     renderSegmentedProgress,
     setupChoiceCards,
-    initNav: initMobileBottomNav
+    initNav: initMobileBottomNav,
+    initScrollNav: initScrollAwareBottomNav
   };
+
+  function boot() {
+    initMobileBottomNav();
+    initScrollAwareBottomNav();
+  }
 
   // Auto-initialize when DOM is ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initMobileBottomNav);
+    document.addEventListener('DOMContentLoaded', boot);
   } else {
-    initMobileBottomNav();
+    boot();
   }
 })();

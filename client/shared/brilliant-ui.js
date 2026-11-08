@@ -245,7 +245,7 @@
     const scrollThreshold = 10; // Threshold in px to prevent micro-jitter
 
     function updateNavVisibility() {
-      const currentScrollY = Math.max(0, window.pageYOffset || document.documentElement.scrollTop || 0);
+      const currentScrollY = Math.max(0, window.pageYOffset || document.documentElement.scrollTop || (document.body ? document.body.scrollTop : 0) || 0);
       const navElements = document.querySelectorAll('.vlk-bottom-nav, .mobile-bottom-nav, .b-mobile-bottom-nav');
       if (!navElements.length) return;
 

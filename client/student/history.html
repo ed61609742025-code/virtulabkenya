@@ -58,32 +58,246 @@
     }
   }
 
-  /* ── Academic Institutional Ribbon ── */
-  .candidate-top-ribbon {
-    background: var(--acad-oxford, #0B2545);
-    color: #FFFFFF;
-    font-size: 0.76rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    text-align: center;
-    padding: 7px 16px;
-    border-bottom: 2px solid var(--acad-gold, #F59E0B);
+  /* ── 1. Top Navigation Bar (Strict Alignment & Mobile Ergonomics) ── */
+  .top-nav {
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 10000;
+    background: var(--topbar-bg, rgba(255, 255, 255, 0.96));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1.5px solid var(--card-border);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+  [data-theme="dark"] .top-nav {
+    background: rgba(11, 19, 34, 0.94);
+    border-bottom-color: rgba(56, 189, 248, 0.18);
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.4);
+  }
+  [data-theme="green"] .top-nav {
+    background: rgba(9, 28, 16, 0.94);
+    border-bottom-color: rgba(52, 211, 153, 0.22);
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.4);
+  }
+
+  .top-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 24px;
+    max-width: 1360px;
+    margin: 0 auto;
+    gap: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+  }
+
+  .nav-brand-academic {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: inherit;
+    flex-shrink: 0;
+  }
+
+  .vlk-brand-logo-wrap {
+    width: 38px;
+    height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
+    border-radius: 10px;
+    flex-shrink: 0;
   }
-  [data-theme="dark"] .candidate-top-ribbon { background: #0B1728; color: #E2E8F0; }
-  [data-theme="green"] .candidate-top-ribbon { background: #061F10; color: #D1FAE5; }
 
-  /* ── 1. Minimalist Hero Bar ── */
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  /* Desktop Nav Links Container */
+  .vlk-nav-bar {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--card-bg-hover, rgba(2, 132, 199, 0.04));
+    border: 1.5px solid var(--card-border);
+    padding: 4px;
+    border-radius: 12px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    margin: 0 auto;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+  [data-theme="dark"] .vlk-nav-bar {
+    background: rgba(15, 26, 46, 0.95);
+    border-color: rgba(56, 189, 248, 0.28);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  }
+  [data-theme="green"] .vlk-nav-bar {
+    background: rgba(12, 33, 20, 0.95);
+    border-color: rgba(52, 211, 153, 0.3);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  }
+
+  .vlk-nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-decoration: none;
+    background: transparent;
+    border: 1px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.16s ease;
+    line-height: 1;
+    position: relative;
+  }
+  .vlk-nav-link .vlk-icon {
+    width: 15px;
+    height: 15px;
+    stroke-width: 2;
+    transition: transform 0.16s ease, stroke 0.16s ease;
+  }
+  .vlk-nav-link:hover {
+    color: var(--heading-color);
+    background: var(--card-bg);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  }
+  .vlk-nav-link.active {
+    background: var(--acad-oxford, #0B2545);
+    color: #FFFFFF !important;
+    border-color: var(--acad-oxford, #0B2545);
+    box-shadow: 0 2px 8px rgba(11, 37, 69, 0.22);
+  }
+  .vlk-nav-link.active .vlk-icon {
+    stroke: #FFFFFF !important;
+  }
+
+  [data-theme="dark"] .vlk-nav-link {
+    color: #F8FAFC !important;
+    font-weight: 700;
+  }
+  [data-theme="dark"] .vlk-nav-link.active {
+    background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important;
+    color: #FFFFFF !important;
+    border: 1px solid #38BDF8 !important;
+    box-shadow: 0 3px 12px rgba(2, 132, 199, 0.55), 0 0 14px rgba(56, 189, 248, 0.35) !important;
+  }
+
+  [data-theme="green"] .vlk-nav-link {
+    color: #ECFDF5 !important;
+    font-weight: 700;
+  }
+  [data-theme="green"] .vlk-nav-link.active {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+    color: #FFFFFF !important;
+    border: 1px solid #34D399 !important;
+    box-shadow: 0 3px 12px rgba(5, 150, 105, 0.55), 0 0 14px rgba(52, 211, 153, 0.35) !important;
+  }
+
+  .vlk-nav-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(217, 119, 6, 0.14);
+    color: #D97706;
+    border: 1px solid rgba(217, 119, 6, 0.35);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin-left: 2px;
+  }
+
+  /* Hamburger Menu Toggle Button */
+  .vlk-mobile-toggle-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    color: var(--heading-color);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    padding: 0;
+    flex-shrink: 0;
+  }
+  .vlk-mobile-toggle-btn:hover,
+  .vlk-mobile-toggle-btn:focus-visible {
+    border-color: var(--cyan-accent);
+    color: var(--cyan-accent);
+    background: rgba(2, 132, 199, 0.08);
+  }
+  .vlk-mobile-toggle-btn .vlk-icon {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2.2;
+  }
+
+  .user-avatar-btn.lang-single-toggle-btn {
+    width: auto;
+    height: 38px;
+    padding: 0 12px;
+    gap: 6px;
+    border-radius: 10px;
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    color: var(--heading-color);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.78rem;
+    transition: all 0.15s ease;
+  }
+  .user-avatar-btn.lang-single-toggle-btn:hover {
+    border-color: var(--cyan-accent);
+    background: var(--card-bg-hover);
+  }
+  .lang-badge-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.74rem;
+    font-weight: 850;
+  }
+
+  @media (max-width: 900px) {
+    .vlk-nav-bar {
+      display: none !important;
+    }
+    .vlk-mobile-toggle-btn {
+      display: inline-flex !important;
+    }
+    .top-navbar {
+      padding: 8px 14px;
+    }
+  }
+
+  /* ── 2. Minimalist Hero Bar with Candidate Identity ── */
   .minimalist-hero-bar {
     background: var(--card-bg, #FFFFFF);
     border: 1.5px solid var(--card-border, #E2E8F0);
     border-radius: 18px;
     box-shadow: var(--vlk-card-shadow, 0 4px 20px rgba(0,0,0,0.06));
-    padding: 18px 24px;
+    padding: 20px 24px;
     margin-bottom: 22px;
     display: flex;
     align-items: center;
@@ -106,8 +320,9 @@
   .mini-hero-left {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 6px;
     min-width: 0;
+    flex: 1;
   }
   .mini-hero-badge-row {
     display: flex;
@@ -149,11 +364,11 @@
       font-size: 1.25rem;
     }
     .minimalist-hero-bar {
-      padding: 14px 16px;
+      padding: 16px 16px;
     }
   }
 
-  /* ── 2. KCSE READINESS SCORE CARD ── */
+  /* ── 3. KCSE READINESS SCORE CARD ── */
   .readiness-card {
     background: var(--card-bg);
     border: 1.5px solid var(--card-border);
@@ -232,21 +447,32 @@
     box-shadow: 0 0 12px rgba(16, 185, 129, 0.35);
   }
   .readiness-milestones {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.72rem;
-    font-weight: 750;
-    color: var(--text-muted);
-    margin-bottom: 20px;
-    padding: 0 4px;
-    flex-wrap: wrap;
-    gap: 6px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+  @media (max-width: 680px) {
+    .readiness-milestones {
+      grid-template-columns: 1fr 1fr;
+    }
   }
   .readiness-milestone-pill {
-    padding: 2px 8px;
-    border-radius: 6px;
+    padding: 8px 12px;
+    border-radius: 10px;
     background: var(--card-bg-hover);
     border: 1px solid var(--card-border);
+    text-align: center;
+    font-size: 0.74rem;
+    font-weight: 750;
+    color: var(--text-muted);
+    transition: all 0.2s ease;
+  }
+  .readiness-milestone-pill.active {
+    background: rgba(2, 132, 199, 0.12);
+    border-color: var(--cyan-accent);
+    color: var(--heading-color);
+    font-weight: 850;
   }
 
   /* 10 Syllabus Topics Responsive Grid */
@@ -349,7 +575,7 @@
     font-weight: 800;
   }
 
-  /* ── 3. CHARTS & ACHIEVEMENTS LAYOUT ── */
+  /* ── 4. CHARTS & ACHIEVEMENTS LAYOUT ── */
   .analytics-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 340px;
@@ -579,7 +805,7 @@
     color: var(--green-accent, #10B981);
   }
 
-  /* ── 4. ATTEMPTS LIST & TABS ── */
+  /* ── 5. ATTEMPTS LIST & TABS ── */
   .history-tabs {
     display: flex;
     gap: 8px;
@@ -646,7 +872,7 @@
     box-shadow: 0 4px 16px rgba(5, 150, 105, 0.4);
   }
 
-  /* ── 5. FILTER BAR & SEARCH INPUT ── */
+  /* ── 6. FILTER BAR & SEARCH INPUT ── */
   .filter-bar-wrap {
     display: flex;
     align-items: center;
@@ -722,7 +948,7 @@
     border: 0;
   }
 
-  /* ── 6. EXPANDABLE SESSION ROWS & DIAGNOSTIC DETAILS ── */
+  /* ── 7. EXPANDABLE SESSION ROWS & DIAGNOSTIC DETAILS ── */
   .session-list-wrapper {
     background: var(--card-bg);
     border: 1.5px solid var(--card-border);
@@ -933,7 +1159,7 @@
     border-radius: 16px;
   }
 
-  /* ── Mobile Navigation Drawer Styles ── */
+  /* ── 8. Mobile Slide-Out Drawer & Backdrop ── */
   .vlk-mobile-drawer-backdrop {
     position: fixed;
     top: 0;
@@ -1021,6 +1247,13 @@
     if (e.key === 'Escape') {
       window.closeMobileNavDrawer();
     }
+    // Keyboard accessibility for topic cards
+    if (e.target && e.target.classList && e.target.classList.contains('topic-item')) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        e.target.click();
+      }
+    }
   });
 </script>
 </head>
@@ -1039,20 +1272,7 @@
       </div>
     </a>
 
-    <!-- Central Candidate Status Badge (Desktop / Tablet) -->
-    <div class="navbar-welcome-message" style="display:flex; flex-direction:column; align-items:center; gap:2px;">
-      <div style="font-size:0.92rem; font-weight:800; color:var(--heading-color);">
-        Candidate: <span id="studentName">Student Candidate</span>
-      </div>
-      <div style="display:flex; align-items:center; gap:8px; font-size:0.74rem; font-weight:700;">
-        <span style="color:#F59E0B; background:rgba(245, 158, 11, 0.12); padding:2px 8px; border-radius:100px; border:1px solid rgba(245, 158, 11, 0.3); display:inline-flex; align-items:center; gap:4px;">
-          🔥 <span id="streakCount">1</span>-Day Streak
-        </span>
-        <span style="color:var(--text-muted);" id="todayDate">Today: Aug 23, 2026</span>
-      </div>
-    </div>
-
-    <!-- Desktop Nav Links Container -->
+    <!-- Desktop Nav Links Container (Hidden on mobile via @media (max-width: 900px)) -->
     <div class="vlk-nav-bar" role="navigation" aria-label="Primary Workspace Links">
       <a href="home.html" class="vlk-nav-link" data-tooltip="Student Workstation" data-tooltip-pos="bottom">
         <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -1080,7 +1300,7 @@
         <span class="lang-badge-tag" id="langBadgeTag">EN</span>
       </button>
 
-      <!-- Theme Toggle: 3-chip switcher for desktop -->
+      <!-- Theme Toggle: 3-chip switcher for desktop (Hidden on mobile via mobile.css) -->
       <div class="theme-toggle-group theme-multi-btn-group" aria-label="Visual Theme Switcher">
         <button class="theme-btn-chip active" data-theme="light" data-theme-val="light" onclick="setTheme('light')" data-tooltip="Light mode" data-tooltip-pos="bottom" aria-label="Light Theme">
           <svg class="theme-icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
@@ -1190,19 +1410,23 @@
 </aside>
 
 <div class="wrap">
-  <!-- Minimalist Hero Header Bar -->
+  <!-- Minimalist Hero Header Bar with Candidate Status -->
   <header class="minimalist-hero-bar" role="banner">
     <div class="mini-hero-left">
       <div class="mini-hero-badge-row">
         <span class="mini-hero-tag">KCSE Paper 3</span>
         <span class="mini-hero-syllabus">Official Practical Chemistry Portfolio</span>
+        <span style="color:#F59E0B; background:rgba(245, 158, 11, 0.12); padding:2px 8px; border-radius:100px; border:1px solid rgba(245, 158, 11, 0.3); font-size:0.72rem; font-weight:750; display:inline-flex; align-items:center; gap:4px;">
+          🔥 <span id="streakCount">1</span>-Day Streak
+        </span>
+        <span style="color:var(--text-muted); font-size:0.72rem; font-weight:600;" id="todayDate">Today: Aug 23, 2026</span>
       </div>
       <h1 class="mini-hero-title">
         <span>📊</span>
         <span>Grades &amp; Performance Analytics</span>
       </h1>
       <div style="font-size:0.84rem; color:var(--text-muted); line-height:1.45; margin-top:2px;">
-        Track your KCSE Paper 3 readiness, exam scores, concordance accuracy, and detailed session logs.
+        Candidate: <b id="studentName" style="color:var(--heading-color);">Student Candidate</b> &bull; Track your KCSE Paper 3 readiness, exam scores, concordance accuracy, and detailed session logs.
       </div>
     </div>
     <div class="mini-hero-right" style="display:flex; align-items:center; gap:10px;">
@@ -1223,7 +1447,7 @@
         </div>
         <div class="readiness-sub">Calculated from lab accuracy, concordant titres, and syllabus practical coverage.</div>
       </div>
-      <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
         <a href="certificate.html" id="certClaimBtn" class="btn btn-primary" style="font-size:0.78rem; padding:6px 14px; border-radius:100px; text-decoration:none; display:none; font-weight:800;">📜 Claim Certificate</a>
         <div class="readiness-score-badge">
           <span class="score-num" id="readinessScoreNum">0%</span>
@@ -1236,10 +1460,10 @@
       <div class="readiness-progress-bar-fill" id="readinessBarFill" style="width: 0%;"></div>
     </div>
     <div class="readiness-milestones">
-      <span class="readiness-milestone-pill">Novice (0–39%)</span>
-      <span class="readiness-milestone-pill">Developing (40–69%)</span>
-      <span class="readiness-milestone-pill">Competent (70–84%)</span>
-      <span class="readiness-milestone-pill">KCSE Ready (85–100%)</span>
+      <span class="readiness-milestone-pill" id="ms-novice">Novice (0–39%)</span>
+      <span class="readiness-milestone-pill" id="ms-dev">Developing (40–69%)</span>
+      <span class="readiness-milestone-pill" id="ms-comp">Competent (70–84%)</span>
+      <span class="readiness-milestone-pill" id="ms-ready">KCSE Ready (85–100%)</span>
     </div>
 
     <div class="readiness-topics-grid">

@@ -3103,3 +3103,671 @@
   color: #FDE68A !important;
   border-color: rgba(245, 158, 11, 0.5) !important;
 }
+
+
+/* ==============================================================================
+   13. MODERN TACTILE BUTTON SYSTEM & INTERACTIVE ENHANCEMENTS (STUDENT HOMEPAGE)
+   ============================================================================== */
+
+/* ── Base Interactive Physics & Transitions ── */
+button,
+.btn,
+.vlk-nav-link,
+.vlk-mobile-toggle-btn,
+.lang-single-toggle-btn,
+.theme-btn-chip,
+.theme-single-toggle-btn,
+.user-avatar-btn,
+.view-toggle-btn,
+.filter-chip,
+.tip-action-btn,
+.tip-next-chip,
+.tip-tool-btn,
+.rec-cta-btn,
+.rec-cycle-chip,
+.rec-tool-btn,
+.daily-launch-btn,
+.btn-resume-primary,
+.btn-resume-secondary,
+.btn-offline-install-cta {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+button:focus-visible,
+a.btn:focus-visible,
+.btn-resume-primary:focus-visible,
+.btn-resume-secondary:focus-visible,
+.filter-chip:focus-visible,
+.view-toggle-btn:focus-visible,
+.tip-action-btn:focus-visible,
+.rec-cta-btn:focus-visible,
+.daily-launch-btn:focus-visible {
+  outline: 2.5px solid var(--cyan-accent, #0284C7) !important;
+  outline-offset: 2.5px !important;
+}
+
+/* ── 1. Hero Primary Action Button (Resume Lab Session) ── */
+.btn-resume-primary {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  min-height: 50px !important;
+  padding: 12px 24px !important;
+  border-radius: 13px !important;
+  background: linear-gradient(135deg, #0284C7 0%, #0369A1 50%, #1D4ED8 100%) !important;
+  color: #FFFFFF !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 0.96rem !important;
+  font-weight: 850 !important;
+  letter-spacing: -0.015em !important;
+  text-decoration: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  box-shadow: 0 4px 14px -1px rgba(2, 132, 199, 0.45),
+              0 1px 3px rgba(0, 0, 0, 0.1),
+              inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+}
+
+.btn-resume-primary:hover {
+  transform: translateY(-2px) scale(1.015) !important;
+  box-shadow: 0 8px 24px -2px rgba(2, 132, 199, 0.55),
+              0 2px 6px rgba(14, 165, 233, 0.35),
+              inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+  filter: brightness(1.06) !important;
+}
+
+.btn-resume-primary:hover .btn-arrow {
+  transform: translateX(3px) !important;
+}
+
+.btn-resume-primary:active {
+  transform: translateY(1px) scale(0.98) !important;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.4),
+              inset 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+
+.btn-resume-primary .btn-play-icon {
+  font-size: 0.82rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 22px !important;
+  height: 22px !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.22) !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+.btn-resume-primary .btn-arrow {
+  display: inline-block !important;
+  transition: transform 0.2s ease !important;
+}
+
+[data-theme="dark"] .btn-resume-primary {
+  background: linear-gradient(135deg, #0284C7 0%, #0369A1 50%, #1E40AF 100%) !important;
+  border-color: rgba(56, 189, 248, 0.4) !important;
+  box-shadow: 0 4px 16px rgba(2, 132, 199, 0.4),
+              0 0 16px rgba(56, 189, 248, 0.2),
+              inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+}
+
+[data-theme="green"] .btn-resume-primary {
+  background: linear-gradient(135deg, #059669 0%, #047857 50%, #065F46 100%) !important;
+  border-color: rgba(52, 211, 153, 0.4) !important;
+  box-shadow: 0 4px 16px rgba(5, 150, 105, 0.4),
+              0 0 16px rgba(52, 211, 153, 0.2),
+              inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+}
+
+/* ── 2. Hero Secondary Action Button (Explore Skill Tree) ── */
+.btn-resume-secondary {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  min-height: 50px !important;
+  padding: 12px 20px !important;
+  border-radius: 13px !important;
+  background: var(--card-bg, #FFFFFF) !important;
+  color: var(--heading-color) !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 0.90rem !important;
+  font-weight: 750 !important;
+  text-decoration: none !important;
+  border: 1.5px solid var(--card-border) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04),
+              inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+}
+
+.btn-resume-secondary:hover {
+  border-color: var(--cyan-accent, #0284C7) !important;
+  color: var(--cyan-accent, #0284C7) !important;
+  background: var(--card-bg-hover, #F8FAFC) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.15) !important;
+}
+
+.btn-resume-secondary:active {
+  transform: translateY(1px) scale(0.98) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+}
+
+[data-theme="dark"] .btn-resume-secondary {
+  background: #111A2E !important;
+  border-color: rgba(56, 189, 248, 0.28) !important;
+  color: #F8FAFC !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] .btn-resume-secondary:hover {
+  background: rgba(56, 189, 248, 0.12) !important;
+  border-color: #38BDF8 !important;
+  color: #38BDF8 !important;
+  box-shadow: 0 6px 20px rgba(56, 189, 248, 0.25) !important;
+}
+
+[data-theme="green"] .btn-resume-secondary {
+  background: #0C2114 !important;
+  border-color: rgba(52, 211, 153, 0.28) !important;
+  color: #ECFDF5 !important;
+}
+
+[data-theme="green"] .btn-resume-secondary:hover {
+  background: rgba(52, 211, 153, 0.14) !important;
+  border-color: #34D399 !important;
+  color: #34D399 !important;
+}
+
+/* ── 3. Segmented View Toggle Buttons (Pathway View / Grid View) ── */
+.pathway-view-toggle {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 4px !important;
+  border-radius: 12px !important;
+  background: var(--card-bg-hover, rgba(2, 132, 199, 0.04)) !important;
+  border: 1.5px solid var(--card-border) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) inset !important;
+}
+
+.view-toggle-btn {
+  padding: 7px 15px !important;
+  border-radius: 9px !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 0.82rem !important;
+  font-weight: 750 !important;
+  border: 1px solid transparent !important;
+  background: transparent !important;
+  color: var(--text-muted) !important;
+  cursor: pointer !important;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+}
+
+.view-toggle-btn:hover {
+  color: var(--heading-color) !important;
+  background: rgba(2, 132, 199, 0.06) !important;
+  transform: translateY(-1px) !important;
+}
+
+.view-toggle-btn:active {
+  transform: scale(0.96) !important;
+}
+
+.view-toggle-btn.active {
+  background: var(--card-bg, #FFFFFF) !important;
+  color: var(--cyan-accent, #0284C7) !important;
+  border-color: var(--card-border) !important;
+  font-weight: 850 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+  transform: none !important;
+}
+
+[data-theme="dark"] .view-toggle-btn.active {
+  background: #162540 !important;
+  color: #38BDF8 !important;
+  border-color: rgba(56, 189, 248, 0.4) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35), 0 0 10px rgba(56, 189, 248, 0.2) !important;
+}
+
+[data-theme="green"] .view-toggle-btn.active {
+  background: #12301D !important;
+  color: #34D399 !important;
+  border-color: rgba(52, 211, 153, 0.4) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35), 0 0 10px rgba(52, 211, 153, 0.2) !important;
+}
+
+/* ── 4. Practical Chemistry Category Filter Chips ── */
+.filter-chips {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  overflow-x: auto !important;
+  padding: 4px 2px !important;
+  scrollbar-width: none !important;
+}
+
+.filter-chip {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 8px 16px !important;
+  min-height: 38px !important;
+  border-radius: 10px !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 0.82rem !important;
+  font-weight: 750 !important;
+  background: var(--card-bg, #FFFFFF) !important;
+  border: 1.5px solid var(--card-border) !important;
+  color: var(--text-muted) !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.filter-chip:hover {
+  color: var(--cyan-accent, #0284C7) !important;
+  border-color: var(--cyan-accent, #0284C7) !important;
+  background: var(--card-bg-hover, #F8FAFC) !important;
+  transform: translateY(-1.5px) !important;
+  box-shadow: 0 3px 10px rgba(2, 132, 199, 0.15) !important;
+}
+
+.filter-chip:active {
+  transform: translateY(1px) scale(0.96) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06) !important;
+}
+
+.filter-chip.active {
+  background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important;
+  color: #FFFFFF !important;
+  border-color: #0284C7 !important;
+  font-weight: 850 !important;
+  box-shadow: 0 3px 12px rgba(2, 132, 199, 0.35),
+              inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+  transform: translateY(-1px) !important;
+}
+
+[data-theme="dark"] .filter-chip {
+  background: #111A2E !important;
+  border-color: rgba(56, 189, 248, 0.25) !important;
+  color: #F8FAFC !important;
+}
+
+[data-theme="dark"] .filter-chip:hover {
+  border-color: #38BDF8 !important;
+  color: #38BDF8 !important;
+  background: rgba(56, 189, 248, 0.14) !important;
+  box-shadow: 0 3px 12px rgba(56, 189, 248, 0.2) !important;
+}
+
+[data-theme="dark"] .filter-chip.active {
+  background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important;
+  border-color: #38BDF8 !important;
+  box-shadow: 0 3px 14px rgba(2, 132, 199, 0.5), 0 0 12px rgba(56, 189, 248, 0.3) !important;
+}
+
+[data-theme="green"] .filter-chip.active {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  border-color: #34D399 !important;
+  box-shadow: 0 3px 14px rgba(5, 150, 105, 0.5), 0 0 12px rgba(52, 211, 153, 0.3) !important;
+}
+
+/* ── 5. Mwalimu AI Tutor & Examiner Tip Buttons ── */
+.tip-action-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 10px 18px !important;
+  border-radius: 11px !important;
+  background: linear-gradient(135deg, #0B2545 0%, #17375E 100%) !important;
+  color: #FFFFFF !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 0.84rem !important;
+  font-weight: 850 !important;
+  text-decoration: none !important;
+  box-shadow: 0 3px 10px rgba(11, 37, 69, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+}
+
+.tip-action-btn:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+  filter: brightness(1.1) !important;
+  box-shadow: 0 6px 18px rgba(11, 37, 69, 0.4) !important;
+}
+
+.tip-action-btn:active {
+  transform: translateY(1px) scale(0.97) !important;
+}
+
+[data-theme="dark"] .tip-action-btn {
+  background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important;
+  border: 1px solid #38BDF8 !important;
+  box-shadow: 0 3px 12px rgba(2, 132, 199, 0.45),
+              0 0 12px rgba(56, 189, 248, 0.25) !important;
+}
+
+.tip-next-chip {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 10px 18px !important;
+  border-radius: 11px !important;
+  border: 1.5px solid var(--card-border) !important;
+  background: var(--card-bg, #FFFFFF) !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 0.84rem !important;
+  font-weight: 800 !important;
+  color: var(--heading-color) !important;
+  cursor: pointer !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  white-space: nowrap !important;
+}
+
+.tip-next-chip:hover {
+  background: var(--card-bg-hover, #F8FAFC) !important;
+  border-color: #D97706 !important;
+  color: #D97706 !important;
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.2) !important;
+  transform: translateX(2.5px) !important;
+}
+
+.tip-next-chip:active {
+  transform: scale(0.96) !important;
+}
+
+[data-theme="dark"] .tip-next-chip {
+  background: #162540 !important;
+  border-color: rgba(245, 158, 11, 0.4) !important;
+  color: #FBBF24 !important;
+}
+
+[data-theme="dark"] .tip-next-chip:hover {
+  background: rgba(245, 158, 11, 0.18) !important;
+  border-color: #FBBF24 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.35) !important;
+}
+
+/* Quick Recall Question Accordion Button */
+.tip-quiz-toggle-btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  padding: 11px 16px !important;
+  border-radius: 12px !important;
+  background: var(--card-bg-hover, rgba(2, 132, 199, 0.04)) !important;
+  border: 1.5px solid var(--card-border) !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 0.84rem !important;
+  font-weight: 800 !important;
+  color: var(--heading-color) !important;
+  cursor: pointer !important;
+  transition: all 0.18s ease !important;
+}
+
+.tip-quiz-toggle-btn:hover {
+  border-color: var(--cyan-accent, #0284C7) !important;
+  background: var(--card-bg, #FFFFFF) !important;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.12) !important;
+}
+
+.tip-quiz-toggle-btn:active {
+  transform: scale(0.99) !important;
+}
+
+/* ── 6. Carousel Navigation Arrows (.tip-tool-btn, .rec-tool-btn) ── */
+.tip-tool-btn,
+.rec-tool-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 9px !important;
+  background: var(--card-bg, #FFFFFF) !important;
+  border: 1.5px solid var(--card-border) !important;
+  color: var(--heading-color) !important;
+  font-size: 1.15rem !important;
+  font-weight: 800 !important;
+  cursor: pointer !important;
+  transition: all 0.16s ease !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  line-height: 1 !important;
+  padding: 0 !important;
+}
+
+.tip-tool-btn:hover,
+.rec-tool-btn:hover {
+  border-color: var(--cyan-accent, #0284C7) !important;
+  color: var(--cyan-accent, #0284C7) !important;
+  background: var(--card-bg-hover, #F8FAFC) !important;
+  transform: scale(1.08) !important;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.15) !important;
+}
+
+.tip-tool-btn:active,
+.rec-tool-btn:active {
+  transform: scale(0.92) !important;
+}
+
+/* ── 7. Daily Quiz Launch Button & Recommended Bench CTA ── */
+.daily-launch-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  min-height: 44px !important;
+  padding: 11px 20px !important;
+  border-radius: 12px !important;
+  background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important;
+  color: #FFFFFF !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 0.88rem !important;
+  font-weight: 850 !important;
+  text-decoration: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.45),
+              inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  cursor: pointer !important;
+}
+
+.daily-launch-btn:hover {
+  transform: translateY(-2px) scale(1.015) !important;
+  filter: brightness(1.08) !important;
+  box-shadow: 0 8px 22px rgba(2, 132, 199, 0.6) !important;
+}
+
+.daily-launch-btn:active {
+  transform: translateY(1px) scale(0.98) !important;
+}
+
+.rec-cta-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 10px 20px !important;
+  min-height: 40px !important;
+  border-radius: 11px !important;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  color: #FFFFFF !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 0.84rem !important;
+  font-weight: 850 !important;
+  text-decoration: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 3px 12px rgba(5, 150, 105, 0.35),
+              inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  cursor: pointer !important;
+}
+
+.rec-cta-btn:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+  filter: brightness(1.08) !important;
+  box-shadow: 0 6px 18px rgba(5, 150, 105, 0.48) !important;
+}
+
+.rec-cta-btn:active {
+  transform: translateY(1px) scale(0.97) !important;
+}
+
+.rec-cycle-chip {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 10px 15px !important;
+  min-height: 40px !important;
+  border-radius: 11px !important;
+  border: 1.5px solid var(--card-border) !important;
+  background: var(--card-bg, #FFFFFF) !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 0.80rem !important;
+  font-weight: 750 !important;
+  color: var(--text-muted) !important;
+  cursor: pointer !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  transition: all 0.2s ease !important;
+}
+
+.rec-cycle-chip:hover {
+  border-color: var(--cyan-accent, #0284C7) !important;
+  color: var(--cyan-accent, #0284C7) !important;
+  background: var(--card-bg-hover, #F8FAFC) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 3px 10px rgba(2, 132, 199, 0.15) !important;
+}
+
+.rec-cycle-chip:active {
+  transform: scale(0.96) !important;
+}
+
+/* ── 8. Apparatus Tour Start Button ── */
+#apparatusStartBtn {
+  min-height: 44px !important;
+  border-radius: 12px !important;
+  background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35),
+              inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+#apparatusStartBtn:hover {
+  transform: translateY(-2px) scale(1.015) !important;
+  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.5) !important;
+  filter: brightness(1.06) !important;
+}
+
+#apparatusStartBtn:active {
+  transform: translateY(1px) scale(0.98) !important;
+}
+
+/* ── 9. Header Buttons Polish (Hamburger, Language, Theme, Bell) ── */
+.vlk-mobile-toggle-btn,
+.lang-single-toggle-btn,
+.theme-single-toggle-btn,
+.user-avatar-btn {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 11px !important;
+  background: var(--card-bg, #FFFFFF) !important;
+  border: 1.5px solid var(--card-border) !important;
+  color: var(--heading-color) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.vlk-mobile-toggle-btn:hover,
+.lang-single-toggle-btn:hover,
+.theme-single-toggle-btn:hover,
+.user-avatar-btn:hover {
+  border-color: var(--cyan-accent, #0284C7) !important;
+  color: var(--cyan-accent, #0284C7) !important;
+  background: var(--card-bg-hover, #F8FAFC) !important;
+  transform: translateY(-1.5px) scale(1.04) !important;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2) !important;
+}
+
+.vlk-mobile-toggle-btn:active,
+.lang-single-toggle-btn:active,
+.theme-single-toggle-btn:active,
+.user-avatar-btn:active {
+  transform: scale(0.94) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Theme Segmented Switcher */
+.theme-toggle-group {
+  padding: 3px !important;
+  border-radius: 11px !important;
+  background: var(--card-bg-hover, rgba(2, 132, 199, 0.04)) !important;
+  border: 1.5px solid var(--card-border) !important;
+  gap: 3px !important;
+}
+
+.theme-btn-chip {
+  padding: 5px 12px !important;
+  border-radius: 8px !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 0.76rem !important;
+  font-weight: 800 !important;
+  color: var(--text-muted) !important;
+  transition: all 0.16s ease !important;
+}
+
+.theme-btn-chip:hover {
+  color: var(--heading-color) !important;
+  background: rgba(2, 132, 199, 0.06) !important;
+}
+
+.theme-btn-chip.active {
+  background: var(--card-bg, #FFFFFF) !important;
+  color: var(--cyan-accent, #0284C7) !important;
+  border: 1px solid var(--card-border) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* ── 10. Offline / PWA Callout Install Button ── */
+.btn-offline-install-cta {
+  min-height: 40px !important;
+  padding: 10px 20px !important;
+  border-radius: 11px !important;
+  background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important;
+  color: #FFFFFF !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 0.86rem !important;
+  font-weight: 850 !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  box-shadow: 0 3px 12px rgba(2, 132, 199, 0.35),
+              inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.btn-offline-install-cta:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.5) !important;
+  filter: brightness(1.06) !important;
+}
+
+.btn-offline-install-cta:active {
+  transform: translateY(1px) scale(0.97) !important;
+}

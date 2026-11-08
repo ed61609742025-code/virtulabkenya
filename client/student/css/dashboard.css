@@ -8793,3 +8793,190 @@ html, body {
   font-weight: 800;
   letter-spacing: 0.02em;
 }
+
+
+/* ============================================================
+   HIGH-CONTRAST DARK & GREEN THEME BUTTONS ACCESSIBILITY
+   ============================================================ */
+
+/* 1. Filter Chips */
+[data-theme="dark"] .filter-chip {
+  background: #111A2E;
+  border-color: rgba(56, 189, 248, 0.28);
+  color: #F8FAFC !important;
+  font-weight: 750;
+}
+[data-theme="dark"] .filter-chip:hover {
+  background: rgba(56, 189, 248, 0.16);
+  border-color: #38BDF8;
+  color: #38BDF8 !important;
+}
+[data-theme="dark"] .filter-chip.active {
+  background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important;
+  border-color: #38BDF8 !important;
+  color: #FFFFFF !important;
+  font-weight: 800;
+  box-shadow: 0 2px 10px rgba(2, 132, 199, 0.45);
+}
+
+[data-theme="green"] .filter-chip {
+  background: #0C2114;
+  border-color: rgba(52, 211, 153, 0.3);
+  color: #ECFDF5 !important;
+  font-weight: 750;
+}
+[data-theme="green"] .filter-chip:hover {
+  background: rgba(52, 211, 153, 0.18);
+  border-color: #34D399;
+  color: #34D399 !important;
+}
+[data-theme="green"] .filter-chip.active {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  border-color: #34D399 !important;
+  color: #FFFFFF !important;
+  font-weight: 800;
+  box-shadow: 0 2px 10px rgba(5, 150, 105, 0.45);
+}
+
+/* 2. Pathway & Grid View Toggles */
+[data-theme="dark"] .pathway-view-toggle {
+  background: #0B1322 !important;
+  border-color: rgba(56, 189, 248, 0.25) !important;
+}
+[data-theme="dark"] .view-toggle-btn {
+  color: #CBD5E1 !important;
+  font-weight: 700;
+}
+[data-theme="dark"] .view-toggle-btn:hover {
+  color: #38BDF8 !important;
+  background: rgba(56, 189, 248, 0.12);
+}
+[data-theme="dark"] .view-toggle-btn.active {
+  background: #162540 !important;
+  color: #38BDF8 !important;
+  border: 1px solid rgba(56, 189, 248, 0.35) !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="green"] .pathway-view-toggle {
+  background: #081C10 !important;
+  border-color: rgba(52, 211, 153, 0.25) !important;
+}
+[data-theme="green"] .view-toggle-btn {
+  color: #A7F3D0 !important;
+  font-weight: 700;
+}
+[data-theme="green"] .view-toggle-btn:hover {
+  color: #34D399 !important;
+  background: rgba(52, 211, 153, 0.14);
+}
+[data-theme="green"] .view-toggle-btn.active {
+  background: #12301D !important;
+  color: #34D399 !important;
+  border: 1px solid rgba(52, 211, 153, 0.35) !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+/* 3. Theme Selector Chips */
+[data-theme="dark"] .theme-btn-chip {
+  color: #CBD5E1 !important;
+}
+[data-theme="dark"] .theme-btn-chip:hover {
+  color: #F8FAFC !important;
+  background: rgba(56, 189, 248, 0.14);
+}
+[data-theme="dark"] .theme-btn-chip.active {
+  background: #162540 !important;
+  color: #38BDF8 !important;
+  border-color: rgba(56, 189, 248, 0.4) !important;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
+}
+
+[data-theme="green"] .theme-btn-chip {
+  color: #A7F3D0 !important;
+}
+[data-theme="green"] .theme-btn-chip:hover {
+  color: #FFFFFF !important;
+  background: rgba(52, 211, 153, 0.16);
+}
+[data-theme="green"] .theme-btn-chip.active {
+  background: #12301D !important;
+  color: #34D399 !important;
+  border-color: rgba(52, 211, 153, 0.4) !important;
+  box-shadow: 0 0 10px rgba(52, 211, 153, 0.25);
+}
+
+/* 4. Action Buttons (Resume Lab Secondary, Reset Lab, Next Tip, Secondary Buttons) */
+[data-theme="dark"] .btn-resume-secondary {
+  background: #162540 !important;
+  border: 1.5px solid rgba(56, 189, 248, 0.3) !important;
+  color: #F8FAFC !important;
+  font-weight: 750 !important;
+}
+[data-theme="dark"] .btn-resume-secondary:hover {
+  border-color: #38BDF8 !important;
+  color: #38BDF8 !important;
+  background: rgba(56, 189, 248, 0.15) !important;
+}
+
+[data-theme="green"] .btn-resume-secondary {
+  background: #12301D !important;
+  border: 1.5px solid rgba(52, 211, 153, 0.3) !important;
+  color: #ECFDF5 !important;
+  font-weight: 750 !important;
+}
+[data-theme="green"] .btn-resume-secondary:hover {
+  border-color: #34D399 !important;
+  color: #34D399 !important;
+  background: rgba(52, 211, 153, 0.15) !important;
+}
+
+[data-theme="dark"] .rec-cycle-chip {
+  background: #162540 !important;
+  border-color: rgba(56, 189, 248, 0.25) !important;
+  color: #F8FAFC !important;
+}
+[data-theme="dark"] .rec-cycle-chip:hover {
+  border-color: #38BDF8 !important;
+  color: #38BDF8 !important;
+}
+
+[data-theme="green"] .rec-cycle-chip {
+  background: #12301D !important;
+  border-color: rgba(52, 211, 153, 0.25) !important;
+  color: #ECFDF5 !important;
+}
+[data-theme="green"] .rec-cycle-chip:hover {
+  border-color: #34D399 !important;
+  color: #34D399 !important;
+}
+
+[data-theme="dark"] .btn-secondary,
+[data-theme="dark"] .btn-outline {
+  background: #162540 !important;
+  border: 1.5px solid rgba(56, 189, 248, 0.3) !important;
+  color: #F8FAFC !important;
+  font-weight: 700 !important;
+}
+[data-theme="dark"] .btn-secondary:hover,
+[data-theme="dark"] .btn-outline:hover {
+  background: rgba(56, 189, 248, 0.16) !important;
+  border-color: #38BDF8 !important;
+  color: #38BDF8 !important;
+}
+
+[data-theme="green"] .btn-secondary,
+[data-theme="green"] .btn-outline {
+  background: #12301D !important;
+  border: 1.5px solid rgba(52, 211, 153, 0.3) !important;
+  color: #ECFDF5 !important;
+  font-weight: 700 !important;
+}
+[data-theme="green"] .btn-secondary:hover,
+[data-theme="green"] .btn-outline:hover {
+  background: rgba(52, 211, 153, 0.16) !important;
+  border-color: #34D399 !important;
+  color: #34D399 !important;
+}

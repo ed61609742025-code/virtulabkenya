@@ -364,7 +364,7 @@
   .vlk-nav-bar {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
     background: var(--card-bg-hover, rgba(2, 132, 199, 0.04));
     border: 1.5px solid var(--card-border);
     padding: 4px;
@@ -372,14 +372,17 @@
     box-sizing: border-box;
     flex-shrink: 0;
     margin: 0 auto;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
   }
   [data-theme="dark"] .vlk-nav-bar {
-    background: rgba(15, 26, 46, 0.7);
-    border-color: rgba(56, 189, 248, 0.2);
+    background: rgba(15, 26, 46, 0.95);
+    border-color: rgba(56, 189, 248, 0.28);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
   }
   [data-theme="green"] .vlk-nav-bar {
-    background: rgba(12, 33, 20, 0.7);
-    border-color: rgba(52, 211, 153, 0.2);
+    background: rgba(12, 33, 20, 0.95);
+    border-color: rgba(52, 211, 153, 0.3);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
   }
 
   .vlk-nav-link {
@@ -394,7 +397,7 @@
     color: var(--text-muted);
     text-decoration: none;
     background: transparent;
-    border: none;
+    border: 1px solid transparent;
     cursor: pointer;
     white-space: nowrap;
     transition: all 0.16s ease;
@@ -405,7 +408,7 @@
     width: 15px;
     height: 15px;
     stroke-width: 2;
-    transition: transform 0.16s ease;
+    transition: transform 0.16s ease, stroke 0.16s ease;
   }
   .vlk-nav-link:hover {
     color: var(--heading-color);
@@ -418,20 +421,65 @@
   .vlk-nav-link.active {
     background: var(--acad-oxford, #0B2545);
     color: #FFFFFF !important;
+    border-color: var(--acad-oxford, #0B2545);
     box-shadow: 0 2px 8px rgba(11, 37, 69, 0.22);
   }
   .vlk-nav-link.active .vlk-icon {
     stroke: #FFFFFF !important;
   }
+
+  /* High-Contrast Dark Mode Nav Pills */
+  [data-theme="dark"] .vlk-nav-link {
+    color: #F8FAFC !important;
+    font-weight: 700;
+  }
+  [data-theme="dark"] .vlk-nav-link .vlk-icon {
+    stroke: #94A3B8;
+  }
+  [data-theme="dark"] .vlk-nav-link:hover {
+    color: #38BDF8 !important;
+    background: rgba(56, 189, 248, 0.14);
+    border-color: rgba(56, 189, 248, 0.3);
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+  }
+  [data-theme="dark"] .vlk-nav-link:hover .vlk-icon {
+    stroke: #38BDF8;
+  }
   [data-theme="dark"] .vlk-nav-link.active {
-    background: #0284C7;
+    background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important;
     color: #FFFFFF !important;
-    box-shadow: 0 2px 10px rgba(2, 132, 199, 0.4);
+    border: 1px solid #38BDF8 !important;
+    box-shadow: 0 3px 12px rgba(2, 132, 199, 0.55), 0 0 14px rgba(56, 189, 248, 0.35) !important;
+  }
+  [data-theme="dark"] .vlk-nav-link.active .vlk-icon {
+    stroke: #FFFFFF !important;
+  }
+
+  /* High-Contrast Emerald/Green Mode Nav Pills */
+  [data-theme="green"] .vlk-nav-link {
+    color: #ECFDF5 !important;
+    font-weight: 700;
+  }
+  [data-theme="green"] .vlk-nav-link .vlk-icon {
+    stroke: #6EE7B7;
+  }
+  [data-theme="green"] .vlk-nav-link:hover {
+    color: #34D399 !important;
+    background: rgba(52, 211, 153, 0.16);
+    border-color: rgba(52, 211, 153, 0.35);
+    box-shadow: 0 0 10px rgba(52, 211, 153, 0.25);
+  }
+  [data-theme="green"] .vlk-nav-link:hover .vlk-icon {
+    stroke: #34D399;
   }
   [data-theme="green"] .vlk-nav-link.active {
-    background: #059669;
+    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
     color: #FFFFFF !important;
-    box-shadow: 0 2px 10px rgba(5, 150, 105, 0.4);
+    border: 1px solid #34D399 !important;
+    box-shadow: 0 3px 12px rgba(5, 150, 105, 0.55), 0 0 14px rgba(52, 211, 153, 0.35) !important;
+  }
+  [data-theme="green"] .vlk-nav-link.active .vlk-icon {
+    stroke: #FFFFFF !important;
   }
 
   .vlk-nav-badge {
@@ -448,14 +496,16 @@
     margin-left: 2px;
   }
   [data-theme="dark"] .vlk-nav-badge {
-    background: rgba(245, 158, 11, 0.2);
-    color: #FBBF24;
-    border-color: rgba(245, 158, 11, 0.4);
+    background: rgba(245, 158, 11, 0.25) !important;
+    color: #FBBF24 !important;
+    border: 1px solid rgba(245, 158, 11, 0.6) !important;
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.25);
   }
   [data-theme="green"] .vlk-nav-badge {
-    background: rgba(251, 191, 36, 0.2);
-    color: #FBBF24;
-    border-color: rgba(251, 191, 36, 0.45);
+    background: rgba(251, 191, 36, 0.25) !important;
+    color: #FCD34D !important;
+    border: 1px solid rgba(251, 191, 36, 0.6) !important;
+    box-shadow: 0 0 8px rgba(251, 191, 36, 0.25);
   }
 
   /* Lab Benches Dropdown */
@@ -1307,7 +1357,6 @@
         </div>
       </a>
 
-            
       <div class="nav-actions">
         <!-- Single Language Toggle Button -->
         <button type="button" class="user-avatar-btn lang-single-toggle-btn" id="langToggleSingleBtn" onclick="toggleLanguage()" data-tooltip="Language: English (Switch to Kiswahili)" data-tooltip-pos="bottom" aria-label="Toggle language: currently English">

@@ -947,6 +947,31 @@
     return 'vlk-ag-badge vlk-ag-badge-' + cat.toLowerCase().replace(/[^a-z]/g, '');
   }
 
+  function categoryIcon(cat) {
+    switch (cat) {
+      case 'Measurement': return '📏';
+      case 'Glassware':   return '🧪';
+      case 'Heating':     return '🔥';
+      case 'Transfer':    return '🥣';
+      case 'Safety':      return '🥽';
+      default:            return '🔬';
+    }
+  }
+
+  function getCardSpecChip(ap) {
+    if (!ap.specs) return '';
+    if (ap.specs.tolerance && ap.specs.tolerance.length <= 26) {
+      return ap.specs.tolerance;
+    }
+    if (ap.specs.capacity) {
+      return ap.specs.capacity;
+    }
+    if (ap.specs.material) {
+      return ap.specs.material.split('(')[0].trim();
+    }
+    return '';
+  }
+
   function makeSVG(ap, w, h, isDetail) {
     var vb = ap.viewBox || '0 0 100 200';
     var sw = w ? 'width="' + w + '" ' : '';
@@ -1009,10 +1034,28 @@
       }
     });
 
-    // ESC key
+    // ESC and Arrow keys
     document.addEventListener('keydown', function (e) {
-      if ((e.key === 'Escape' || e.keyCode === 27) && _state.isOpen && !_state.required) {
+      if (!_state.isOpen) return;
+      if ((e.key === 'Escape' || e.keyCode === 27) && !_state.required) {
         ApparatusGallery.close();
+        return;
+      }
+      if (_state.mode === 'detail' && _state.detailIndex !== null && _state.detailIndex !== undefined) {
+        var allItems = getFiltered(_state.currentCategory);
+        var currentAp = APPARATUS_DATA[_state.detailIndex];
+        var localIdx = allItems.indexOf(currentAp);
+        var totalFiltered = allItems.length;
+
+        if (e.key === 'ArrowRight' || e.keyCode === 39) {
+          e.preventDefault();
+          var nextIdx = (localIdx + 1) < totalFiltered ? APPARATUS_DATA.indexOf(allItems[localIdx + 1]) : APPARATUS_DATA.indexOf(allItems[0]);
+          _internal._openDetail(nextIdx, 'next');
+        } else if (e.key === 'ArrowLeft' || e.keyCode === 37) {
+          e.preventDefault();
+          var prevIdx = localIdx > 0 ? APPARATUS_DATA.indexOf(allItems[localIdx - 1]) : APPARATUS_DATA.indexOf(allItems[totalFiltered - 1]);
+          _internal._openDetail(prevIdx, 'prev');
+        }
       }
     });
 
@@ -1028,7 +1071,7 @@
         '<span class="vlk-ag-header-icon">🔬</span>' +
         '<div>' +
           '<h2 class="vlk-ag-title">Lab Apparatus Guide' + (titleExtra ? ' <span style="font-weight:500;color:var(--ag-text-muted);">' + esc(titleExtra) + '</span>' : '') + '</h2>' +
-          '<div class="vlk-ag-subtitle">KCSE Chemistry Paper 3 — 18 Apparatus</div>' +
+          '<div class="vlk-ag-subtitle">KCSE Chemistry Paper 3 — ' + APPARATUS_DATA.length + ' Apparatus</div>' +
         '</div>' +
       '</div>' +
       (showClose ? '<button class="vlk-ag-close-btn" onclick="window.ApparatusGallery.close()" aria-label="Close apparatus guide" title="Close">✕</button>' : '') +
@@ -1054,12 +1097,28 @@
       return '<div class="vlk-ag-body"><div class="vlk-ag-empty"><div class="vlk-ag-empty-icon">🔭</div><div class="vlk-ag-empty-text">No apparatus in this category</div></div></div>';
     }
     return '<div class="vlk-ag-body"><div class="vlk-ag-grid" role="list">' +
-      items.map(function (ap, idx) {
+      items.map(function (ap) {
         var realIdx = APPARATUS_DATA.indexOf(ap);
+        var itemNum = String(realIdx + 1).padStart(2, '0');
+        var specChip = getCardSpecChip(ap);
+        var catIcon = categoryIcon(ap.category);
+
         return '<div class="vlk-ag-card" role="listitem" tabindex="0" onclick="window._vlkAG._openDetail(' + realIdx + ')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){window._vlkAG._openDetail(' + realIdx + ')}" aria-label="' + esc(ap.name) + '">' +
-          '<div class="vlk-ag-card-svg">' + makeSVG(ap) + '</div>' +
-          '<div class="vlk-ag-card-name">' + esc(ap.name) + '</div>' +
-          '<span class="' + badgeClass(ap.category) + '">' + esc(ap.category) + '</span>' +
+          '<div class="vlk-ag-card-top">' +
+            '<span class="vlk-ag-card-index">#' + itemNum + '</span>' +
+            '<span class="' + badgeClass(ap.category) + '">' + catIcon + ' ' + esc(ap.category) + '</span>' +
+          '</div>' +
+          '<div class="vlk-ag-card-svg">' +
+            makeSVG(ap) +
+          '</div>' +
+          '<div class="vlk-ag-card-info">' +
+            '<div class="vlk-ag-card-name">' + esc(ap.name) + '</div>' +
+            (specChip ? '<div class="vlk-ag-card-spec-chip" title="' + esc(specChip) + '"><span>⚙️</span> ' + esc(specChip) + '</div>' : '') +
+            '<p class="vlk-ag-card-desc">' + esc(ap.primaryUse) + '</p>' +
+          '</div>' +
+          '<div class="vlk-ag-card-footer">' +
+            '<span class="vlk-ag-card-action">Inspect Specs 🔬 &rarr;</span>' +
+          '</div>' +
         '</div>';
       }).join('') +
     '</div></div>';
@@ -1073,29 +1132,138 @@
       '</div>';
   }
 
+  /* ── Touch Gesture Swipe Navigation for Mobile ── */
+  function attachDetailSwipe(detailEl, currentIdx) {
+    if (!detailEl) return;
+    var allItems = getFiltered(_state.currentCategory);
+    var currentAp = APPARATUS_DATA[currentIdx];
+    var localIdx = allItems.indexOf(currentAp);
+    var totalFiltered = allItems.length;
+
+    var startX = 0;
+    var startY = 0;
+    var currentX = 0;
+    var currentY = 0;
+    var isSwiping = false;
+    var isHorizontal = null;
+
+    var stage = detailEl.querySelector('.vlk-ag-detail-stage') || detailEl;
+    var swipeZone = detailEl.querySelector('.vlk-ag-detail-diagram-container') || detailEl;
+
+    function onTouchStart(e) {
+      if (!e.touches || e.touches.length !== 1) return;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      currentX = startX;
+      currentY = startY;
+      isSwiping = true;
+      isHorizontal = null;
+      stage.style.transition = 'none';
+    }
+
+    function onTouchMove(e) {
+      if (!isSwiping || !e.touches || e.touches.length !== 1) return;
+      currentX = e.touches[0].clientX;
+      currentY = e.touches[0].clientY;
+      var deltaX = currentX - startX;
+      var deltaY = currentY - startY;
+
+      if (isHorizontal === null) {
+        if (Math.abs(deltaX) > 8 || Math.abs(deltaY) > 8) {
+          isHorizontal = Math.abs(deltaX) > Math.abs(deltaY);
+        }
+      }
+
+      if (isHorizontal) {
+        if (e.cancelable) e.preventDefault();
+        var resistance = 0.55;
+        var clamped = deltaX * resistance;
+        stage.style.transform = 'translateX(' + clamped + 'px) scale(' + (1 - Math.min(Math.abs(clamped) / 800, 0.06)) + ')';
+      }
+    }
+
+    function onTouchEnd() {
+      if (!isSwiping) return;
+      isSwiping = false;
+      var deltaX = currentX - startX;
+      stage.style.transition = 'transform 0.24s cubic-bezier(0.2, 0.9, 0.3, 1)';
+
+      if (isHorizontal && Math.abs(deltaX) >= 42) {
+        if (deltaX < 0) {
+          // Swiped Left -> NEXT card
+          var nextIdx = (localIdx + 1) < totalFiltered ? APPARATUS_DATA.indexOf(allItems[localIdx + 1]) : APPARATUS_DATA.indexOf(allItems[0]);
+          if (navigator.vibrate) try { navigator.vibrate(12); } catch (err) {}
+          _internal._openDetail(nextIdx, 'next');
+          return;
+        } else {
+          // Swiped Right -> PREV card
+          var prevIdx = localIdx > 0 ? APPARATUS_DATA.indexOf(allItems[localIdx - 1]) : APPARATUS_DATA.indexOf(allItems[totalFiltered - 1]);
+          if (navigator.vibrate) try { navigator.vibrate(12); } catch (err) {}
+          _internal._openDetail(prevIdx, 'prev');
+          return;
+        }
+      }
+      // Reset position
+      stage.style.transform = 'translateX(0px) scale(1)';
+    }
+
+    swipeZone.addEventListener('touchstart', onTouchStart, { passive: true });
+    swipeZone.addEventListener('touchmove', onTouchMove, { passive: false });
+    swipeZone.addEventListener('touchend', onTouchEnd, { passive: true });
+    swipeZone.addEventListener('touchcancel', onTouchEnd, { passive: true });
+  }
+
   /* ── render: Detail Panel ── */
-  function renderDetail(idx) {
+  function renderDetail(idx, direction) {
     var ap = APPARATUS_DATA[idx];
     var allItems = getFiltered(_state.currentCategory);
     var localIdx = allItems.indexOf(ap);
+    var totalFiltered = allItems.length;
+    var realIdx = APPARATUS_DATA.indexOf(ap);
+    var itemNum = String(realIdx + 1).padStart(2, '0');
+    var catIcon = categoryIcon(ap.category);
     var hasPrev = localIdx > 0;
-    var hasNext = localIdx < allItems.length - 1;
+    var hasNext = localIdx < totalFiltered - 1;
+    var pct = Math.round(((localIdx + 1) / totalFiltered) * 100);
 
-    return '<div class="vlk-ag-detail">' +
+    var prevIdx = hasPrev ? APPARATUS_DATA.indexOf(allItems[localIdx - 1]) : APPARATUS_DATA.indexOf(allItems[totalFiltered - 1]);
+    var nextIdx = hasNext ? APPARATUS_DATA.indexOf(allItems[localIdx + 1]) : APPARATUS_DATA.indexOf(allItems[0]);
+
+    var animClass = '';
+    if (direction === 'next') animClass = ' vlk-ag-slide-next';
+    else if (direction === 'prev') animClass = ' vlk-ag-slide-prev';
+
+    return '<div class="vlk-ag-detail' + animClass + '" data-detail-idx="' + idx + '" data-local-idx="' + localIdx + '">' +
       '<div class="vlk-ag-detail-header">' +
-        '<button class="vlk-ag-back-btn" onclick="window._vlkAG._backToGallery()">← Back to Gallery</button>' +
+        '<button class="vlk-ag-back-btn" onclick="window._vlkAG._backToGallery()" title="Return to bench catalog">← Back to Bench</button>' +
+        '<div class="vlk-ag-detail-progress-wrap">' +
+          '<div class="vlk-ag-detail-progress-label">' +
+            '<span class="vlk-ag-detail-counter">Apparatus <strong>' + (localIdx + 1) + '</strong> of <strong>' + totalFiltered + '</strong> (' + pct + '%)</span>' +
+          '</div>' +
+          '<div class="vlk-ag-detail-progress-bar">' +
+            '<div class="vlk-ag-detail-progress-fill" style="width:' + pct + '%;"></div>' +
+          '</div>' +
+        '</div>' +
         '<div class="vlk-ag-detail-nav">' +
-          '<button class="vlk-ag-nav-btn" ' + (hasPrev ? '' : 'disabled') + ' onclick="window._vlkAG._openDetail(' + (hasPrev ? APPARATUS_DATA.indexOf(allItems[localIdx - 1]) : 0) + ')">← Prev</button>' +
-          '<button class="vlk-ag-nav-btn" ' + (hasNext ? '' : 'disabled') + ' onclick="window._vlkAG._openDetail(' + (hasNext ? APPARATUS_DATA.indexOf(allItems[localIdx + 1]) : 0) + ')">Next →</button>' +
+          '<button class="vlk-ag-nav-btn" title="Previous apparatus [Left Arrow]" onclick="window._vlkAG._openDetail(' + prevIdx + ', \'prev\')">‹ Prev</button>' +
+          '<button class="vlk-ag-nav-btn" title="Next apparatus [Right Arrow]" onclick="window._vlkAG._openDetail(' + nextIdx + ', \'next\')">Next ›</button>' +
         '</div>' +
       '</div>' +
       '<div class="vlk-ag-detail-body">' +
-        '<div class="vlk-ag-detail-diagram">' +
-          '<div class="vlk-ag-detail-stage">' + makeSVG(ap, null, 210, true) + '</div>' +
+        '<div class="vlk-ag-detail-diagram-container">' +
+          '<button type="button" class="vlk-ag-floating-nav vlk-ag-floating-prev" onclick="window._vlkAG._openDetail(' + prevIdx + ', \'prev\')" aria-label="Previous apparatus">‹</button>' +
+          '<div class="vlk-ag-detail-stage" id="vlkAgDetailStage">' +
+            makeSVG(ap, null, 210, true) +
+          '</div>' +
+          '<button type="button" class="vlk-ag-floating-nav vlk-ag-floating-next" onclick="window._vlkAG._openDetail(' + nextIdx + ', \'next\')" aria-label="Next apparatus">›</button>' +
+          '<div class="vlk-ag-swipe-hint" aria-hidden="true">‹ &nbsp; 👆 Swipe left / right to browse &nbsp; ›</div>' +
         '</div>' +
         '<div class="vlk-ag-detail-heading-row">' +
-          '<h2 class="vlk-ag-detail-name">' + esc(ap.name) + '</h2>' +
-          '<span class="' + badgeClass(ap.category) + '" style="font-size:0.72rem;padding:5px 12px;">' + esc(ap.category) + '</span>' +
+          '<div>' +
+            '<div class="vlk-ag-detail-meta-chip">#' + itemNum + ' in KCSE Syllabus</div>' +
+            '<h2 class="vlk-ag-detail-name">' + esc(ap.name) + '</h2>' +
+          '</div>' +
+          '<span class="' + badgeClass(ap.category) + '" style="font-size:0.75rem;padding:6px 14px;">' + catIcon + ' ' + esc(ap.category) + '</span>' +
         '</div>' +
         (ap.specs ? (
           '<div class="vlk-ag-specs-card">' +
@@ -1131,6 +1299,7 @@
         '</div>' +
       '</div>' +
       '<div class="vlk-ag-detail-footer">' +
+        '<button class="vlk-ag-btn-secondary" onclick="window._vlkAG._backToGallery()">← Back to Bench</button>' +
         '<button class="vlk-ag-btn-primary" onclick="window._vlkAG._startQuizFlow()">🧪 Take the Quiz →</button>' +
       '</div>' +
     '</div>';
@@ -1302,16 +1471,20 @@
       _state.currentCategory = cat;
       _render('gallery');
     },
-    _openDetail: function (idx) {
+    _openDetail: function (idx, direction) {
       _state.detailIndex = idx;
       _state.mode = 'detail';
       // Inject detail panel into existing modal without full re-render
       var existingDetail = _state.modalEl.querySelector('.vlk-ag-detail');
-      if (existingDetail) existingDetail.parentNode.removeChild(existingDetail);
+      if (existingDetail && existingDetail.parentNode) {
+        existingDetail.parentNode.removeChild(existingDetail);
+      }
       var temp = document.createElement('div');
-      temp.innerHTML = renderDetail(idx);
-      while (temp.firstChild) {
-        _state.modalEl.appendChild(temp.firstChild);
+      temp.innerHTML = renderDetail(idx, direction);
+      var detailEl = temp.firstElementChild;
+      if (detailEl) {
+        _state.modalEl.appendChild(detailEl);
+        attachDetailSwipe(detailEl, idx);
       }
     },
     _backToGallery: function (filterMissed) {

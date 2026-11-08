@@ -92,4 +92,29 @@ describe('Apparatus Pedagogy & Novice Scaffolding Suite', () => {
       assert.ok(refHtml.includes('Apparatus Guide'), 'reference.html must have an Apparatus Guide button');
     });
   });
+
+  describe('4. Mobile Touch Swipe & Upgraded Bench Cards', () => {
+    const sharedDir = path.join(__dirname, '../../client/shared');
+
+    it('apparatus-gallery.js should include touch swipe navigation and keyboard arrow support', () => {
+      const jsCode = fs.readFileSync(path.join(sharedDir, 'apparatus-gallery.js'), 'utf8');
+      assert.ok(jsCode.includes('attachDetailSwipe'), 'Must include attachDetailSwipe function');
+      assert.ok(jsCode.includes('touchstart') && jsCode.includes('touchmove') && jsCode.includes('touchend'), 'Must register touch event listeners');
+      assert.ok(jsCode.includes('vlk-ag-floating-nav') && jsCode.includes('vlk-ag-swipe-hint'), 'Must include floating touch buttons and mobile swipe hint');
+      assert.ok(jsCode.includes('vlk-ag-slide-next') && jsCode.includes('vlk-ag-slide-prev'), 'Must include slide next and prev transition classes');
+      assert.ok(jsCode.includes('vlk-ag-card-index') && jsCode.includes('vlk-ag-card-spec-chip'), 'Must render apparatus item numbers and specification chips');
+      assert.ok(jsCode.includes('ArrowRight') && jsCode.includes('ArrowLeft'), 'Must support keyboard arrow key browsing');
+      assert.ok(jsCode.includes('APPARATUS_DATA.length') && jsCode.includes('Apparatus'), 'Header subtitle must dynamically report the apparatus count');
+    });
+
+    it('apparatus-gallery.css should provide mobile touch and card layout styles', () => {
+      const cssCode = fs.readFileSync(path.join(sharedDir, 'apparatus-gallery.css'), 'utf8');
+      assert.ok(cssCode.includes('.vlk-ag-card-index'), 'Must style card index badge');
+      assert.ok(cssCode.includes('.vlk-ag-card-spec-chip'), 'Must style key capability spec chip');
+      assert.ok(cssCode.includes('.vlk-ag-floating-nav'), 'Must style floating chevron touch buttons');
+      assert.ok(cssCode.includes('.vlk-ag-swipe-hint'), 'Must style mobile swipe hint pill');
+      assert.ok(cssCode.includes('.vlk-ag-slide-next') && cssCode.includes('.vlk-ag-slide-prev'), 'Must style directional slide animations');
+      assert.ok(cssCode.includes('.vlk-ag-detail-progress-bar') && cssCode.includes('.vlk-ag-detail-progress-fill'), 'Must style detail progress indicators');
+    });
+  });
 });

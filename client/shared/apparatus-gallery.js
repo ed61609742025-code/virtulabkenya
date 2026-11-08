@@ -514,6 +514,398 @@
       "Protects against UV radiation only"
     ],
     "richSVG": "\n      <path d=\"M22 50 Q8 54 2 58\" stroke=\"#1E293B\" stroke-width=\"6\" stroke-linecap=\"round\" fill=\"none\"/>\n      <path d=\"M158 50 Q172 54 178 58\" stroke=\"#1E293B\" stroke-width=\"6\" stroke-linecap=\"round\" fill=\"none\"/>\n      <path d=\"M18 32 Q54 22 90 32 Q126 22 162 32 Q174 58 160 82 Q126 95 98 74 Q90 70 82 74 Q54 95 20 82 Q6 58 18 32 Z\" fill=\"#E0F2FE\" stroke=\"#0284C7\" stroke-width=\"2.5\"/>\n      <path d=\"M22 35 Q55 26 90 35 Q125 26 158 35 Q168 56 156 78 Q125 90 98 72 Q90 68 82 72 Q55 90 24 78 Q12 56 22 35 Z\" fill=\"url(#agGlass)\" stroke=\"#38BDF8\" stroke-width=\"1.8\"/>\n      <path d=\"M32 40 Q54 35 76 44\" stroke=\"#FFFFFF\" stroke-width=\"3\" stroke-linecap=\"round\" fill=\"none\" opacity=\"0.85\"/>\n      <path d=\"M104 44 Q126 35 148 40\" stroke=\"#FFFFFF\" stroke-width=\"3\" stroke-linecap=\"round\" fill=\"none\" opacity=\"0.85\"/>\n      <circle cx=\"50\" cy=\"27\" r=\"3.5\" fill=\"#334155\" stroke=\"#1E293B\" stroke-width=\"0.8\"/>\n      <circle cx=\"130\" cy=\"27\" r=\"3.5\" fill=\"#334155\" stroke=\"#1E293B\" stroke-width=\"0.8\"/>\n      <circle cx=\"48\" cy=\"74\" r=\"3.5\" fill=\"#334155\" stroke=\"#1E293B\" stroke-width=\"0.8\"/>\n      <circle cx=\"132\" cy=\"74\" r=\"3.5\" fill=\"#334155\" stroke=\"#1E293B\" stroke-width=\"0.8\"/>\n    "
+  },
+  {
+    "id": "volumetric-flask",
+    "name": "Volumetric Flask (250 cm³)",
+    "category": "Measurement",
+    "viewBox": "0 0 140 210",
+    "svgPath": "M62 10 L62 70 Q62 72 38 130 Q30 150 30 170 Q30 195 70 195 Q110 195 110 170 Q110 150 102 130 Q78 72 78 70 L78 10 Z M56 10 L84 10 M50 75 L90 75",
+    "primaryUse": "Prepares standard solutions of precise known concentration by dissolving accurate mass up to the calibration ring",
+    "labContext": "Used prior to volumetric titrations to prepare primary standard solutions (e.g. 0.05 M oxalic acid or 0.1 M Na₂CO₃)",
+    "safetyNote": "Never heat liquids directly inside or dissolve hot solutes, as thermal expansion permanently distorts calibrated volume.",
+    "funFact": "The narrow neck makes the meniscus position ultra-sensitive: a single excess drop visibly raises the fluid above the mark.",
+    "specs": {
+      "material": "Borosilicate 3.3 Glass (ISO 1042 Class A)",
+      "capacity": "250.00 cm³",
+      "tolerance": "±0.15 cm³",
+      "handling": "Invert flask 10 times with polyethylene stopper securely seated to achieve homogeneous concentration"
+    },
+    "quizDistractors": [
+      "Conical Flask",
+      "Measuring Cylinder",
+      "Flat-Bottom Flask"
+    ],
+    "useDistractors": [
+      "Delivers variable drops of titrant",
+      "Heats volatile organic liquids",
+      "Filters solid precipitates"
+    ],
+    "richSVG": "\n      <g filter=\"url(#agShadow)\">\n        <polygon points=\"62,10 78,10 82,24 58,24\" fill=\"url(#agGlass)\" stroke=\"#38BDF8\" stroke-width=\"1.2\"/>\n        <polygon points=\"56,6 84,6 82,14 58,14\" fill=\"#0284C7\" stroke=\"#0369A1\" stroke-width=\"0.8\"/>\n        <rect x=\"64\" y=\"24\" width=\"12\" height=\"60\" fill=\"url(#agGlass)\" stroke=\"#38BDF8\" stroke-width=\"1.2\"/>\n        <path d=\"M64 84 Q34 140 32 172 Q32 196 70 196 Q108 196 108 172 Q106 140 76 84 Z\" fill=\"url(#agGlass)\" stroke=\"#38BDF8\" stroke-width=\"1.5\"/>\n      </g>\n      <!-- Liquid fill -->\n      <path d=\"M65 68 L65 84 Q35 140 34 172 Q34 194 70 194 Q106 194 106 172 Q105 140 75 84 L75 68 Z\" fill=\"url(#agLiquidBlue)\"/>\n      <ellipse cx=\"70\" cy=\"68\" rx=\"5\" ry=\"1.2\" fill=\"#0284C7\"/>\n      <!-- Calibration etched line -->\n      <line x1=\"60\" y1=\"68\" x2=\"80\" y2=\"68\" stroke=\"#DC2626\" stroke-width=\"1.6\"/>\n      <text x=\"83\" y=\"70\" font-size=\"5\" font-weight=\"bold\" fill=\"#DC2626\" font-family=\"'JetBrains Mono', monospace\">Ring</text>\n      <!-- Specular reflection -->\n      <path d=\"M66 30 L66 80 Q40 135 38 168\" stroke=\"#FFFFFF\" stroke-width=\"2.5\" opacity=\"0.8\" stroke-linecap=\"round\" fill=\"none\"/>\n      <!-- Specification frosted badge -->\n      <g fill=\"#0284C7\" opacity=\"0.9\">\n        <circle cx=\"70\" cy=\"145\" r=\"14\" fill=\"rgba(255,255,255,0.7)\" stroke=\"#38BDF8\" stroke-width=\"0.8\"/>\n        <text x=\"60\" y=\"142\" font-size=\"5.5\" font-weight=\"bold\" font-family=\"'JetBrains Mono', monospace\" fill=\"#0369A1\">250ml</text>\n        <text x=\"59\" y=\"148\" font-size=\"4\" font-family=\"'JetBrains Mono', monospace\" fill=\"#0284C7\">In 20°C</text>\n        <text x=\"58\" y=\"153\" font-size=\"3.5\" font-family=\"'JetBrains Mono', monospace\" fill=\"#0284C7\">±0.15ml</text>\n      </g>\n    "
+  },
+  {
+    "id": "white-tile",
+    "name": "Porcelain White Tile",
+    "category": "Transfer",
+    "viewBox": "0 0 160 140",
+    "svgPath": "M20 50 L100 20 L140 60 L60 90 Z M20 50 L20 62 L60 102 L60 90 Z M60 102 L140 72 L140 60 L60 90 Z",
+    "primaryUse": "Provides a pure, neutral white background under the conical flask to detect subtle indicator color changes at the endpoint",
+    "labContext": "Placed directly under the conical flask during Question 1 titrations so faint pink or orange endpoints are not missed",
+    "safetyNote": "Keep dry; wipe clean immediately if acid or alkali drops splash onto the surface.",
+    "funFact": "Eliminates chromatic distortion caused by dark or varnished wooden laboratory benchtops.",
+    "specs": {
+      "material": "High-fired glazed chemical porcelain",
+      "capacity": "100 mm × 100 mm",
+      "tolerance": "Chemically inert to strong acids and alkalis",
+      "handling": "Center the conical flask directly on the tile under the burette jet"
+    },
+    "quizDistractors": [
+      "Watch Glass",
+      "Spotting Tile",
+      "Filter Paper"
+    ],
+    "useDistractors": [
+      "Measures liquid mass",
+      "Heats solids to redness",
+      "Evaporates solvents quickly"
+    ],
+    "richSVG": "\n      <g filter=\"url(#agShadow)\">\n        <!-- 3D Beveled porcelain tile -->\n        <!-- Front side edge -->\n        <polygon points=\"25,70 25,82 75,115 75,103\" fill=\"#94A3B8\" stroke=\"#64748B\" stroke-width=\"0.8\"/>\n        <!-- Right side edge -->\n        <polygon points=\"75,103 75,115 135,77 135,65\" fill=\"#CBD5E1\" stroke=\"#94A3B8\" stroke-width=\"0.8\"/>\n        <!-- Top surface -->\n        <polygon points=\"25,70 85,32 135,65 75,103\" fill=\"url(#agPorcelain)\" stroke=\"#94A3B8\" stroke-width=\"1.2\"/>\n      </g>\n      <!-- Glossy ceramic glaze specular sheen -->\n      <polygon points=\"35,68 85,37 125,63 75,94\" fill=\"none\" stroke=\"#FFFFFF\" stroke-width=\"1.8\" opacity=\"0.85\"/>\n      <!-- Refraction droplets illustrating indicator endpoint detection -->\n      <ellipse cx=\"65\" cy=\"74\" rx=\"8\" ry=\"4.5\" fill=\"#F472B6\" opacity=\"0.85\"/>\n      <ellipse cx=\"63\" cy=\"72\" rx=\"3\" ry=\"1.5\" fill=\"#FFFFFF\" opacity=\"0.9\"/>\n      <text x=\"78\" y=\"76\" font-size=\"5\" font-weight=\"bold\" fill=\"#DB2777\" font-family=\"'JetBrains Mono', monospace\">Endpoint Pink</text>\n      <ellipse cx=\"100\" cy=\"56\" rx=\"6\" ry=\"3.5\" fill=\"#38BDF8\" opacity=\"0.8\"/>\n      <ellipse cx=\"98\" cy=\"55\" rx=\"2\" ry=\"1.2\" fill=\"#FFFFFF\" opacity=\"0.9\"/>\n    "
+  },
+  {
+    "id": "electronic-balance",
+    "name": "Digital Top-Pan Balance",
+    "category": "Measurement",
+    "viewBox": "0 0 180 150",
+    "svgPath": "M25 50 L155 50 L165 110 L15 110 Z M50 25 L130 25 L130 50 L50 50 Z M45 75 L135 75 L135 100 L45 100 Z",
+    "primaryUse": "Accurately weighs masses of solid reagents, watch glasses, crucibles, and filter papers to 0.01 g",
+    "labContext": "Used in volumetric and gravimetric practicals to weigh anhydrous salts, magnesium ribbon, or solid precipitates",
+    "safetyNote": "Never place wet or hot objects directly onto the stainless steel pan. Always use a weighing boat and tare the balance.",
+    "funFact": "Can detect the mass of a single human fingerprint oil residue (~0.001 g).",
+    "specs": {
+      "material": "ABS housing with 304 stainless steel weighing pan",
+      "capacity": "500.00 g",
+      "tolerance": "±0.01 g readability",
+      "handling": "Level with bubble indicator, zero with TARE button, avoid vibrations and air draughts"
+    },
+    "quizDistractors": [
+      "Spring Balance",
+      "Triple Beam Balance",
+      "Platform Scale"
+    ],
+    "useDistractors": [
+      "Measures solution volume",
+      "Determines boiling points",
+      "Counts chemical molecules directly"
+    ],
+    "richSVG": "\n      <g filter=\"url(#agShadow)\">\n        <!-- Main balance housing -->\n        <polygon points=\"25,55 155,55 165,125 15,125\" fill=\"#F1F5F9\" stroke=\"#94A3B8\" stroke-width=\"1.2\"/>\n        <polygon points=\"15,125 165,125 165,135 15,135\" fill=\"#334155\"/>\n      </g>\n      <!-- Circular stainless steel weighing pan -->\n      <ellipse cx=\"90\" cy=\"45\" rx=\"46\" ry=\"16\" fill=\"url(#agMetalChrome)\" stroke=\"#64748B\" stroke-width=\"1.2\"/>\n      <ellipse cx=\"90\" cy=\"45\" rx=\"38\" ry=\"12\" fill=\"none\" stroke=\"#FFFFFF\" stroke-width=\"1.5\" opacity=\"0.8\"/>\n      <!-- Digital LCD display frame -->\n      <rect x=\"45\" y=\"70\" width=\"90\" height=\"32\" rx=\"4\" fill=\"#0F172A\" stroke=\"#475569\" stroke-width=\"1.2\"/>\n      <!-- Glowing digital readout -->\n      <text x=\"56\" y=\"92\" font-size=\"16\" font-weight=\"bold\" fill=\"#38BDF8\" font-family=\"'JetBrains Mono', monospace\" letter-spacing=\"1\">25.04</text>\n      <text x=\"116\" y=\"92\" font-size=\"11\" font-weight=\"bold\" fill=\"#0284C7\" font-family=\"'JetBrains Mono', monospace\">g</text>\n      <!-- Membrane buttons -->\n      <g>\n        <rect x=\"35\" y=\"108\" width=\"28\" height=\"10\" rx=\"2\" fill=\"#E2E8F0\" stroke=\"#94A3B8\" stroke-width=\"0.8\"/>\n        <text x=\"40\" y=\"115.5\" font-size=\"5\" font-weight=\"bold\" fill=\"#334155\">ON/OFF</text>\n        <rect x=\"76\" y=\"108\" width=\"28\" height=\"10\" rx=\"2\" fill=\"#0284C7\" stroke=\"#0369A1\" stroke-width=\"0.8\"/>\n        <text x=\"83\" y=\"115.5\" font-size=\"5\" font-weight=\"bold\" fill=\"#FFFFFF\">TARE</text>\n        <rect x=\"117\" y=\"108\" width=\"28\" height=\"10\" rx=\"2\" fill=\"#E2E8F0\" stroke=\"#94A3B8\" stroke-width=\"0.8\"/>\n        <text x=\"124\" y=\"115.5\" font-size=\"5\" font-weight=\"bold\" fill=\"#334155\">MODE</text>\n      </g>\n      <!-- Level spirit bubble -->\n      <circle cx=\"145\" cy=\"78\" r=\"4.5\" fill=\"#E2E8F0\" stroke=\"#94A3B8\" stroke-width=\"0.8\"/>\n      <circle cx=\"145\" cy=\"78\" r=\"1.8\" fill=\"#10B981\"/>\n    "
+  },
+  {
+    "id": "stopwatch",
+    "name": "Digital Stopwatch (Timer)",
+    "category": "Measurement",
+    "viewBox": "0 0 140 160",
+    "svgPath": "M70 20 C35 20 20 45 20 85 C20 125 35 150 70 150 C105 150 120 125 120 85 C120 45 105 20 70 20 Z M62 8 L78 8 L78 20 L62 20 Z",
+    "primaryUse": "Measures elapsed reaction time in seconds during reaction kinetics and rates of reaction experiments",
+    "labContext": "Used in Form 4 Rates practicals (e.g. sodium thiosulfate + dilute HCl disappearing cross experiment)",
+    "safetyNote": "Keep away from corrosive chemical fumes, splashes, and heating flames.",
+    "funFact": "In KCSE kinetics analysis, reaction rate is calculated as the reciprocal of time (1/t in s⁻¹).",
+    "specs": {
+      "material": "Shock-resistant ABS resin casing",
+      "capacity": "9 hr 59 min 59.99 s",
+      "tolerance": "±0.01 s precision (Quartz crystal)",
+      "handling": "Start immediately when solutions make first contact; stop when cross disappears"
+    },
+    "quizDistractors": [
+      "Thermometer",
+      "Hydrometer",
+      "Manometer"
+    ],
+    "useDistractors": [
+      "Measures volume of gas evolved",
+      "Calculates molar mass directly",
+      "Regulates burner flame temperature"
+    ],
+    "richSVG": "\n      <!-- Neck lanyard loop -->\n      <path d=\"M60 12 C60 0 80 0 80 12\" stroke=\"#64748B\" stroke-width=\"3\" fill=\"none\"/>\n      <rect x=\"62\" y=\"12\" width=\"16\" height=\"12\" rx=\"2\" fill=\"url(#agMetalChrome)\" stroke=\"#475569\" stroke-width=\"1\"/>\n      <!-- Push buttons -->\n      <rect x=\"30\" y=\"24\" width=\"14\" height=\"8\" rx=\"2\" fill=\"url(#agMetalChrome)\" stroke=\"#475569\" stroke-width=\"1\" transform=\"rotate(-30 37 28)\"/>\n      <rect x=\"96\" y=\"24\" width=\"14\" height=\"8\" rx=\"2\" fill=\"#EA580C\" stroke=\"#C2410C\" stroke-width=\"1\" transform=\"rotate(30 103 28)\"/>\n      <g filter=\"url(#agShadow)\">\n        <!-- Stopwatch circular body -->\n        <circle cx=\"70\" cy=\"90\" r=\"54\" fill=\"#1E293B\" stroke=\"#334155\" stroke-width=\"2.5\"/>\n        <circle cx=\"70\" cy=\"90\" r=\"48\" fill=\"#0F172A\"/>\n      </g>\n      <!-- Rubber grip ribs -->\n      <line x1=\"16\" y1=\"80\" x2=\"16\" y2=\"100\" stroke=\"#475569\" stroke-width=\"3\" stroke-linecap=\"round\"/>\n      <line x1=\"124\" y1=\"80\" x2=\"124\" y2=\"100\" stroke=\"#475569\" stroke-width=\"3\" stroke-linecap=\"round\"/>\n      <!-- Digital LCD display -->\n      <rect x=\"36\" y=\"70\" width=\"68\" height=\"34\" rx=\"4\" fill=\"#E2E8F0\" stroke=\"#94A3B8\" stroke-width=\"1\"/>\n      <text x=\"42\" y=\"93\" font-size=\"14\" font-weight=\"bold\" fill=\"#0F172A\" font-family=\"'JetBrains Mono', monospace\">00:42</text>\n      <text x=\"86\" y=\"87\" font-size=\"8\" font-weight=\"bold\" fill=\"#0284C7\" font-family=\"'JetBrains Mono', monospace\">85</text>\n      <text x=\"44\" y=\"100\" font-size=\"4\" font-weight=\"bold\" fill=\"#64748B\">MIN</text>\n      <text x=\"66\" y=\"100\" font-size=\"4\" font-weight=\"bold\" fill=\"#64748B\">SEC</text>\n      <text x=\"86\" y=\"97\" font-size=\"4\" font-weight=\"bold\" fill=\"#64748B\">1/100</text>\n      <!-- Sub labels -->\n      <text x=\"50\" y=\"125\" font-size=\"5\" font-weight=\"bold\" fill=\"#94A3B8\" font-family=\"'JetBrains Mono', monospace\">SPLIT / RESET</text>\n      <text x=\"54\" y=\"55\" font-size=\"5.5\" font-weight=\"bold\" fill=\"#EA580C\" font-family=\"'JetBrains Mono', monospace\">START / STOP</text>\n    "
+  },
+  {
+    "id": "test-tube-rack",
+    "name": "Test Tube Rack",
+    "category": "Transfer",
+    "viewBox": "0 0 190 140",
+    "svgPath": "M15 40 L175 40 L175 120 L15 120 Z M15 75 L175 75 M40 40 L40 120 M80 40 L80 120 M120 40 L120 120 M160 40 L160 120",
+    "primaryUse": "Holds multiple test tubes upright in series during qualitative tests and provides pegs for inverted drying",
+    "labContext": "Organizes unknown solutions during Questions 2 & 3 qualitative testing across multiple reagents",
+    "safetyNote": "Never insert hot boiling tubes straight from the flame into plastic rack holes; allow them to cool slightly first.",
+    "funFact": "Hardwood lab racks are kiln-treated with linseed oil to resist acid stains and flame scorching.",
+    "specs": {
+      "material": "Kiln-dried hardwood or chemically resistant polypropylene",
+      "capacity": "6 tube apertures + 6 drying pegs",
+      "tolerance": "Fits 16 mm test tubes and 25 mm boiling tubes",
+      "handling": "Arrange tubes sequentially from left to right corresponding to bench test steps"
+    },
+    "quizDistractors": [
+      "Tripod Stand",
+      "Retort Stand",
+      "Crucible Tongs"
+    ],
+    "useDistractors": [
+      "Heats multiple solutions at once",
+      "Filters insoluble residues",
+      "Crushes coarse crystalline rocks"
+    ],
+    "richSVG": "\n      <g filter=\"url(#agShadow)\">\n        <!-- Back drying pins -->\n        <rect x=\"35\" y=\"25\" width=\"4\" height=\"40\" rx=\"1.5\" fill=\"#78350F\"/>\n        <rect x=\"75\" y=\"25\" width=\"4\" height=\"40\" rx=\"1.5\" fill=\"#78350F\"/>\n        <rect x=\"115\" y=\"25\" width=\"4\" height=\"40\" rx=\"1.5\" fill=\"#78350F\"/>\n        <rect x=\"155\" y=\"25\" width=\"4\" height=\"40\" rx=\"1.5\" fill=\"#78350F\"/>\n        <!-- Upper tier shelf -->\n        <polygon points=\"15,65 175,65 170,78 10,78\" fill=\"#B45309\" stroke=\"#78350F\" stroke-width=\"1\"/>\n        <!-- Side pillars -->\n        <rect x=\"10\" y=\"65\" width=\"12\" height=\"55\" rx=\"2\" fill=\"#92400E\" stroke=\"#78350F\" stroke-width=\"1\"/>\n        <rect x=\"168\" y=\"65\" width=\"12\" height=\"55\" rx=\"2\" fill=\"#92400E\" stroke=\"#78350F\" stroke-width=\"1\"/>\n        <!-- Lower base tier -->\n        <polygon points=\"10,120 180,120 175,130 5,130\" fill=\"#B45309\" stroke=\"#78350F\" stroke-width=\"1\"/>\n      </g>\n      <!-- Tube 1 (Blue Cu2+ Solution) -->\n      <g>\n        <rect x=\"40\" y=\"35\" width=\"14\" height=\"75\" rx=\"7\" fill=\"url(#agGlass)\" stroke=\"#38BDF8\" stroke-width=\"1\"/>\n        <rect x=\"41\" y=\"60\" width=\"12\" height=\"48\" rx=\"6\" fill=\"url(#agLiquidBlue)\"/>\n        <line x1=\"43\" y1=\"40\" x2=\"43\" y2=\"95\" stroke=\"#FFFFFF\" stroke-width=\"1.2\" opacity=\"0.8\"/>\n      </g>\n      <!-- Tube 2 (Amber Fe3+ Solution) -->\n      <g>\n        <rect x=\"80\" y=\"35\" width=\"14\" height=\"75\" rx=\"7\" fill=\"url(#agGlass)\" stroke=\"#38BDF8\" stroke-width=\"1\"/>\n        <rect x=\"81\" y=\"65\" width=\"12\" height=\"43\" rx=\"6\" fill=\"url(#agLiquidAmber)\"/>\n        <line x1=\"83\" y1=\"40\" x2=\"83\" y2=\"95\" stroke=\"#FFFFFF\" stroke-width=\"1.2\" opacity=\"0.8\"/>\n      </g>\n      <!-- Tube 3 (White Precipitate) -->\n      <g>\n        <rect x=\"120\" y=\"35\" width=\"14\" height=\"75\" rx=\"7\" fill=\"url(#agGlass)\" stroke=\"#38BDF8\" stroke-width=\"1\"/>\n        <rect x=\"121\" y=\"70\" width=\"12\" height=\"38\" rx=\"6\" fill=\"#F8FAFC\" stroke=\"#CBD5E1\" stroke-width=\"0.5\"/>\n        <ellipse cx=\"127\" cy=\"70\" rx=\"5\" ry=\"1.5\" fill=\"#E2E8F0\"/>\n        <line x1=\"123\" y1=\"40\" x2=\"123\" y2=\"95\" stroke=\"#FFFFFF\" stroke-width=\"1.2\" opacity=\"0.8\"/>\n      </g>\n    "
+  },
+  {
+    "id": "test-tube-holder",
+    "name": "Wooden Test Tube Holder",
+    "category": "Heating",
+    "viewBox": "0 0 170 140",
+    "svgPath": "M20 65 L105 65 L135 45 M105 75 L135 95 M105 65 Q115 70 105 75 M60 60 L60 80",
+    "primaryUse": "Clamps securely around a test tube or boiling tube to hold it safely over a Bunsen flame",
+    "labContext": "Used in qualitative analysis when heating dry solid salts or boiling solutions for gas detection",
+    "safetyNote": "Always point the mouth of the heated tube away from yourself and other students to prevent injury from bumping.",
+    "funFact": "Wood is selected because it is a poor conductor of heat and won't burn your hand or shatter delicate hot glass.",
+    "specs": {
+      "material": "Natural birch hardwood with spring steel wire collar",
+      "capacity": "Accommodates 12 mm to 25 mm diameter tubes",
+      "tolerance": "Clamping pressure calibrated to avoid crushing glass",
+      "handling": "Clamp near the upper third of the tube; angle at 45° with continuous gentle flicking"
+    },
+    "quizDistractors": [
+      "Crucible Tongs",
+      "Retort Clamp",
+      "Deflagrating Spoon"
+    ],
+    "useDistractors": [
+      "Measures liquid temperature",
+      "Stirs acid mixtures",
+      "Transfers hot liquid droplets"
+    ],
+    "richSVG": "\n      <g filter=\"url(#agShadow)\">\n        <!-- Angled test tube in jaws -->\n        <g transform=\"rotate(35 125 65)\">\n          <rect x=\"117\" y=\"10\" width=\"16\" height=\"85\" rx=\"8\" fill=\"url(#agGlass)\" stroke=\"#38BDF8\" stroke-width=\"1.2\"/>\n          <rect x=\"119\" y=\"50\" width=\"12\" height=\"43\" rx=\"6\" fill=\"url(#agLiquidBlue)\"/>\n          <line x1=\"121\" y1=\"15\" x2=\"121\" y2=\"85\" stroke=\"#FFFFFF\" stroke-width=\"1.5\" opacity=\"0.8\"/>\n        </g>\n        <!-- Wooden handle arms -->\n        <rect x=\"15\" y=\"60\" width=\"95\" height=\"9\" rx=\"2\" fill=\"#D97706\" stroke=\"#B45309\" stroke-width=\"0.8\"/>\n        <rect x=\"15\" y=\"73\" width=\"95\" height=\"9\" rx=\"2\" fill=\"#B45309\" stroke=\"#78350F\" stroke-width=\"0.8\"/>\n        <!-- Clamping jaws -->\n        <path d=\"M105 60 Q122 50 135 40\" stroke=\"#D97706\" stroke-width=\"8\" stroke-linecap=\"round\" fill=\"none\"/>\n        <path d=\"M105 78 Q122 88 135 98\" stroke=\"#B45309\" stroke-width=\"8\" stroke-linecap=\"round\" fill=\"none\"/>\n        <!-- Spring steel slide collar -->\n        <rect x=\"65\" y=\"55\" width=\"12\" height=\"32\" rx=\"3\" fill=\"url(#agMetalChrome)\" stroke=\"#475569\" stroke-width=\"1\"/>\n        <circle cx=\"71\" cy=\"71\" r=\"2.5\" fill=\"#334155\"/>\n      </g>\n    "
+  },
+  {
+    "id": "crucible-lid",
+    "name": "Crucible & Lid (with Pipeclay Triangle)",
+    "category": "Heating",
+    "viewBox": "0 0 160 160",
+    "svgPath": "M45 40 L115 40 L105 120 L55 120 Z M38 34 L122 34 L118 42 L42 42 Z M74 24 L86 24 L86 34 L74 34 Z M20 125 L140 125 M80 125 L80 155",
+    "primaryUse": "Withstands direct high-temperature heating to red heat when determining water of crystallization or burning metals",
+    "labContext": "Used in empirical formula practicals (heating magnesium ribbon in oxygen or decomposing hydrated CuSO₄)",
+    "safetyNote": "Never place a glowing hot crucible onto a cold bench (it will crack from thermal shock). Use crucible tongs.",
+    "funFact": "Porcelain crucibles can withstand temperatures exceeding 1,150 °C without deformation.",
+    "specs": {
+      "material": "High-alumina unglazed chemical porcelain (with iron-wire pipeclay triangle)",
+      "capacity": "30 cm³",
+      "tolerance": "Withstands up to 1,150 °C red-heat",
+      "handling": "Leave lid slightly ajar to admit oxygen while preventing loss of oxide smoke particles"
+    },
+    "quizDistractors": [
+      "Evaporating Dish",
+      "Watch Glass",
+      "Beaker"
+    ],
+    "useDistractors": [
+      "Measures solution volume",
+      "Condenses hot distillation vapor",
+      "Separates immiscible solvents"
+    ],
+    "richSVG": "\n      <!-- Pipeclay triangle -->\n      <g filter=\"url(#agShadow)\">\n        <line x1=\"20\" y1=\"130\" x2=\"140\" y2=\"130\" stroke=\"#475569\" stroke-width=\"2.5\"/>\n        <line x1=\"140\" y1=\"130\" x2=\"80\" y2=\"40\" stroke=\"#475569\" stroke-width=\"2.5\"/>\n        <line x1=\"80\" y1=\"40\" x2=\"20\" y2=\"130\" stroke=\"#475569\" stroke-width=\"2.5\"/>\n        <!-- Ceramic pipe sleeves -->\n        <rect x=\"42\" y=\"126\" width=\"76\" height=\"8\" rx=\"2\" fill=\"url(#agPorcelain)\" stroke=\"#94A3B8\" stroke-width=\"0.8\"/>\n        <rect x=\"36\" y=\"76\" width=\"8\" height=\"60\" rx=\"2\" fill=\"url(#agPorcelain)\" stroke=\"#94A3B8\" stroke-width=\"0.8\" transform=\"rotate(-30 40 106)\"/>\n        <rect x=\"116\" y=\"76\" width=\"8\" height=\"60\" rx=\"2\" fill=\"url(#agPorcelain)\" stroke=\"#94A3B8\" stroke-width=\"0.8\" transform=\"rotate(30 120 106)\"/>\n      </g>\n      <!-- Thermal heating glow under crucible -->\n      <ellipse cx=\"80\" cy=\"120\" rx=\"28\" ry=\"8\" fill=\"#F97316\" opacity=\"0.45\" filter=\"url(#agGlow)\"/>\n      <!-- Porcelain Crucible Pot -->\n      <g filter=\"url(#agShadow)\">\n        <path d=\"M48 65 Q45 118 70 126 Q80 128 90 126 Q115 118 112 65 Z\" fill=\"url(#agPorcelain)\" stroke=\"#CBD5E1\" stroke-width=\"1.4\"/>\n      </g>\n      <!-- Fitted Porcelain Lid (Ajar technique) -->\n      <g filter=\"url(#agShadow)\" transform=\"rotate(-12 80 55)\">\n        <polygon points=\"40,56 120,56 116,62 44,62\" fill=\"url(#agPorcelain)\" stroke=\"#94A3B8\" stroke-width=\"1\"/>\n        <path d=\"M72 44 L88 44 L86 56 L74 56 Z\" fill=\"url(#agPorcelain)\" stroke=\"#94A3B8\" stroke-width=\"1\"/>\n        <ellipse cx=\"80\" cy=\"44\" rx=\"8\" ry=\"2.5\" fill=\"#E2E8F0\"/>\n      </g>\n      <!-- Specular reflection highlight -->\n      <path d=\"M54 75 Q52 110 72 120\" stroke=\"#FFFFFF\" stroke-width=\"2\" opacity=\"0.85\" fill=\"none\"/>\n    "
+  },
+  {
+    "id": "evaporating-dish",
+    "name": "Evaporating Dish (Basin)",
+    "category": "Heating",
+    "viewBox": "0 0 160 120",
+    "svgPath": "M20 40 Q80 110 140 40 Q80 50 20 40 Z M15 38 L25 42 M20 40 Q80 60 140 40",
+    "primaryUse": "Evaporates solvent from a solution over a water bath or gentle flame to recover dissolved solute crystals",
+    "labContext": "Used in salt preparation experiments to evaporate solutions to the crystallization point",
+    "safetyNote": "Do not heat to complete dryness if crystals spit hot liquid. Remove heat once crystals form on a glass rod dip test.",
+    "funFact": "The wide, shallow bowl maximizes the liquid surface area, drastically accelerating evaporation.",
+    "specs": {
+      "material": "Glazed chemical porcelain with pouring lip",
+      "capacity": "80 cm³ (75 mm diameter)",
+      "tolerance": "Thermal shock resistant up to 1,000 °C",
+      "handling": "Heat gently on a wire gauze; stop heating when crystallization skin forms on surface"
+    },
+    "quizDistractors": [
+      "Crucible",
+      "Watch Glass",
+      "Petri Dish"
+    ],
+    "useDistractors": [
+      "Prepares exact molar standard solutions",
+      "Directs gas bubbles into lime water",
+      "Weighs micro-gram precipitates"
+    ],
+    "richSVG": "\n      <g filter=\"url(#agShadow)\">\n        <!-- Hemispherical porcelain dish body -->\n        <path d=\"M18 45 Q20 102 80 102 Q140 102 142 45 Q80 60 18 45 Z\" fill=\"url(#agPorcelain)\" stroke=\"#CBD5E1\" stroke-width=\"1.4\"/>\n        <!-- Pouring spout profile -->\n        <polygon points=\"18,45 10,42 22,50\" fill=\"url(#agPorcelain)\" stroke=\"#94A3B8\" stroke-width=\"1\"/>\n      </g>\n      <!-- Blue copper(II) sulfate evaporating liquid solution -->\n      <path d=\"M26 54 Q80 94 134 54 Q80 64 26 54 Z\" fill=\"url(#agLiquidBlue)\"/>\n      <ellipse cx=\"80\" cy=\"54\" rx=\"54\" ry=\"7\" fill=\"#0284C7\" opacity=\"0.6\"/>\n      <!-- Crystallization crust rim -->\n      <path d=\"M30 52 Q80 60 130 52\" stroke=\"#FFFFFF\" stroke-width=\"2.5\" stroke-dasharray=\"2 3\" fill=\"none\"/>\n      <text x=\"56\" y=\"42\" font-size=\"5\" font-weight=\"bold\" fill=\"#0284C7\" font-family=\"'JetBrains Mono', monospace\">Crystal Crust</text>\n      <!-- Glaze reflection -->\n      <path d=\"M25 58 Q32 90 65 96\" stroke=\"#FFFFFF\" stroke-width=\"2\" opacity=\"0.8\" fill=\"none\"/>\n    "
+  },
+  {
+    "id": "gas-jar",
+    "name": "Gas Jar & Cover Plate",
+    "category": "Glassware",
+    "viewBox": "0 0 140 210",
+    "svgPath": "M35 25 L105 25 L105 185 L120 185 L120 195 L20 195 L20 185 L35 185 Z M25 20 L115 20 L115 26 L25 26 Z",
+    "primaryUse": "Collects and holds laboratory gases for combustion, bleaching, solubility, and chemical identification tests",
+    "labContext": "Used in Form 2 gas preparations (O₂, H₂, Cl₂, CO₂, SO₂) collected over water or by downward/upward delivery",
+    "safetyNote": "Slide greased ground-glass cover plate tightly onto the mouth to trap toxic or irritating gases like chlorine.",
+    "funFact": "The thick, heavy glass base prevents the jar from tipping over when combustion spoons are lowered inside.",
+    "specs": {
+      "material": "Heavy-gauge pressed borosilicate glass with ground flat rim",
+      "capacity": "250 cm³",
+      "tolerance": "Withstands internal combustion heat and mild pressures",
+      "handling": "Grease rim with petroleum jelly; slide cover plate horizontally across to seal"
+    },
+    "quizDistractors": [
+      "Measuring Cylinder",
+      "Boiling Tube",
+      "Conical Flask"
+    ],
+    "useDistractors": [
+      "Measures solution volume to 0.05 ml",
+      "Separates oil from water layers",
+      "Crushes coarse rock minerals"
+    ],
+    "richSVG": "\n      <g filter=\"url(#agShadow)\">\n        <!-- Heavy glass foot base -->\n        <rect x=\"20\" y=\"180\" width=\"100\" height=\"14\" rx=\"2\" fill=\"url(#agGlass)\" stroke=\"#38BDF8\" stroke-width=\"1.4\"/>\n        <line x1=\"22\" y1=\"184\" x2=\"118\" y2=\"184\" stroke=\"#FFFFFF\" stroke-width=\"1.8\" opacity=\"0.8\"/>\n        <!-- Cylindrical glass body -->\n        <rect x=\"35\" y=\"30\" width=\"70\" height=\"150\" fill=\"url(#agGlass)\" stroke=\"#38BDF8\" stroke-width=\"1.4\"/>\n      </g>\n      <!-- Pale greenish-yellow gas haze (Chlorine simulation) -->\n      <rect x=\"37\" y=\"32\" width=\"66\" height=\"146\" fill=\"rgba(163,230,53,0.22)\"/>\n      <circle cx=\"55\" cy=\"80\" r=\"2\" fill=\"#84CC16\" opacity=\"0.6\"/>\n      <circle cx=\"85\" cy=\"110\" r=\"2.5\" fill=\"#84CC16\" opacity=\"0.5\"/>\n      <circle cx=\"65\" cy=\"140\" r=\"1.8\" fill=\"#84CC16\" opacity=\"0.7\"/>\n      <!-- Glass reflection highlights -->\n      <line x1=\"40\" y1=\"35\" x2=\"40\" y2=\"175\" stroke=\"#FFFFFF\" stroke-width=\"2.5\" opacity=\"0.85\"/>\n      <line x1=\"45\" y1=\"35\" x2=\"45\" y2=\"175\" stroke=\"#FFFFFF\" stroke-width=\"1\" opacity=\"0.5\"/>\n      <!-- Ground glass rim -->\n      <rect x=\"30\" y=\"24\" width=\"80\" height=\"6\" fill=\"#E2E8F0\" stroke=\"#94A3B8\" stroke-width=\"1\"/>\n      <!-- Ground glass cover plate slid on top -->\n      <g filter=\"url(#agShadow)\">\n        <polygon points=\"22,18 118,18 112,24 16,24\" fill=\"url(#agGlass)\" stroke=\"#0284C7\" stroke-width=\"1.2\"/>\n        <line x1=\"24\" y1=\"20\" x2=\"114\" y2=\"20\" stroke=\"#FFFFFF\" stroke-width=\"1.5\" opacity=\"0.85\"/>\n      </g>\n    "
+  },
+  {
+    "id": "mortar-pestle",
+    "name": "Mortar & Pestle",
+    "category": "Transfer",
+    "viewBox": "0 0 170 140",
+    "svgPath": "M25 45 Q85 130 145 45 Q85 55 25 45 Z M100 20 L125 70 Q130 85 115 88 Q100 85 105 70 L80 20 Z",
+    "primaryUse": "Grinds, pulverizes, and crushes coarse solid crystals, rock minerals, or plant matter into fine powders",
+    "labContext": "Used to pulverize solid lumps before dissolution or rate testing to increase surface area",
+    "safetyNote": "Grind using a firm circular twisting motion — never strike the pestle like a hammer against the bottom.",
+    "funFact": "The unglazed coarse interior creates friction essential to grind crystalline lattices down to micron sizes.",
+    "specs": {
+      "material": "Dense chemical-grade unglazed porcelain",
+      "capacity": "80 mm diameter bowl with heavy contoured pestle",
+      "tolerance": "Resistant to mechanical wear, acids, and alkalis",
+      "handling": "Hold mortar firmly with one hand; apply circular downward pressure with pestle head"
+    },
+    "quizDistractors": [
+      "Crucible",
+      "Evaporating Dish",
+      "Spatula"
+    ],
+    "useDistractors": [
+      "Measures gas volumes under water",
+      "Holds burette during titration",
+      "Burns sulfur inside gas jar"
+    ],
+    "richSVG": "\n      <g filter=\"url(#agShadow)\">\n        <!-- Heavy thick mortar bowl -->\n        <path d=\"M25 50 Q28 115 85 115 Q142 115 145 50 Q85 64 25 50 Z\" fill=\"url(#agPorcelain)\" stroke=\"#94A3B8\" stroke-width=\"1.5\"/>\n        <polygon points=\"25,50 16,46 28,56\" fill=\"url(#agPorcelain)\" stroke=\"#94A3B8\" stroke-width=\"1\"/>\n        <ellipse cx=\"85\" cy=\"50\" rx=\"60\" ry=\"14\" fill=\"#F1F5F9\" stroke=\"#CBD5E1\" stroke-width=\"1.2\"/>\n        <ellipse cx=\"85\" cy=\"50\" rx=\"48\" ry=\"10\" fill=\"#E2E8F0\"/>\n      </g>\n      <!-- Crushed orange chemical powder inside -->\n      <ellipse cx=\"85\" cy=\"85\" rx=\"28\" ry=\"12\" fill=\"#EA580C\" opacity=\"0.85\"/>\n      <circle cx=\"80\" cy=\"83\" r=\"1.5\" fill=\"#FDBA74\"/>\n      <circle cx=\"92\" cy=\"87\" r=\"2\" fill=\"#FDBA74\"/>\n      <!-- Contoured porcelain pestle tilted in bowl -->\n      <g filter=\"url(#agShadow)\" transform=\"rotate(24 95 65)\">\n        <path d=\"M90 12 L106 12 L102 75 Q104 88 98 90 Q92 88 94 75 Z\" fill=\"url(#agPorcelain)\" stroke=\"#94A3B8\" stroke-width=\"1.2\"/>\n        <ellipse cx=\"98\" cy=\"12\" rx=\"8\" ry=\"3\" fill=\"#E2E8F0\"/>\n        <line x1=\"93\" y1=\"18\" x2=\"95\" y2=\"72\" stroke=\"#FFFFFF\" stroke-width=\"1.5\" opacity=\"0.8\"/>\n      </g>\n    "
+  },
+  {
+    "id": "separating-funnel",
+    "name": "Separating Funnel (100 cm³)",
+    "category": "Glassware",
+    "viewBox": "0 0 130 230",
+    "svgPath": "M55 10 L75 10 L75 40 Q105 80 100 130 Q90 170 68 175 L68 195 L62 195 L62 175 Q40 170 30 130 Q25 80 55 40 Z M60 195 L70 195 L67 225 L63 225 Z",
+    "primaryUse": "Separates two immiscible liquids of differing densities (e.g. kerosene/oil and water or organic solvent extraction)",
+    "labContext": "Used in Form 1 separation of mixtures and organic chemistry extraction practicals",
+    "safetyNote": "Invert and open the stopcock periodically during shaking to release built-up vapor pressure.",
+    "funFact": "The pear shape ensures a narrow cross-section at the bottom, creating a razor-sharp boundary interface for clean cuts.",
+    "specs": {
+      "material": "Borosilicate 3.3 Glass with PTFE stopcock plug",
+      "capacity": "100 cm³",
+      "tolerance": "Leak-proof ground glass joint and PTFE key",
+      "handling": "Run out the lower denser layer via stopcock; pour the upper lighter layer out through the top neck"
+    },
+    "quizDistractors": [
+      "Filter Funnel",
+      "Thistle Funnel",
+      "Burette"
+    ],
+    "useDistractors": [
+      "Prepares standard molar solutions",
+      "Supports crucible over flame",
+      "Measures boiling points of liquids"
+    ],
+    "richSVG": "\n      <g filter=\"url(#agShadow)\">\n        <!-- Ground stopper -->\n        <polygon points=\"56,6 74,6 72,18 58,18\" fill=\"#0284C7\" stroke=\"#0369A1\" stroke-width=\"1\"/>\n        <rect x=\"60\" y=\"18\" width=\"10\" height=\"18\" fill=\"url(#agGlass)\" stroke=\"#38BDF8\" stroke-width=\"1\"/>\n        <!-- Pear-shaped glass body -->\n        <path d=\"M60 36 Q106 75 100 130 Q94 165 68 174 L68 192 L62 192 L62 174 Q36 165 30 130 Q24 75 70 36 Z\" fill=\"url(#agGlass)\" stroke=\"#38BDF8\" stroke-width=\"1.3\"/>\n      </g>\n      <!-- Top immiscible layer (Organic/Amber oil) -->\n      <path d=\"M42 90 Q28 120 38 135 L92 135 Q102 120 88 90 Z\" fill=\"url(#agLiquidAmber)\"/>\n      <!-- Lower immiscible layer (Aqueous blue solution) -->\n      <path d=\"M38 135 Q30 160 62 172 L62 192 L68 192 L68 172 Q100 160 92 135 Z\" fill=\"url(#agLiquidBlue)\"/>\n      <!-- Meniscus interface boundary line -->\n      <line x1=\"38\" y1=\"135\" x2=\"92\" y2=\"135\" stroke=\"#0284C7\" stroke-width=\"2\"/>\n      <text x=\"96\" y=\"137\" font-size=\"5\" font-weight=\"bold\" fill=\"#0284C7\" font-family=\"'JetBrains Mono', monospace\">Interface</text>\n      <!-- PTFE Stopcock valve -->\n      <rect x=\"52\" y=\"190\" width=\"26\" height=\"8\" rx=\"2\" fill=\"#E2E8F0\" stroke=\"#64748B\" stroke-width=\"1\"/>\n      <rect x=\"44\" y=\"192\" width=\"42\" height=\"4\" rx=\"2\" fill=\"url(#agTeflonRed)\" stroke=\"#991B1B\" stroke-width=\"0.8\"/>\n      <!-- Delivery stem jet -->\n      <polygon points=\"63,198 67,198 66,224 64,224\" fill=\"url(#agGlass)\" stroke=\"#38BDF8\" stroke-width=\"1\"/>\n      <!-- Specular reflection -->\n      <path d=\"M38 95 Q34 130 50 160\" stroke=\"#FFFFFF\" stroke-width=\"2\" opacity=\"0.85\" fill=\"none\"/>\n    "
+  },
+  {
+    "id": "deflagrating-spoon",
+    "name": "Deflagrating Spoon (Combustion Spoon)",
+    "category": "Heating",
+    "viewBox": "0 0 130 200",
+    "svgPath": "M65 10 L65 155 L95 155 Q100 160 95 165 L65 165 Z M35 70 L95 70 L95 75 L35 75 Z",
+    "primaryUse": "Holds burning chemical samples (e.g. sulfur, sodium, phosphorus) and lowers them safely into gas jars",
+    "labContext": "Form 2 non-metals and oxygen practicals — observing bright combustion flames inside gas jars",
+    "safetyNote": "Always lower inside a fume cupboard or well-ventilated lab; avoid breathing sulfur dioxide or chlorine gas fumes.",
+    "funFact": "The circular metal disc shield serves two purposes: seals the gas jar mouth and deflects rising toxic fumes away from the hand.",
+    "specs": {
+      "material": "Stainless steel shaft with brass/steel combustion cup and deflector disc",
+      "capacity": "15 mm cup diameter (holds 0.5–2 g solids)",
+      "tolerance": "Withstands continuous direct burner flames above 800 °C",
+      "handling": "Heat solid until combustion starts, then immediately lower into gas jar until disc rests on rim"
+    },
+    "quizDistractors": [
+      "Spatula",
+      "Crucible Tongs",
+      "Test Tube Holder"
+    ],
+    "useDistractors": [
+      "Draws precise 25 cm³ aliquots",
+      "Crushes crystalline salts",
+      "Tests pH of aqueous solutions"
+    ],
+    "richSVG": "\n      <!-- Top finger holding loop -->\n      <circle cx=\"65\" cy=\"16\" r=\"8\" fill=\"none\" stroke=\"url(#agMetalChrome)\" stroke-width=\"2.5\"/>\n      <!-- Vertical stainless steel shaft -->\n      <line x1=\"65\" y1=\"24\" x2=\"65\" y2=\"160\" stroke=\"url(#agMetalChrome)\" stroke-width=\"2.5\" stroke-linecap=\"round\"/>\n      <line x1=\"64\" y1=\"24\" x2=\"64\" y2=\"160\" stroke=\"#FFFFFF\" stroke-width=\"1\" opacity=\"0.8\"/>\n      <!-- Circular vapor baffle disc -->\n      <g filter=\"url(#agShadow)\">\n        <ellipse cx=\"65\" cy=\"75\" rx=\"32\" ry=\"7\" fill=\"url(#agMetalChrome)\" stroke=\"#475569\" stroke-width=\"1.2\"/>\n        <ellipse cx=\"65\" cy=\"75\" rx=\"26\" ry=\"4.5\" fill=\"none\" stroke=\"#FFFFFF\" stroke-width=\"1\" opacity=\"0.8\"/>\n      </g>\n      <!-- Bottom right angle bend & brass combustion cup -->\n      <path d=\"M65 160 L65 170 L95 170\" stroke=\"url(#agMetalChrome)\" stroke-width=\"2.5\" fill=\"none\"/>\n      <g filter=\"url(#agShadow)\">\n        <path d=\"M85 170 Q85 182 95 182 Q105 182 105 170 Z\" fill=\"url(#agBrass)\" stroke=\"#78350F\" stroke-width=\"1\"/>\n      </g>\n      <!-- Burning sulfur with brilliant violet-blue combustion flame -->\n      <ellipse cx=\"95\" cy=\"170\" rx=\"8\" ry=\"3\" fill=\"#EAB308\"/>\n      <path d=\"M88 170 Q95 140 102 170 Z\" fill=\"url(#agFlameOuter)\" opacity=\"0.9\" filter=\"url(#agGlow)\"/>\n      <path d=\"M91 170 Q95 148 99 170 Z\" fill=\"url(#agFlameInner)\"/>\n    "
+  },
+  {
+    "id": "lab-coat",
+    "name": "Protective Lab Coat",
+    "category": "Safety",
+    "viewBox": "0 0 160 180",
+    "svgPath": "M55 20 L40 45 L15 110 L30 115 L45 75 L45 160 L115 160 L115 75 L130 115 L145 110 L120 45 L105 20 Z M55 20 L80 60 L105 20",
+    "primaryUse": "Protects skin and clothing against corrosive chemical splashes, acid droplets, toxic stains, and burner sparks",
+    "labContext": "Mandatory personal protective equipment (PPE) worn fully buttoned in all secondary school chemistry laboratories",
+    "safetyNote": "Always fasten all front buttons and keep sleeves rolled down. Remove immediately if saturated with concentrated acid.",
+    "funFact": "100% heavy cotton resists charring without melting, whereas polyester melts and adheres directly to burned skin.",
+    "specs": {
+      "material": "100% heavy drill cotton (245 g/m²)",
+      "capacity": "Full torso and thigh coverage with reinforced pockets",
+      "tolerance": "Flame-retardant and acid-splash resistant",
+      "handling": "Fasten all press studs; wear knee-length with sleeves covering wrists"
+    },
+    "quizDistractors": [
+      "Safety Goggles",
+      "Rubber Apron",
+      "Insulated Gloves"
+    ],
+    "useDistractors": [
+      "Collects gaseous products",
+      "Measures temperature rise in calorimetry",
+      "Separates insoluble precipitates"
+    ],
+    "richSVG": "\n      <g filter=\"url(#agShadow)\">\n        <!-- Lab coat body -->\n        <path d=\"M52 24 L38 48 L14 110 L30 116 L44 80 L44 165 L116 165 L116 80 L130 116 L146 110 L122 48 L108 24 Z\" fill=\"url(#agPorcelain)\" stroke=\"#94A3B8\" stroke-width=\"1.4\"/>\n      </g>\n      <!-- Center button placket & lapels -->\n      <polygon points=\"52,24 80,68 108,24 80,48\" fill=\"#F1F5F9\" stroke=\"#CBD5E1\" stroke-width=\"1\"/>\n      <line x1=\"80\" y1=\"68\" x2=\"80\" y2=\"165\" stroke=\"#94A3B8\" stroke-width=\"1.2\"/>\n      <!-- Stainless steel snap buttons -->\n      <circle cx=\"80\" cy=\"85\" r=\"2.5\" fill=\"url(#agMetalChrome)\" stroke=\"#475569\" stroke-width=\"0.6\"/>\n      <circle cx=\"80\" cy=\"110\" r=\"2.5\" fill=\"url(#agMetalChrome)\" stroke=\"#475569\" stroke-width=\"0.6\"/>\n      <circle cx=\"80\" cy=\"135\" r=\"2.5\" fill=\"url(#agMetalChrome)\" stroke=\"#475569\" stroke-width=\"0.6\"/>\n      <!-- Breast pocket with VirtuLab shield badge -->\n      <rect x=\"52\" y=\"70\" width=\"18\" height=\"20\" rx=\"1.5\" fill=\"#F8FAFC\" stroke=\"#CBD5E1\" stroke-width=\"0.8\"/>\n      <path d=\"M57 78 L65 74 L65 85 L57 82 Z\" fill=\"#059669\"/>\n      <!-- Hip patch pockets -->\n      <rect x=\"48\" y=\"115\" width=\"22\" height=\"26\" rx=\"2\" fill=\"#F8FAFC\" stroke=\"#CBD5E1\" stroke-width=\"0.8\"/>\n      <rect x=\"90\" y=\"115\" width=\"22\" height=\"26\" rx=\"2\" fill=\"#F8FAFC\" stroke=\"#CBD5E1\" stroke-width=\"0.8\"/>\n      <!-- Shadow drape lines -->\n      <line x1=\"60\" y1=\"48\" x2=\"52\" y2=\"140\" stroke=\"#CBD5E1\" stroke-width=\"1\" stroke-dasharray=\"8 6\"/>\n      <line x1=\"100\" y1=\"48\" x2=\"108\" y2=\"140\" stroke=\"#CBD5E1\" stroke-width=\"1\" stroke-dasharray=\"8 6\"/>\n    "
+  },
+  {
+    "id": "test-tube-brush",
+    "name": "Test Tube Brush",
+    "category": "Safety",
+    "viewBox": "0 0 170 120",
+    "svgPath": "M15 60 L140 60 M140 60 C155 50 155 70 140 60 M60 35 L60 85 M80 35 L80 85 M100 35 L100 85 M120 35 L120 85",
+    "primaryUse": "Cleans test tubes, boiling tubes, and glassware without scratching glass or breaking delicate rounded bottoms",
+    "labContext": "Used after qualitative tests to scrub away stubborn precipitates (Fe(OH)₃, BaSO₄) before final distilled water rinses",
+    "safetyNote": "Check that the tip has a soft radial fan or cotton cushion so the wire core does not punch through the glass bottom.",
+    "funFact": "Twisted double-galvanized wire gives the shaft flexibility to scrub curved internal surfaces without permanent bending.",
+    "specs": {
+      "material": "High-density nylon bristles on twisted galvanized steel wire",
+      "capacity": "Cleans tubes from 10 mm to 30 mm diameter",
+      "tolerance": "Resistant to laboratory detergents, dilute acids, and hot water",
+      "handling": "Insert with twisting motion using soapy water; do not force against tube bottom"
+    },
+    "quizDistractors": [
+      "Glass Stirring Rod",
+      "Spatula",
+      "Dropping Pipette"
+    ],
+    "useDistractors": [
+      "Transfers solid powder aliquots",
+      "Measures 25 ml volumes accurately",
+      "Heats hydrated salts over flame"
+    ],
+    "richSVG": "\n      <!-- Finger loop at handle end -->\n      <ellipse cx=\"22\" cy=\"60\" rx=\"9\" ry=\"7\" fill=\"none\" stroke=\"url(#agMetalChrome)\" stroke-width=\"2\"/>\n      <!-- Twisted galvanized wire shaft -->\n      <line x1=\"31\" y1=\"60\" x2=\"140\" y2=\"60\" stroke=\"url(#agMetalChrome)\" stroke-width=\"2.5\"/>\n      <line x1=\"31\" y1=\"59\" x2=\"140\" y2=\"59\" stroke=\"#FFFFFF\" stroke-width=\"0.8\" opacity=\"0.85\"/>\n      <!-- Dense cylindrical nylon bristle head -->\n      <g stroke=\"#38BDF8\" stroke-width=\"1.2\" opacity=\"0.9\">\n        <line x1=\"70\" y1=\"38\" x2=\"70\" y2=\"82\"/>\n        <line x1=\"77\" y1=\"36\" x2=\"77\" y2=\"84\"/>\n        <line x1=\"84\" y1=\"35\" x2=\"84\" y2=\"85\"/>\n        <line x1=\"91\" y1=\"35\" x2=\"91\" y2=\"85\"/>\n        <line x1=\"98\" y1=\"35\" x2=\"98\" y2=\"85\"/>\n        <line x1=\"105\" y1=\"35\" x2=\"105\" y2=\"85\"/>\n        <line x1=\"112\" y1=\"35\" x2=\"112\" y2=\"85\"/>\n        <line x1=\"119\" y1=\"36\" x2=\"119\" y2=\"84\"/>\n        <line x1=\"126\" y1=\"38\" x2=\"126\" y2=\"82\"/>\n      </g>\n      <g stroke=\"#0284C7\" stroke-width=\"1.2\" opacity=\"0.75\">\n        <line x1=\"73\" y1=\"42\" x2=\"73\" y2=\"78\"/>\n        <line x1=\"80\" y1=\"40\" x2=\"80\" y2=\"80\"/>\n        <line x1=\"87\" y1=\"38\" x2=\"87\" y2=\"82\"/>\n        <line x1=\"94\" y1=\"38\" x2=\"94\" y2=\"82\"/>\n        <line x1=\"101\" y1=\"38\" x2=\"101\" y2=\"82\"/>\n        <line x1=\"108\" y1=\"38\" x2=\"108\" y2=\"82\"/>\n        <line x1=\"115\" y1=\"40\" x2=\"115\" y2=\"80\"/>\n        <line x1=\"122\" y1=\"42\" x2=\"122\" y2=\"78\"/>\n      </g>\n      <!-- Protective radial fan tuft at tip -->\n      <path d=\"M130 50 Q145 60 130 70\" stroke=\"#38BDF8\" stroke-width=\"2.5\" fill=\"none\"/>\n      <circle cx=\"140\" cy=\"60\" r=\"4.5\" fill=\"#E0F2FE\" stroke=\"#38BDF8\" stroke-width=\"1\"/>\n    "
   }
 ];
 

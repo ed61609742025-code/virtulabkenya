@@ -17,8 +17,8 @@ const ApparatusGallery = require('../../client/shared/apparatus-gallery.js');
 describe('Apparatus Pedagogy & Novice Scaffolding Suite', () => {
 
   describe('1. APPARATUS_DATA Catalog Integrity', () => {
-    it('should contain all 18 standard KCSE Paper 3 apparatus', () => {
-      assert.strictEqual(ApparatusGallery.APPARATUS_DATA.length, 18);
+    it('should contain all 32 standard KCSE laboratory apparatus', () => {
+      assert.strictEqual(ApparatusGallery.APPARATUS_DATA.length, 32);
     });
 
     it('every apparatus should have id, name, category, viewBox, svgPath, primaryUse, labContext', () => {
@@ -46,6 +46,11 @@ describe('Apparatus Pedagogy & Novice Scaffolding Suite', () => {
       assert.ok(ids.includes('bunsen-burner'), 'Must include bunsen-burner');
       assert.ok(ids.includes('thermometer'), 'Must include thermometer');
       assert.ok(ids.includes('safety-goggles'), 'Must include safety-goggles');
+      assert.ok(ids.includes('volumetric-flask'), 'Must include volumetric-flask');
+      assert.ok(ids.includes('white-tile'), 'Must include white-tile');
+      assert.ok(ids.includes('electronic-balance'), 'Must include electronic-balance');
+      assert.ok(ids.includes('stopwatch'), 'Must include stopwatch');
+      assert.ok(ids.includes('separating-funnel'), 'Must include separating-funnel');
     });
   });
 

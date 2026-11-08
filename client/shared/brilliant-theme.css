@@ -609,6 +609,16 @@ body.has-bottom-nav .vlk-bottom-nav ~ .b-mobile-bottom-nav {
   display: none !important;
 }
 
+/* Auto-hide bottom nav bar on scroll down, reappear on scroll up (X / Twitter style) */
+.vlk-bottom-nav.nav-hidden,
+.mobile-bottom-nav.nav-hidden,
+.b-mobile-bottom-nav.nav-hidden {
+  transform: translate3d(0, calc(100% + 24px), 0) !important;
+  -webkit-transform: translate3d(0, calc(100% + 24px), 0) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 /* ── 8. MOBILE THERMAL & GPU BATTERY OPTIMIZATION ── */
 @media (max-width: 768px) {
   /* Eliminate multi-pass GPU framebuffer blur filters on mobile */

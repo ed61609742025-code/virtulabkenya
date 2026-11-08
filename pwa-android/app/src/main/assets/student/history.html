@@ -1159,16 +1159,14 @@
     border-radius: 16px;
   }
 
-  /* ── 8. Mobile Slide-Out Drawer & Backdrop ── */
+  /* ── 8. Mobile Slide-Out Drawer & Backdrop (Full Styling System) ── */
   .vlk-mobile-drawer-backdrop {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
-    z-index: 19998;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 99998;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.25s ease, visibility 0.25s ease;
@@ -1177,27 +1175,312 @@
     opacity: 1;
     visibility: visible;
   }
+
   .vlk-mobile-drawer {
     position: fixed;
     top: 0;
     left: 0;
     bottom: 0;
-    width: min(84vw, 320px);
+    width: 310px;
+    max-width: 86vw;
     background: var(--card-bg, #0F172A);
     border-right: 1.5px solid var(--card-border, #1E293B);
-    z-index: 19999;
+    box-shadow: 0 0 36px rgba(0, 0, 0, 0.5);
+    z-index: 99999;
     transform: translateX(-100%);
-    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     flex-direction: column;
-    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
+    overflow-y: hidden;
+    color: var(--text-main, #F8FAFC);
   }
   .vlk-mobile-drawer.active {
     transform: translateX(0);
   }
-</style>
+
+  [data-theme="dark"] .vlk-mobile-drawer {
+    background: #0B1322;
+    border-right-color: rgba(56, 189, 248, 0.22);
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.65);
+  }
+  [data-theme="green"] .vlk-mobile-drawer {
+    background: #091C10;
+    border-right-color: rgba(52, 211, 153, 0.25);
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.65);
+  }
+
+  .vlk-drawer-header {
+    padding: 16px 18px 14px;
+    border-bottom: 1.5px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: var(--card-bg-hover, rgba(2, 132, 199, 0.05));
+    flex-shrink: 0;
+  }
+  [data-theme="dark"] .vlk-drawer-header {
+    background: #0F1A2E;
+    border-bottom-color: rgba(56, 189, 248, 0.2);
+  }
+  [data-theme="green"] .vlk-drawer-header {
+    background: #0C2114;
+    border-bottom-color: rgba(52, 211, 153, 0.25);
+  }
+
+  .vlk-drawer-user-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+  .vlk-drawer-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #0284C7, #2563EB);
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 850;
+    font-size: 0.88rem;
+    font-family: 'JetBrains Mono', monospace;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35);
+  }
+  .vlk-drawer-name {
+    font-size: 0.90rem;
+    font-weight: 850;
+    color: var(--heading-color);
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .vlk-drawer-syllabus {
+    font-size: 0.68rem;
+    font-weight: 750;
+    color: var(--cyan-accent, #0284C7);
+    margin-top: 2px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .vlk-drawer-close-btn {
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+  }
+  .vlk-drawer-close-btn:hover {
+    color: var(--heading-color);
+    border-color: var(--cyan-accent);
+    background: var(--card-bg-hover);
+  }
+
+  .vlk-drawer-body {
+    padding: 12px 14px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Section Titles Visual Hierarchy */
+  .vlk-drawer-section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.72rem;
+    font-weight: 850;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    padding: 14px 8px 6px;
+    margin-top: 10px;
+    border-top: 1px solid var(--card-border);
+  }
+  .vlk-drawer-section-title:first-of-type {
+    margin-top: 0;
+    padding-top: 4px;
+    border-top: none;
+  }
+  .vlk-drawer-section-title::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--cyan-accent, #0284C7);
+    flex-shrink: 0;
+  }
+
+  /* Menu Items Spacing & Touch Ergonomics */
+  .vlk-drawer-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    min-height: 44px;
+    border-radius: 11px;
+    text-decoration: none !important;
+    font-weight: 750;
+    font-size: 0.88rem;
+    color: var(--heading-color) !important;
+    border: 1.5px solid transparent;
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    background: transparent;
+  }
+  .vlk-drawer-link .vlk-icon {
+    width: 19px;
+    height: 19px;
+    stroke-width: 2.1;
+    stroke: currentColor;
+    flex-shrink: 0;
+    transition: transform 0.18s ease;
+  }
+  .vlk-drawer-link:hover,
+  .vlk-drawer-link:focus-visible {
+    background: var(--card-bg-hover, rgba(2, 132, 199, 0.08));
+    border-color: var(--card-border);
+    color: var(--cyan-accent, #0284C7) !important;
+    transform: translateX(3px);
+  }
+  .vlk-drawer-link:hover .vlk-icon,
+  .vlk-drawer-link:focus-visible .vlk-icon {
+    stroke: var(--cyan-accent, #0284C7);
+    transform: scale(1.08);
+  }
+
+  /* Clear Active State Feedback */
+  .vlk-drawer-link.active {
+    background: var(--acad-oxford, #0B2545) !important;
+    border-color: var(--acad-oxford, #0B2545) !important;
+    color: #FFFFFF !important;
+    font-weight: 850;
+    box-shadow: 0 4px 14px rgba(11, 37, 69, 0.25);
+  }
+  .vlk-drawer-link.active .vlk-icon {
+    stroke: #FFFFFF !important;
+  }
+  .vlk-drawer-link.active::after {
+    content: '';
+    position: absolute;
+    right: 14px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #38BDF8;
+    box-shadow: 0 0 8px #38BDF8;
+  }
+  [data-theme="dark"] .vlk-drawer-link.active {
+    background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important;
+    border-color: #38BDF8 !important;
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+  }
+  [data-theme="green"] .vlk-drawer-link.active {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+    border-color: #34D399 !important;
+    box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35);
+  }
+
+  /* Sublinks for Practical Benches */
+  .vlk-drawer-sublink {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 8px 12px 8px 14px;
+    min-height: 40px;
+    border-radius: 9px;
+    text-decoration: none !important;
+    font-size: 0.84rem;
+    font-weight: 650;
+    color: var(--text-muted) !important;
+    border: 1.5px solid transparent;
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    background: transparent;
+  }
+  .vlk-drawer-sublink:hover,
+  .vlk-drawer-sublink:focus-visible {
+    background: var(--card-bg-hover, rgba(2, 132, 199, 0.08));
+    border-color: var(--card-border);
+    color: var(--heading-color) !important;
+    transform: translateX(3px);
+  }
+  .vlk-drawer-bullet {
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.05rem;
+    flex-shrink: 0;
+  }
+
+  /* Optimized Drawer Footer & Logout Button */
+  .vlk-drawer-footer {
+    padding: 14px 16px max(16px, env(safe-area-inset-bottom, 16px));
+    border-top: 1.5px solid var(--card-border);
+    background: var(--card-bg-hover, rgba(2, 132, 199, 0.05));
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  [data-theme="dark"] .vlk-drawer-footer {
+    background: #0F1A2E;
+    border-top-color: rgba(56, 189, 248, 0.2);
+  }
+  [data-theme="green"] .vlk-drawer-footer {
+    background: #0C2114;
+    border-top-color: rgba(52, 211, 153, 0.25);
+  }
+
+  .vlk-drawer-logout-btn {
+    width: 100%;
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1.5px solid rgba(239, 68, 68, 0.35);
+    color: var(--red-accent, #EF4444);
+    font-size: 0.85rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+  }
+  .vlk-drawer-logout-btn:hover,
+  .vlk-drawer-logout-btn:focus-visible {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: #EF4444;
+    color: #EF4444;
+  }
+  .vlk-drawer-logout-btn .vlk-icon {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2.2;
+    stroke: currentColor;
+  }</style>
 <script>
-  window.openMobileNavDrawer = function() {
+    window.openMobileNavDrawer = function() {
     var drawer = document.getElementById('vlkMobileDrawer');
     var backdrop = document.getElementById('vlkMobileDrawerBackdrop');
     var toggleBtn = document.getElementById('mobileNavToggleBtn');
@@ -1209,6 +1492,27 @@
     if (backdrop) backdrop.classList.add('active');
     if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
     document.body.style.overflow = 'hidden';
+
+    // Populate candidate identity in drawer header
+    try {
+      var rawUser = localStorage.getItem('vlk_user') || localStorage.getItem('user');
+      if (rawUser) {
+        var u = JSON.parse(rawUser);
+        var nameEl = document.getElementById('drawerStudentName');
+        var avatarEl = document.getElementById('drawerStudentAvatar');
+        if (nameEl && u.name) nameEl.textContent = u.name;
+        if (avatarEl && u.name) {
+          var parts = u.name.trim().split(/\s+/);
+          var inits = parts.length > 1 ? (parts[0][0] + parts[parts.length - 1][0]) : parts[0].slice(0, 2);
+          avatarEl.textContent = inits.toUpperCase();
+        }
+      }
+    } catch (e) {}
+
+    setTimeout(function() {
+      var closeBtn = drawer.querySelector('.vlk-drawer-close-btn');
+      if (closeBtn) closeBtn.focus();
+    }, 50);
   };
 
   window.closeMobileNavDrawer = function(e) {

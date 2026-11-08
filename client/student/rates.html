@@ -176,16 +176,6 @@
           <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg> Dark
         </button>
 
-        <!-- Theory & Kinetics Revision Link -->
-        <a href="rates_theory.html" class="theme-btn-chip" title="Open Reaction Rates &amp; Collision Theory Revision Guide" style="padding:4px 8px; font-size:0.75rem; text-decoration:none; display:inline-flex; align-items:center; gap:4px;">
-          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> <span class="btn-text-full">Theory</span>
-        </a>
-
-        <!-- Reagent Safety SDS Button -->
-        <button type="button" class="nav-btn nav-btn-safety" onclick="openSafetyModal()" title="View Chemical Safety Data Sheets" style="padding:4px 8px; font-size:0.75rem; display:inline-flex; align-items:center; gap:4px;">
-          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> <span class="btn-text-full">SDS</span>
-        </button>
-
         <!-- Settings Dropdown -->
         <div style="position:relative; display:inline-flex; align-items:center;">
           <button type="button" class="nav-btn nav-btn-settings" onclick="toggleSettingsMenu(event)" title="Workbench Settings &amp; Tools" style="padding:4px 8px; font-size:0.75rem; display:inline-flex; align-items:center; gap:4px;">
@@ -243,6 +233,16 @@
               <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
               Print Practical Sheet
             </button>
+            <div style="display:flex; flex-direction:column; gap:6px; border-top:1px solid var(--card-border); padding-top:8px;">
+              <a href="rates_theory.html" style="background:var(--card-bg-hover);border:1px solid var(--card-border);color:var(--text-main);padding:6px 10px;border-radius:6px;text-decoration:none;font-size:0.75rem;font-weight:700;display:inline-flex;align-items:center;gap:6px;">
+                <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                KCSE Rates Theory Guide
+              </a>
+              <button type="button" onclick="openSafetyModal()" style="background:var(--red-bg);border:1px solid var(--red-border);color:var(--red-accent);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;display:inline-flex;align-items:center;gap:6px;">
+                <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Reagent Safety (SDS)
+              </button>
+            </div>
           </div>
         </div>
 

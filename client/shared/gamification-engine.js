@@ -195,15 +195,36 @@
   const STORAGE_KEY_XP = 'vlk_student_xp';
   const STORAGE_KEY_DAILY_BITE = 'vlk_daily_bite_completed_date';
 
+  function getLocalDateString(d = new Date()) {
+    const date = d instanceof Date ? d : new Date(d);
+    if (isNaN(date.getTime())) return '';
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  function getDaysBetween(dateStrA, dateStrB) {
+    if (!dateStrA || !dateStrB) return 999;
+    const [y1, m1, d1] = dateStrA.split('-').map(Number);
+    const [y2, m2, d2] = dateStrB.split('-').map(Number);
+    const t1 = Date.UTC(y1, m1 - 1, d1);
+    const t2 = Date.UTC(y2, m2 - 1, d2);
+    return Math.round((t1 - t2) / (1000 * 60 * 60 * 24));
+  }
+
   function getStreakData() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY_STREAK);
-      if (raw) return JSON.parse(raw);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed.count === 'number') return parsed;
+      }
     } catch (e) {}
     return {
       count: 1,
       longest: 1,
-      lastActiveDate: new Date().toDateString(),
+      lastActiveDate: null,
       freezeCount: 1
     };
   }
@@ -214,31 +235,37 @@
     } catch (e) {}
   }
 
-  function logPracticeActivity() {
+  function logPracticeActivity(simulatedDate) {
     const data = getStreakData();
-    const today = new Date().toDateString();
+    const todayStr = simulatedDate ? getLocalDateString(simulatedDate) : getLocalDateString();
 
-    if (data.lastActiveDate === today) {
+    if (!data.lastActiveDate) {
+      data.count = Math.max(data.count || 1, 1);
+      data.longest = Math.max(data.longest || 1, data.count);
+      data.lastActiveDate = todayStr;
+      saveStreakData(data);
+      return data;
+    }
+
+    if (data.lastActiveDate === todayStr) {
+      saveStreakData(data);
       return data; // Already logged today
     }
 
-    const yesterday = new Date(Date.now() - 86400000).toDateString();
-    const twoDaysAgo = new Date(Date.now() - 172800000).toDateString();
+    const diffDays = getDaysBetween(todayStr, data.lastActiveDate);
 
-    if (data.lastActiveDate === yesterday) {
+    if (diffDays === 1) {
       data.count += 1;
-    } else if (data.lastActiveDate === twoDaysAgo && data.freezeCount > 0) {
-      // Streak freeze used automatically
+    } else if (diffDays === 2 && data.freezeCount > 0) {
       data.freezeCount -= 1;
       data.count += 1;
       showStreakToast(`Streak Freeze preserved your ${data.count}-day streak!`);
-    } else {
-      // Reset streak
+    } else if (diffDays > 1) {
       data.count = 1;
     }
 
-    data.longest = Math.max(data.longest, data.count);
-    data.lastActiveDate = today;
+    data.longest = Math.max(data.longest || 1, data.count);
+    data.lastActiveDate = todayStr;
     saveStreakData(data);
 
     // Milestone celebrations (3, 7, 14, 30 days)
@@ -247,6 +274,66 @@
       showStreakToast(`Milestone Achieved: ${data.count}-Day Practical Streak recorded!`);
     }
 
+    return data;
+  }
+
+  function calculateStreakFromSessions(sessions, simulatedToday) {
+    if (!sessions || !Array.isArray(sessions) || sessions.length === 0) {
+      return getStreakData();
+    }
+
+    const dateSet = new Set();
+    sessions.forEach(s => {
+      const raw = s.created_at || s.date || s.timestamp;
+      if (raw) {
+        const d = new Date(raw);
+        if (!isNaN(d.getTime())) {
+          dateSet.add(getLocalDateString(d));
+        }
+      }
+    });
+
+    const uniqueDates = Array.from(dateSet).sort().reverse();
+    if (uniqueDates.length === 0) {
+      return getStreakData();
+    }
+
+    const todayStr = simulatedToday ? getLocalDateString(simulatedToday) : getLocalDateString();
+    const latestDate = uniqueDates[0];
+    const diffFromToday = getDaysBetween(todayStr, latestDate);
+
+    let count = 1;
+    if (diffFromToday === 0 || diffFromToday === 1) {
+      count = 1;
+      let currDate = latestDate;
+      for (let i = 1; i < uniqueDates.length; i++) {
+        const prevDate = uniqueDates[i];
+        const diff = getDaysBetween(currDate, prevDate);
+        if (diff === 1) {
+          count++;
+          currDate = prevDate;
+        } else {
+          break;
+        }
+      }
+    } else {
+      count = 1;
+    }
+
+    const data = getStreakData();
+    data.count = Math.max(data.count, count);
+    data.longest = Math.max(data.longest || 1, data.count);
+    data.lastActiveDate = latestDate;
+    saveStreakData(data);
+    return data;
+  }
+
+  function setStreak(count) {
+    const data = getStreakData();
+    data.count = Math.max(1, parseInt(count, 10) || 1);
+    data.longest = Math.max(data.longest || 1, data.count);
+    data.lastActiveDate = getLocalDateString();
+    saveStreakData(data);
     return data;
   }
 
@@ -414,6 +501,8 @@
   window.GamificationEngine = {
     getStreak: getStreakData,
     logActivity: logPracticeActivity,
+    calculateStreakFromSessions,
+    setStreak,
     getXP: getXPDetails,
     addXP,
     getDailyChallenge,

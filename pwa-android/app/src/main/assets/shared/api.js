@@ -760,6 +760,15 @@ async function apiRequest(method, endpoint, body, retries = 2) {
         throw new Error(data.error || `Request failed with status ${res.status}`);
       }
       updateOfflineBanner(true);
+      // Auto-log gamification activity on successful practical submission
+      if (method === 'POST') {
+        const ep = (endpoint || '').toLowerCase();
+        if (ep.includes('/sessions') || ep.includes('/qualitative') || ep.includes('/organic') || ep.includes('/energy') || ep.includes('/rates') || ep.includes('/solubility') || ep.includes('/gas') || ep.includes('/composite')) {
+          if (typeof window !== 'undefined' && window.GamificationEngine && typeof window.GamificationEngine.logActivity === 'function') {
+            try { window.GamificationEngine.logActivity(); } catch (e) {}
+          }
+        }
+      }
       return data;
     } catch (err) {
       if (attempt < retries && err.message && err.message.includes('fetch')) {

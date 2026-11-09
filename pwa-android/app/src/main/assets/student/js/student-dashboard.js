@@ -2209,45 +2209,48 @@ requireStudentLogin();
   function updateLabStreak(sessions) {
     const streakEl = document.getElementById('streakCount');
     const streakElMobile = document.getElementById('streakCountMobile');
-    if (!streakEl && !streakElMobile) return;
+    const pulseStreakEl = document.getElementById('pulseStreakVal');
+    const profStreakEl = document.getElementById('profStatStreak');
 
-    const setStreak = (val) => {
-      if (streakEl) streakEl.textContent = val;
-      if (streakElMobile) streakElMobile.textContent = val;
-    };
-
-    if (!sessions || sessions.length === 0) {
-      setStreak('1');
-      return;
-    }
-
-    // Extract unique session dates (YYYY-MM-DD)
-    const dates = Array.from(new Set(sessions.map(s => {
-      if (!s.created_at) return null;
-      const d = new Date(s.created_at);
-      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-    }).filter(Boolean))).sort().reverse();
-
-    if (dates.length === 0) {
-      setStreak('1');
-      return;
-    }
-
-    let streak = 1;
-    let curr = new Date(dates[0]);
-
-    for (let i = 1; i < dates.length; i++) {
-      const prev = new Date(dates[i]);
-      const diffDays = Math.round((curr - prev) / (1000 * 60 * 60 * 24));
-      if (diffDays === 1) {
-        streak++;
-        curr = prev;
-      } else if (diffDays > 1) {
-        break;
+    let streakCount = 1;
+    if (window.GamificationEngine && typeof window.GamificationEngine.calculateStreakFromSessions === 'function') {
+      const sData = window.GamificationEngine.calculateStreakFromSessions(sessions);
+      streakCount = sData.count;
+    } else if (sessions && sessions.length > 0) {
+      const dateSet = new Set();
+      sessions.forEach(s => {
+        const raw = s.created_at || s.date || s.timestamp;
+        if (raw) {
+          const d = new Date(raw);
+          if (!isNaN(d.getTime())) {
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            dateSet.add(`${y}-${m}-${day}`);
+          }
+        }
+      });
+      const uniqueDates = Array.from(dateSet).sort().reverse();
+      if (uniqueDates.length > 0) {
+        streakCount = 1;
+        let curr = new Date(uniqueDates[0]);
+        for (let i = 1; i < uniqueDates.length; i++) {
+          const prev = new Date(uniqueDates[i]);
+          const diffDays = Math.round((curr - prev) / 86400000);
+          if (diffDays === 1) {
+            streakCount++;
+            curr = prev;
+          } else if (diffDays > 1) {
+            break;
+          }
+        }
       }
     }
 
-    setStreak(Math.max(1, streak));
+    if (streakEl) streakEl.textContent = streakCount;
+    if (streakElMobile) streakElMobile.textContent = streakCount;
+    if (pulseStreakEl) pulseStreakEl.textContent = streakCount;
+    if (profStreakEl) profStreakEl.textContent = `${streakCount} Day${streakCount === 1 ? '' : 's'}`;
   }
 
   let adaptiveRecQueue = [];
@@ -3942,14 +3945,19 @@ requireStudentLogin();
 
       // Streak calculation
       let streakCount = 1;
-      if (window.GamificationEngine && typeof window.GamificationEngine.getStreak === 'function') {
-        const sData = window.GamificationEngine.getStreak();
-        streakCount = (sData && sData.count) ? sData.count : 1;
+      if (window.GamificationEngine && typeof window.GamificationEngine.calculateStreakFromSessions === 'function') {
+        const sData = window.GamificationEngine.calculateStreakFromSessions(allSessions);
+        streakCount = sData.count;
       } else {
         const sEl = document.getElementById('streakCountMobile') || document.getElementById('streakCount');
         if (sEl) streakCount = parseInt(sEl.textContent, 10) || 1;
       }
       const formattedStreak = `${streakCount} Day${streakCount === 1 ? '' : 's'}`;
+
+      const streakElPrimary = document.getElementById('streakCount');
+      const streakElMobile = document.getElementById('streakCountMobile');
+      if (streakElPrimary) streakElPrimary.textContent = streakCount;
+      if (streakElMobile) streakElMobile.textContent = streakCount;
 
       if (sessEl) sessEl.textContent = totalCount;
       if (accEl) accEl.textContent = accuracyPct + '%';

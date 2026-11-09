@@ -1284,16 +1284,16 @@
   color: var(--text-muted);
 }
 
-/* ── 9. Sidebar Card: Mwalimu AI Tutor Card Modernization ── */
+/* ── 9. Sidebar Card: Mwalimu AI Examiner Coaching Card (Precise Micro-Card) ── */
 .mwalimu-ai-card {
   background: var(--card-bg, #FFFFFF) !important;
   border: 1px solid var(--card-border, #E2E8F0) !important;
-  border-radius: var(--vlk-radius-card) !important;
-  padding: 20px 22px !important;
+  border-radius: 14px !important;
+  padding: 14px 16px !important;
   box-shadow: var(--vlk-card-shadow) !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 12px !important;
+  gap: 10px !important;
   transition: all 0.2s ease !important;
   position: relative;
   overflow: hidden;
@@ -1304,7 +1304,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 4px;
+  width: 3.5px;
   height: 100%;
   background: linear-gradient(180deg, #F59E0B 0%, #D97706 100%);
 }
@@ -1314,157 +1314,200 @@
   box-shadow: var(--vlk-card-shadow-hover) !important;
 }
 
+.mwalimu-card-header,
 .guidance-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 10px;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  margin: 0 !important;
 }
 
+.mwalimu-header-left,
 .mwalimu-tutor-identity {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  display: flex !important;
+  align-items: center !important;
+  gap: 9px !important;
+  min-width: 0 !important;
+  flex: 1 !important;
 }
 
 .mwalimu-ai-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, rgba(2, 132, 199, 0.15) 0%, rgba(245, 158, 11, 0.15) 100%);
-  border: 1px solid rgba(2, 132, 199, 0.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--cyan-accent);
-  flex-shrink: 0;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 8px !important;
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.15) 0%, rgba(245, 158, 11, 0.15) 100%) !important;
+  border: 1px solid rgba(2, 132, 199, 0.25) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: var(--cyan-accent) !important;
+  flex-shrink: 0 !important;
+}
+
+.mwalimu-identity-text {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  min-width: 0 !important;
 }
 
 .mwalimu-name {
-  font-size: 0.88rem;
-  font-weight: 800;
-  color: var(--heading-color);
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  font-size: 0.84rem !important;
+  font-weight: 800 !important;
+  color: var(--heading-color) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  line-height: 1.2 !important;
 }
 
 .mwalimu-badge-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.62rem;
-  font-weight: 800;
-  padding: 1px 6px;
-  border-radius: 4px;
-  background: var(--acad-oxford, #0B2545);
-  color: #FFFFFF;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 0.58rem !important;
+  font-weight: 800 !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+  background: var(--acad-oxford, #0B2545) !important;
+  color: #FFFFFF !important;
+  letter-spacing: 0.02em !important;
+}
+
+.mwalimu-meta-tags {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-wrap: wrap !important;
+  margin-top: 1px !important;
 }
 
 .mwalimu-source-line {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.64rem;
-  font-weight: 700;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 0.62rem !important;
+  font-weight: 700 !important;
+  color: var(--text-muted) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.03em !important;
 }
 
 .tip-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  display: flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+  flex-shrink: 0 !important;
+}
+
+.tip-counter {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  color: var(--text-muted) !important;
+  margin-right: 2px !important;
 }
 
 .tip-tool-btn,
 .tip-dismiss-btn {
-  width: 26px;
-  height: 26px;
-  border-radius: 6px;
-  border: 1px solid var(--card-border);
-  background: var(--card-bg-hover, transparent);
-  color: var(--text-muted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  font-size: 0.8rem;
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 6px !important;
+  border: 1px solid var(--card-border) !important;
+  background: var(--card-bg-hover, transparent) !important;
+  color: var(--text-muted) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  font-size: 0.75rem !important;
+  padding: 0 !important;
 }
 
 .tip-tool-btn:hover,
 .tip-dismiss-btn:hover {
-  color: var(--heading-color);
-  border-color: var(--cyan-accent);
+  color: var(--heading-color) !important;
+  border-color: var(--cyan-accent) !important;
 }
 
 .mwalimu-diagnostic-banner {
-  background: rgba(245, 158, 11, 0.1) !important;
-  border: 1px solid rgba(245, 158, 11, 0.28) !important;
-  border-radius: 10px !important;
-  padding: 10px 14px !important;
-  margin-top: 12px !important;
-  margin-bottom: 14px !important;
-  font-size: 0.78rem !important;
+  background: rgba(245, 158, 11, 0.08) !important;
+  border: 1px solid rgba(245, 158, 11, 0.22) !important;
+  border-radius: 7px !important;
+  padding: 5px 8px !important;
+  margin: 0 !important;
+  font-size: 0.74rem !important;
+  line-height: 1.35 !important;
   color: var(--heading-color) !important;
-  display: flex !important;
+  display: none;
   align-items: center !important;
-  gap: 8px !important;
+  gap: 6px !important;
+}
+
+.tip-content-body {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
 }
 
 .tip-title {
-  font-size: 0.96rem !important;
+  font-size: 0.88rem !important;
   font-weight: 800 !important;
   color: var(--heading-color) !important;
-  margin: 0 0 4px 0 !important;
+  margin: 0 !important;
+  line-height: 1.3 !important;
 }
 
 .tip-text {
-  font-size: 0.82rem !important;
-  line-height: 1.55 !important;
+  font-size: 0.79rem !important;
+  line-height: 1.48 !important;
   color: var(--text-muted) !important;
   margin: 0 !important;
 }
 
 .tip-quiz-box {
-  background: var(--card-bg-hover, rgba(0,0,0,0.03));
-  border: 1px solid var(--card-border);
-  border-radius: 10px;
-  overflow: hidden;
+  background: var(--card-bg-hover, rgba(0,0,0,0.02)) !important;
+  border: 1px solid var(--card-border) !important;
+  border-radius: 7px !important;
+  overflow: hidden !important;
+  margin: 0 !important;
 }
 
 .tip-quiz-toggle-btn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-  border: none;
-  background: transparent;
-  font-size: 0.76rem;
-  font-weight: 700;
-  color: var(--heading-color);
-  cursor: pointer;
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 5px 8px !important;
+  border: none !important;
+  background: transparent !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  color: var(--heading-color) !important;
+  cursor: pointer !important;
 }
 
 .tip-action-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-top: 4px;
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  margin-top: 1px !important;
 }
 
 .tip-action-btn {
   display: inline-flex !important;
+  width: 100% !important;
   align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
   gap: 6px !important;
-  padding: 7px 14px !important;
-  border-radius: 9px !important;
+  padding: 8px 14px !important;
+  border-radius: 8px !important;
   background: var(--acad-oxford, #0B2545) !important;
   color: #FFFFFF !important;
-  font-size: 0.78rem !important;
+  font-size: 0.79rem !important;
   font-weight: 800 !important;
   text-decoration: none !important;
   transition: all 0.15s ease !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
 }
 
 .tip-action-btn:hover {
@@ -2309,9 +2352,9 @@
 
   /* 7. Mwalimu AI Tutor Card Mobile */
   .mwalimu-ai-card {
-    padding: 16px 16px !important;
-    border-radius: 16px !important;
-    gap: 10px !important;
+    padding: 13px 14px !important;
+    border-radius: 14px !important;
+    gap: 9px !important;
   }
 
   .mwalimu-ai-avatar {

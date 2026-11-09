@@ -145,7 +145,7 @@
 <link rel="stylesheet" href="css/dashboard.css?v=193">
 <link rel="stylesheet" href="css/skill-tree.css?v=193">
 <link rel="stylesheet" href="css/mobile.css?v=193">
-<link rel="stylesheet" href="css/home-redesign.css?v=193">
+<link rel="stylesheet" href="css/home-redesign.css?v=194">
 
 <!-- Non-Critical Stylesheets (Asynchronously loaded to unblock LCP) -->
 <link rel="stylesheet" href="../shared/pwa-installer.css?v=167" media="print" onload="this.media='all'">
@@ -1897,27 +1897,27 @@
             </div>
 
           <div class="guidance-card tip-card upgraded-tip-card mwalimu-ai-card" id="studyTipCard">
-              <div class="guidance-header">
-                <div class="tip-header-left">
-                  <div class="mwalimu-tutor-identity">
-                    <div class="mwalimu-ai-avatar" aria-hidden="true">
-                      <svg class="vlk-icon mwalimu-avatar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93"/>
-                        <path d="M8.24 9.93A4 4 0 0 1 12 2"/>
-                        <path d="M6 18c0-3.3 2.7-6 6-6s6 2.7 6 6v2H6v-2z"/>
-                        <circle cx="12" cy="7" r="1" fill="currentColor"/>
-                      </svg>
-                      <span class="mwalimu-pulse-spark"></span>
-                    </div>
-                    <div class="mwalimu-identity-text">
-                      <div class="mwalimu-name">Mwalimu AI <span class="mwalimu-badge-tag">TUTOR</span></div>
-                      <div class="mwalimu-source-line" id="mwalimuSourceLine">PERSONALIZED EXAMINER DIAGNOSTIC SCAN</div>
+              <div class="mwalimu-card-header">
+                <div class="mwalimu-header-left">
+                  <div class="mwalimu-ai-avatar" aria-hidden="true">
+                    <svg class="vlk-icon mwalimu-avatar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93"/>
+                      <path d="M8.24 9.93A4 4 0 0 1 12 2"/>
+                      <path d="M6 18c0-3.3 2.7-6 6-6s6 2.7 6 6v2H6v-2z"/>
+                      <circle cx="12" cy="7" r="1" fill="currentColor"/>
+                    </svg>
+                    <span class="mwalimu-pulse-spark"></span>
+                  </div>
+                  <div class="mwalimu-identity-text">
+                    <div class="mwalimu-name">Mwalimu AI <span class="mwalimu-badge-tag">EXAMINER COACH</span></div>
+                    <div class="mwalimu-meta-tags">
+                      <span class="tip-category-badge badge-warning" id="stCategoryBadge">Concordance &amp; Accuracy Trap</span>
+                      <span class="mwalimu-source-line" id="mwalimuSourceLine" style="display:none;">Diagnostic Scan</span>
                     </div>
                   </div>
-                  <span class="tip-category-badge badge-warning" id="stCategoryBadge" style="display:inline-flex; align-items:center; gap:4px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Concordance &amp; Accuracy Trap &#9662;</span>
-                  <span class="tip-counter" id="stCounter">Tip 1/12</span>
                 </div>
                 <div class="tip-header-actions">
+                  <span class="tip-counter" id="stCounter">Tip 1/12</span>
                   <button type="button" class="tip-tool-btn tip-save-btn" id="stSaveBtn" onclick="toggleSaveCurrentTip()" title="Save to Exam Pocket" aria-label="Save tip to Exam Pocket">
                     <span id="stSaveIcon"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
                   </button>
@@ -1932,7 +1932,7 @@
               <!-- AI Diagnostic Callout Pill -->
               <div class="mwalimu-diagnostic-banner" id="mwalimuDiagnosticBanner">
                 <span class="diagnostic-beacon-icon">✨</span>
-                <span class="diagnostic-text" id="mwalimuDiagnosticText">Analyzing your recent practical sessions for examiner deductions…</span>
+                <span class="diagnostic-text" id="mwalimuDiagnosticText">Analyzing your recent practical sessions…</span>
               </div>
 
               <div class="tip-content-body">
@@ -1946,7 +1946,7 @@
               <div class="tip-quiz-box" id="stQuizBox">
                 <button type="button" class="tip-quiz-toggle-btn" id="stQuizToggleBtn" onclick="toggleTipQuiz()">
                   <span class="quiz-btn-label" id="stQuizBtnLabel" style="display:inline-flex; align-items:center; gap:5px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Quick Recall Question (+10 XP)</span>
-                  <span class="quiz-chevron" id="stQuizChevron" aria-hidden="true"><svg class="quiz-chevron-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><polyline points="6 9 12 15 18 9"/></svg></span>
+                  <span class="quiz-chevron" id="stQuizChevron" aria-hidden="true"><svg class="quiz-chevron-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><polyline points="6 9 12 15 18 9"/></svg></span>
                 </button>
                 <div class="tip-quiz-content" id="stQuizContent" style="display:none;">
                   <p class="quiz-question" id="stQuizQuestion">Loading question…</p>
@@ -1960,9 +1960,6 @@
                 <a id="stActionBtn" href="lab.html?studyMode=guided" class="tip-action-btn" data-tooltip="Practice this specific technique now" data-tooltip-pos="top">
                   <span id="stActionText">Practice Concordancy Drill ▶</span>
                 </a>
-                <button type="button" class="tip-next-chip" onclick="cycleStudyTip(1)">
-                  <span>Next Tip &rarr;</span>
-                </button>
               </div>
             </div>
 
@@ -2451,7 +2448,7 @@
   <script defer src="../shared/brilliant-ui.js?v=167"></script>
   <script defer src="../shared/gamification-engine.js?v=167"></script>
   <script defer src="js/skill-tree.js?v=173"></script>
-  <script defer src="js/student-dashboard.js?v=175"></script>
+  <script defer src="js/student-dashboard.js?v=176"></script>
   <script defer src="../shared/subscription-ui.js?v=167"></script>
 
   

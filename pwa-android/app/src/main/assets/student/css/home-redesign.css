@@ -4014,3 +4014,8 @@ a.btn:focus-visible,
 .btn-offline-install-cta:active {
   transform: translateY(1px) scale(0.97) !important;
 }
+
+/* Force remove view switcher toggle: Stick exclusively to Pathway View */
+.pathway-view-toggle {
+  display: none !important;
+}

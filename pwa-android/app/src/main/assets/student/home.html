@@ -142,10 +142,10 @@
 
 <!-- Critical Layout & Dashboard Stylesheets (Render-Critical) -->
 <link rel="stylesheet" href="../shared/style.css?v=167">
-<link rel="stylesheet" href="css/dashboard.css?v=191">
-<link rel="stylesheet" href="css/skill-tree.css?v=191">
-<link rel="stylesheet" href="css/mobile.css?v=191">
-<link rel="stylesheet" href="css/home-redesign.css?v=191">
+<link rel="stylesheet" href="css/dashboard.css?v=192">
+<link rel="stylesheet" href="css/skill-tree.css?v=192">
+<link rel="stylesheet" href="css/mobile.css?v=192">
+<link rel="stylesheet" href="css/home-redesign.css?v=192">
 
 <!-- Non-Critical Stylesheets (Asynchronously loaded to unblock LCP) -->
 <link rel="stylesheet" href="../shared/pwa-installer.css?v=167" media="print" onload="this.media='all'">
@@ -1713,27 +1713,16 @@
                 <span data-i18n="pathway_heading">Practical Chemistry Topics</span>
               </h2>
               <div class="section-subheading" data-i18n="pathway_sub">
-                Choose a topic or follow the guided pathway:
+                Follow your guided KCSE practical chemistry learning pathway:
               </div>
             </div>
           </div>
           
           <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
             <span class="dash-section-badge badge-green">40 Marks Syllabus</span>
-            <!-- View Toggle Switcher -->
-            <div class="pathway-view-toggle" role="tablist" aria-label="Topic View Modes">
-              <button type="button" class="view-toggle-btn active" id="btnViewTree" role="tab" aria-selected="true" aria-controls="panel_benches" onclick="SkillTree.switchView('tree')" data-tooltip="Pathway view" data-tooltip-pos="bottom">
-                <span data-i18n="btn_learning_pathway">Pathway View</span>
-              </button>
-              <button type="button" class="view-toggle-btn" id="btnViewGrid" role="tab" aria-selected="false" aria-controls="panel_benches" onclick="SkillTree.switchView('grid')" data-tooltip="Grid view" data-tooltip-pos="bottom">
-                <span data-i18n="btn_discipline_grid">Grid View</span>
-              </button>
-            </div>
           </div>
         </div>
 
-
-          
         <!-- Interactive Visual Skill Tree Pathway View -->
         <div id="skillTreeContainer" role="tabpanel" aria-label="Learning Pathway View">
           <div style="text-align:center; padding:36px; font-family:'JetBrains Mono', monospace; font-size:0.88rem; color:var(--text-muted);">
@@ -1741,111 +1730,7 @@
           </div>
         </div>
 
-        <!-- Grid View Wrap -->
-        <div id="practiceGridWrap" role="tabpanel" id="panel_benches" aria-label="Practical Discipline Grid" style="display:none;">
-          <!-- Search and Filter Bar -->
-          <div class="search-filter-bar" style="border-radius:12px; margin-bottom:20px; background:var(--card-bg-hover); border:1px solid var(--card-border); padding:14px 18px;">
-            <div class="search-input-wrap">
-              <input type="text" id="experimentSearchInput" oninput="filterPractices()" placeholder="Filter practicals (e.g. Titration, Qualitative Salt, Thermochemistry, Kinetics, Organic...)">
-            </div>
-            <div class="filter-chips" style="margin-top:12px;">
-              <button class="filter-chip active" data-filter="all" onclick="setPracticeFilter('all')">All Practicals</button>
-              <button class="filter-chip" data-filter="acidBase" onclick="setPracticeFilter('acidBase')">Volumetric</button>
-              <button class="filter-chip" data-filter="qualitative" onclick="setPracticeFilter('qualitative')">Qualitative Salts</button>
-              <button class="filter-chip" data-filter="rates" onclick="setPracticeFilter('rates')">Kinetics</button>
-              <button class="filter-chip" data-filter="energy" onclick="setPracticeFilter('energy')">Thermochemistry</button>
-              <button class="filter-chip" data-filter="solubility" onclick="setPracticeFilter('solubility')">Solubility</button>
-              <button class="filter-chip" data-filter="organic" onclick="setPracticeFilter('organic')">Organic Chemistry</button>
-            </div>
-          </div>
-
-          <!-- Laboratory Bench Cards Grid -->
-          <div class="practice-2col-grid" id="practiceGrid">
-            
-            <!-- 1. Guided Volumetric Analysis -->
-            <a href="lab.html?studyMode=guided" class="practice-banner-card" data-type="acidBase" style="border-left:4px solid var(--acad-gold);">
-              <div class="practice-card-icon-badge" style="background:rgba(217,119,6,0.12); color:#D97706;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2v17.5c0 1.4-1.1 2.5-2.5 2.5s-2.5-1.1-2.5-2.5V2"/><path d="M8.5 2h7"/><path d="M9.5 12h5"/></svg></div>
-              <div style="flex:1; min-width:0;">
-                <div class="practice-text-title">Guided Volumetric Analysis</div>
-                <div class="practice-text-desc">Step-by-step meniscus alignment, indicator selection, and calculations.</div>
-              </div>
-            </a>
-
-            <!-- 2. Volumetric Workbench -->
-            <a href="lab.html" class="practice-banner-card" data-type="acidBase" style="border-left:4px solid var(--acad-navy);">
-              <div class="practice-card-icon-badge" style="background:rgba(2,132,199,0.12); color:#0284C7;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg></div>
-              <div style="flex:1; min-width:0;">
-                <div class="practice-text-title">Volumetric Analysis Workbench</div>
-                <div class="practice-text-desc">Acid-Base, KMnO₄ Redox, Mohr's Precipitation, and EDTA Complexometry.</div>
-              </div>
-            </a>
-
-            <!-- 3. Qualitative Salt Analysis -->
-            <a href="qualitative.html" class="practice-banner-card" data-type="qualitative" style="border-left:4px solid var(--acad-emerald);">
-              <div class="practice-card-icon-badge" style="background:rgba(16,185,129,0.12); color:#059669;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18h8M3 22h18M14 22a7 7 0 1 0 0-14h-1M9 14h2M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2M12 6V3a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3"/></svg></div>
-              <div style="flex:1; min-width:0;">
-                <div class="practice-text-title">Systematic Qualitative Analysis</div>
-                <div class="practice-text-desc">Identify 10 unknown cations and anions via aqueous reagents and flame tests.</div>
-              </div>
-            </a>
-
-            <!-- 4. Reaction Rates & Kinetics -->
-            <a href="rates.html" class="practice-banner-card" data-type="rates" style="border-left:4px solid #F59E0B;">
-              <div class="practice-card-icon-badge" style="background:rgba(245,158,11,0.12); color:#D97706;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
-              <div style="flex:1; min-width:0;">
-                <div class="practice-text-title">Reaction Rates &amp; Kinetics</div>
-                <div class="practice-text-desc">Disappearing cross method, rate graphs (1/t vs conc), and temperature effects.</div>
-              </div>
-            </a>
-
-            <!-- 5. Thermochemistry & Enthalpy -->
-            <a href="energy.html" class="practice-banner-card" data-type="energy" style="border-left:4px solid #EF4444;">
-              <div class="practice-card-icon-badge" style="background:rgba(239,68,68,0.12); color:#DC2626;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/><circle cx="11.5" cy="17.5" r="1.5" fill="currentColor"/></svg></div>
-              <div style="flex:1; min-width:0;">
-                <div class="practice-text-title">Thermochemistry &amp; Energy Changes</div>
-                <div class="practice-text-desc">Calorimetric measurement of neutralization, solution, and displacement enthalpies (ΔH).</div>
-              </div>
-            </a>
-
-            <!-- 6. Solubility Curves -->
-            <a href="solubility.html" class="practice-banner-card" data-type="solubility" style="border-left:4px solid #0284C7;">
-              <div class="practice-card-icon-badge" style="background:rgba(2,132,199,0.12); color:#0284C7;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><line x1="20" y1="7" x2="4" y2="17"/><line x1="4" y1="7" x2="20" y2="17"/><line x1="12" y1="6" x2="15" y2="3"/><line x1="12" y1="6" x2="9" y2="3"/><line x1="12" y1="18" x2="15" y2="21"/><line x1="12" y1="18" x2="9" y2="21"/></svg></div>
-              <div style="flex:1; min-width:0;">
-                <div class="practice-text-title">Solubility Curves &amp; Crystallization</div>
-                <div class="practice-text-desc">Determine crystallization inception points across solute masses and plot curves.</div>
-              </div>
-            </a>
-
-            <!-- 7. Organic Chemistry Lab -->
-            <a href="organic.html" class="practice-banner-card" data-type="organic" style="border-left:4px solid #10B981;">
-              <div class="practice-card-icon-badge" style="background:rgba(16,185,129,0.12); color:#059669;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg></div>
-              <div style="flex:1; min-width:0;">
-                <div class="practice-text-title">Organic Chemistry &amp; Functional Groups</div>
-                <div class="practice-text-desc">Test for unsaturation (Br₂/KMnO₄), combustion sootiness, and esterification.</div>
-              </div>
-            </a>
-
-            <!-- 8. Gas Preparation & Identification -->
-            <a href="gas_prep.html" class="practice-banner-card" data-type="gas" style="border-left:4px solid #8B5CF6;">
-              <div class="practice-card-icon-badge" style="background:rgba(139,92,246,0.12); color:#7C3AED;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg></div>
-              <div style="flex:1; min-width:0;">
-                <div class="practice-text-title">Gas Preparation &amp; Analysis</div>
-                <div class="practice-text-desc">Generate and test H₂, O₂, CO₂, Cl₂, NH₃, and SO₂ with confirmatory tests.</div>
-              </div>
-            </a>
-
-            <!-- 9. KCSE Mock Exam -->
-            <a href="mock_exams.html" class="practice-banner-card" data-type="all" style="border-left:4px solid var(--acad-gold); grid-column: 1 / -1; background:var(--card-bg-hover);">
-              <div class="practice-card-icon-badge" style="background:rgba(245,158,11,0.15); color:#D97706;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/><path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></div>
-              <div style="flex:1; min-width:0;">
-                <div class="practice-text-title">KCSE Paper 3 National Mock Examination (40 Marks)</div>
-                <div class="practice-text-desc">Full 40-mark timed mock exam with automated grading rubric.</div>
-              </div>
-            </a>
-
-          </div>
-        </div>
-      </section>
+        </section>
 
         </div>
 

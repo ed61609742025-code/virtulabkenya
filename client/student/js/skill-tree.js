@@ -814,7 +814,6 @@
   };
 
   document.addEventListener('DOMContentLoaded', () => {
-    const savedView = localStorage.getItem('vlk_benches_view') || 'tree';
-    switchPathwayView(savedView);
+    switchPathwayView('tree');
   });
 })();

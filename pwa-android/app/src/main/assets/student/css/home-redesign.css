@@ -3376,9 +3376,7 @@
 
 /* ── Mwalimu AI Spacing & Affordance Refinements (Suggestion 3 & 4) ── */
 .mwalimu-source-line {
-  margin-top: 4px !important;
-  margin-bottom: 8px !important;
-  display: block !important;
+  display: none !important;
 }
 
 .tip-title {

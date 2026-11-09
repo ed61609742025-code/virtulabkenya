@@ -1713,7 +1713,7 @@ requireStudentLogin();
       const trueC = (cationErrSession.true_cation || '').toUpperCase();
       if ((stdC.includes('AL') && trueC.includes('PB')) || (stdC.includes('PB') && trueC.includes('AL')) || cationErrSession.salt_key?.includes('Pb') || cationErrSession.salt_key?.includes('Al')) {
         diagnosticAdvice = {
-          category: '⚠️ CATION MISCONCEPTION',
+          category: 'Cation Analysis',
           badgeClass: 'badge-danger',
           sourceNotice: '✨ <strong>Error Detected:</strong> Al³⁺ vs Pb²⁺ precipitate confusion in recent salt analysis',
           title: 'Cation Trap: Al³⁺ vs Pb²⁺ Confirmatory Test',
@@ -1731,7 +1731,7 @@ requireStudentLogin();
         };
       } else if (stdC.includes('ZN') || trueC.includes('ZN') || cationErrSession.salt_key?.includes('Zn')) {
         diagnosticAdvice = {
-          category: '⚠️ AMPHOTERIC CATION TRAP',
+          category: 'Qualitative Analysis',
           badgeClass: 'badge-warning',
           sourceNotice: '✨ <strong>Error Detected:</strong> Incomplete separation in excess aqueous ammonia',
           title: 'Amphoteric Trap: Zn²⁺ vs Al³⁺ in Excess NH₃(aq)',
@@ -1760,7 +1760,7 @@ requireStudentLogin();
 
       if (titrErrSession) {
         diagnosticAdvice = {
-          category: '⚠️ CONCORDANCY MARGIN',
+          category: 'Titration Concordancy',
           badgeClass: 'badge-warning',
           sourceNotice: '✨ <strong>KNEC Table 1:</strong> Titre spread exceeded the &plusmn;0.20 cm&sup3; concordancy margin',
           title: 'Titre Concordancy Warning (KNEC Table 1)',
@@ -1784,7 +1784,7 @@ requireStudentLogin();
       const anionErrSession = sessionList.find(s => s.anion_correct === false || (s.salt_key && (s.salt_key.includes('SO3') || s.salt_key.includes('SO4')) && !s.correct));
       if (anionErrSession) {
         diagnosticAdvice = {
-          category: '⚠️ ANION DISTINCTION',
+          category: 'Anion Analysis',
           badgeClass: 'badge-warning',
           sourceNotice: '✨ <strong>Error Detected:</strong> Confusion between Sulfite (SO₃²⁻) and Sulfate (SO₄²⁻)',
           title: 'Sulfite vs Sulfate: The Acidification Test',
@@ -1808,7 +1808,7 @@ requireStudentLogin();
       const energyErr = sessionList.find(s => (s.system_id || s.experiment_type || '').includes('energy') && !s.correct);
       if (energyErr) {
         diagnosticAdvice = {
-          category: '⚠️ THERMOCHEMISTRY TRAP',
+          category: 'Thermochemistry',
           badgeClass: 'badge-info',
           sourceNotice: '✨ <strong>Thermochemistry Trap:</strong> Inaccurate temperature rise ΔT extrapolation',
           title: 'Calorimetry: Theoretical Maximum ΔT Extrapolation',
@@ -1830,7 +1830,7 @@ requireStudentLogin();
     // E. High Accuracy Streak Praise
     if (!diagnosticAdvice && recentAccuracy >= 80 && recentSessions.length >= 3) {
       diagnosticAdvice = {
-        category: '🏆 DISTINCTION STREAK',
+        category: 'Distinction Streak',
         badgeClass: 'badge-success',
         sourceNotice: `✨ <strong>Distinction Track:</strong> Outstanding ${recentAccuracy}% accuracy across your last ${recentSessions.length} sessions!`,
         title: 'Mwalimu Commendation: Top Chemist Trajectory',

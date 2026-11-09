@@ -2159,9 +2159,12 @@ requireStudentLogin();
     const finalCells = trials.map(v => `<td>${v.toFixed(2)}</td>`).join('');
     const initialCells = trials.map(() => `<td>0.00</td>`).join('');
     const titreCells = trials.map((v, i) => {
-      const cls = isConcordant(v, i) ? 'concordant-cell' : '';
-      return `<td class="${cls}">${v.toFixed(2)}</td>`;
+      const concord = isConcordant(v, i);
+      const cls = concord ? 'concordant-cell' : '';
+      const checkTag = concord ? ' <span title="Concordant trial within ±0.10 cm³" style="color:var(--green-accent);font-weight:800;">✓</span>' : '';
+      return `<td class="${cls}">${v.toFixed(2)}${checkTag}</td>`;
     }).join('');
+
 
     list.innerHTML = `
       <table class="kcse-table">
@@ -2526,7 +2529,22 @@ requireStudentLogin();
     } else if (q.letter === 'e') {
       const activeConc = !isNaN(studentCalcConc) ? studentCalcConc : (!isNaN(studentMolesAnalyte) ? (studentMolesAnalyte * 1000.0) / (sessionAnalyteVolume || 25.0) : null);
       if (activeConc != null) {
-        ecfExpected = activeConc * (current.rfm || 36.5);
+        if (current.key === 'dibasic') {
+          const mass = (sessionMassConc || 4.90);
+          ecfExpected = activeConc > 0 ? (mass / activeConc) : 98.0;
+        } else if (current.key === 'precipitation') {
+          ecfExpected = activeConc * (250 / 1000) * (current.rfm || 58.5);
+        } else if (current.key === 'tribasic') {
+          ecfExpected = activeConc * (500 / 1000) * (current.rfm || 98.0);
+        } else if (current.key === 'complexometric') {
+          ecfExpected = activeConc * 100.0 * 1000;
+        } else if (current.key === 'weakAcid') {
+          ecfExpected = (activeConc * 10.0 * 60.0) / 10.0;
+        } else if (current.key === 'weakBase') {
+          ecfExpected = activeConc * 22.4;
+        } else {
+          ecfExpected = activeConc * (current.rfm || 36.5);
+        }
       }
     }
 
@@ -2589,62 +2607,156 @@ requireStudentLogin();
   function checkMassConcentration() { checkQuestionStep(4); }
 
   function calculateKcseExamMarks(studentAverage, studentAnswer) {
-    const eqVol = equivalenceVolume;
-    const diffTitre = Math.abs(studentAverage - eqVol);
-    let accuracyMarks = 0;
-    if (diffTitre <= 0.10) accuracyMarks = 5;
-    else if (diffTitre <= 0.20) accuracyMarks = 4;
-    else if (diffTitre <= 0.30) accuracyMarks = 3;
-    else if (diffTitre <= 0.50) accuracyMarks = 2;
-    else if (diffTitre <= 1.00) accuracyMarks = 1;
-    else accuracyMarks = 0;
+    const eqVol = (typeof equivalenceVolume === 'number' && equivalenceVolume > 0) ? equivalenceVolume : 25.0;
 
-    const isConcordant = (v, i) => trials.some((other, j) => j !== i && Math.abs(other - v) <= 0.10);
-    const concordantCount = trials.filter((v, i) => isConcordant(v, i)).length;
-    let concordanceMarks = 0;
-    if (concordantCount >= 2) concordanceMarks = 3;
-    else if (trials.length >= 2) {
-      const diffFirstTwo = Math.abs(trials[0] - trials[1]);
-      if (diffFirstTwo <= 0.20) concordanceMarks = 2;
-      else concordanceMarks = 1;
-    } else concordanceMarks = 0;
+    // 1. Build standardized Table 1 trials array for KnecGrading.evaluateKnecTable1
+    const tableTrials = (trials || []).map(v => {
+      const numV = Number(v) || 0;
+      return {
+        initial: 0.00,
+        final: numV,
+        used: numV,
+        recorded: true
+      };
+    });
 
-    const expectedAvg = systemAverage();
-    const diffAvg = Math.abs(studentAverage - expectedAvg);
-    const rawAvgStr = document.getElementById('avgInput') ? document.getElementById('avgInput').value : '';
-    const isDecimal2 = rawAvgStr.includes('.') && rawAvgStr.split('.')[1].length >= 2;
-    let averageMarks = 0;
-    if (diffAvg <= 0.02) {
-      averageMarks = isDecimal2 ? 2 : 1;
-    } else {
-      averageMarks = 0;
+    let tableEval = null;
+    if (typeof evaluateKnecTable1 === 'function') {
+      tableEval = evaluateKnecTable1(tableTrials, eqVol, studentAverage);
+    } else if (typeof window !== 'undefined' && window.KnecGrading && typeof window.KnecGrading.evaluateKnecTable1 === 'function') {
+      tableEval = window.KnecGrading.evaluateKnecTable1(tableTrials, eqVol, studentAverage);
     }
 
-    const expectedConc = (current.ratio * sessionTitrantConc * studentAverage) / sessionAnalyteVolume;
-    const diffConcPct = expectedConc > 0 ? (Math.abs(studentAnswer - expectedConc) / expectedConc) * 100 : 100;
-    let concMarks = 0;
-    if (diffConcPct <= 2.5) concMarks = 5;
-    else if (diffConcPct <= 5.0) concMarks = 3;
-    else if (diffConcPct <= 10.0) concMarks = 2;
-    else concMarks = 0;
+    // Default table score fallback if helper is somehow not loaded
+    const tableScore = tableEval ? tableEval.tableScore : 4.0;
+    const tableRubrics = tableEval ? tableEval.rubric : [
+      { code: 'CT', criterion: 'Complete Table (CT)', mark: 1.0, max: 1.0, detail: 'Trials recorded within realistic boundaries.' },
+      { code: 'D', criterion: 'Use of Decimals (D)', mark: 1.0, max: 1.0, detail: 'Readings follow 2 d.p. convention.' },
+      { code: 'AC', criterion: 'Accuracy vs School Value (AC)', mark: 1.0, max: 1.0, detail: 'Titre within concordancy tolerance.' },
+      { code: 'PA', criterion: 'Principles of Averaging (PA)', mark: 1.0, max: 1.0, detail: 'Concordant titres averaged.' },
+      { code: 'FA', criterion: 'Final Accuracy of Mean (FA)', mark: 1.0, max: 1.0, detail: 'Mean titre accuracy.' }
+    ];
 
-    const totalMarks = accuracyMarks + concordanceMarks + averageMarks + concMarks;
+    // 2. Question Scores (Questions a, b, c, d, e — 2.0 Marks Each = 10.0 Marks)
+    // (a) Average Titre calculation
+    const expectedAvg = systemAverage();
+    const diffAvg = Math.abs(studentAverage - expectedAvg);
+    let qAMarks = 0.0;
+    if (diffAvg <= 0.02) qAMarks = 2.0;
+    else if (diffAvg <= 0.10) qAMarks = 1.0;
+
+    // (b) Moles of Titrant
+    const studentMolesTitrant = parseFloat(document.getElementById('molesTitrantInput')?.value);
+    const expectedMolesTitrant = (sessionTitrantConc * studentAverage) / 1000;
+    let qBMarks = 0.0;
+    if (!isNaN(studentMolesTitrant)) {
+      if (Math.abs(studentMolesTitrant - expectedMolesTitrant) <= 0.0001 || (expectedMolesTitrant > 0 && Math.abs(studentMolesTitrant - expectedMolesTitrant) / expectedMolesTitrant <= 0.03)) {
+        qBMarks = 2.0;
+      } else if (expectedMolesTitrant > 0 && Math.abs(studentMolesTitrant - expectedMolesTitrant) / expectedMolesTitrant <= 0.10) {
+        qBMarks = 1.0;
+      }
+    }
+
+    // (c) Moles of Analyte (with ECF from studentMolesTitrant)
+    const studentMolesAnalyte = parseFloat(document.getElementById('molesAnalyteInput')?.value);
+    const directExpectedMolesAnalyte = expectedMolesTitrant * (current.ratio || 1.0);
+    const ecfExpectedMolesAnalyte = !isNaN(studentMolesTitrant) ? (studentMolesTitrant * (current.ratio || 1.0)) : directExpectedMolesAnalyte;
+    let qCMarks = 0.0;
+    if (!isNaN(studentMolesAnalyte)) {
+      if (Math.abs(studentMolesAnalyte - directExpectedMolesAnalyte) <= 0.0001 || (directExpectedMolesAnalyte > 0 && Math.abs(studentMolesAnalyte - directExpectedMolesAnalyte) / directExpectedMolesAnalyte <= 0.03) ||
+          Math.abs(studentMolesAnalyte - ecfExpectedMolesAnalyte) <= 0.0001 || (ecfExpectedMolesAnalyte > 0 && Math.abs(studentMolesAnalyte - ecfExpectedMolesAnalyte) / ecfExpectedMolesAnalyte <= 0.03)) {
+        qCMarks = 2.0;
+      } else {
+        qCMarks = 0.0;
+      }
+    }
+
+    // (d) Molar concentration of Analyte (with ECF from studentMolesAnalyte)
+    const studentCalcConc = parseFloat(document.getElementById('calcConc')?.value);
+    const directExpectedConc = (directExpectedMolesAnalyte * 1000.0) / sessionAnalyteVolume;
+    const ecfExpectedConc = !isNaN(studentMolesAnalyte) ? ((studentMolesAnalyte * 1000.0) / sessionAnalyteVolume) : directExpectedConc;
+    let qDMarks = 0.0;
+    if (!isNaN(studentCalcConc)) {
+      if (Math.abs(studentCalcConc - directExpectedConc) <= 0.0015 || (directExpectedConc > 0 && Math.abs(studentCalcConc - directExpectedConc) / directExpectedConc <= 0.03) ||
+          Math.abs(studentCalcConc - ecfExpectedConc) <= 0.0015 || (ecfExpectedConc > 0 && Math.abs(studentCalcConc - ecfExpectedConc) / ecfExpectedConc <= 0.03)) {
+        qDMarks = 2.0;
+      } else if (directExpectedConc > 0 && Math.abs(studentCalcConc - directExpectedConc) / directExpectedConc <= 0.08) {
+        qDMarks = 1.0;
+      }
+    }
+
+    // (e) Mass concentration / RFM / % Acidity / ppm Hardness (with ECF from activeConc)
+    const studentMassConc = parseFloat(document.getElementById('massConcInput')?.value);
+    const activeConc = !isNaN(studentCalcConc) ? studentCalcConc : (!isNaN(studentMolesAnalyte) ? (studentMolesAnalyte * 1000.0) / sessionAnalyteVolume : directExpectedConc);
+
+    let directExpectedE = current.questions[4].calcExpected({
+      studentAvg: expectedAvg,
+      sessionTitrantConc,
+      sessionAnalyteVolume,
+      sessionMassConc,
+      current
+    });
+    let ecfExpectedE = current.questions[4].calcExpected({
+      studentAvg: studentAverage,
+      studentCalcConc: activeConc,
+      sessionTitrantConc,
+      sessionAnalyteVolume,
+      sessionMassConc,
+      current
+    });
+
+    let qEMarks = 0.0;
+    if (!isNaN(studentMassConc)) {
+      const isDirectOk = current.questions[4].checkOk(studentMassConc, directExpectedE);
+      const isEcfOk = current.questions[4].checkOk(studentMassConc, ecfExpectedE);
+      if (isDirectOk || isEcfOk) {
+        qEMarks = 2.0;
+      } else {
+        qEMarks = 0.0;
+      }
+    }
+
+    const calcTotalMarks = qAMarks + qBMarks + qCMarks + qDMarks + qEMarks;
+    const totalMarks = Math.min(15.0, parseFloat((tableScore + calcTotalMarks).toFixed(1)));
 
     let grade = 'E';
-    if (totalMarks >= 13) grade = 'A';
-    else if (totalMarks >= 10) grade = 'B';
-    else if (totalMarks >= 7) grade = 'C';
-    else if (totalMarks >= 4) grade = 'D';
+    if (typeof calculateKnecGrade === 'function') {
+      grade = calculateKnecGrade(totalMarks, 15.0);
+    } else if (typeof window !== 'undefined' && window.KnecGrading && typeof window.KnecGrading.calculateKnecGrade === 'function') {
+      grade = window.KnecGrading.calculateKnecGrade(totalMarks, 15.0);
+    } else {
+      if (totalMarks >= 12.0) grade = 'A';
+      else if (totalMarks >= 10.5) grade = 'B+';
+      else if (totalMarks >= 9.0) grade = 'B';
+      else if (totalMarks >= 7.5) grade = 'C+';
+      else if (totalMarks >= 6.0) grade = 'C';
+      else if (totalMarks >= 4.5) grade = 'D';
+      else grade = 'E';
+    }
+
+    // Preserve legacy fields for backward compatibility
+    const accuracyMarks = Math.round(tableScore);
+    const concordanceMarks = (tableRubrics.find(r => r.code === 'PA')?.mark || 1.0) >= 1.0 ? 3 : 1;
+    const averageMarks = qAMarks;
+    const concMarks = Math.round(qBMarks + qCMarks + qDMarks + qEMarks);
 
     return {
+      tableScore,
+      tableRubrics,
+      qAMarks,
+      qBMarks,
+      qCMarks,
+      qDMarks,
+      qEMarks,
+      calcTotalMarks,
+      totalMarks,
+      grade,
+      expectedConc: directExpectedConc,
+      expectedAvg,
       accuracyMarks,
       concordanceMarks,
       averageMarks,
-      concMarks,
-      totalMarks,
-      grade,
-      expectedConc,
-      expectedAvg
+      concMarks
     };
   }
 
@@ -2683,13 +2795,32 @@ requireStudentLogin();
 
     const tbody = document.getElementById('examBreakdownTableBody');
     if (tbody) {
+      const rubrics = examMarks.tableRubrics || [];
+      const tableRows = rubrics.map(r => `
+        <tr>
+          <td>Table 1: ${r.criterion} [${r.code}]</td>
+          <td style="text-align:center;">${r.max.toFixed(1)}</td>
+          <td style="text-align:center;font-weight:700;color:${r.mark >= r.max ? '#10B981' : '#EF4444'};">${r.mark.toFixed(1)}</td>
+        </tr>
+      `).join('');
+
       tbody.innerHTML = `
-        <tr><td>Burette Accuracy & Meniscus Reading</td><td style="text-align:center;">5</td><td style="text-align:center;font-weight:700;">${examMarks.accuracyMarks}</td></tr>
-        <tr><td>Concordance of Titres (within 0.10 cm³)</td><td style="text-align:center;">3</td><td style="text-align:center;font-weight:700;">${examMarks.concordanceMarks}</td></tr>
-        <tr><td>Average Titre Format & Accuracy</td><td style="text-align:center;">2</td><td style="text-align:center;font-weight:700;">${examMarks.averageMarks}</td></tr>
-        <tr><td>Molarity Concentration Calculation</td><td style="text-align:center;">5</td><td style="text-align:center;font-weight:700;">${examMarks.concMarks}</td></tr>
+        <tr style="background:var(--card-bg-hover);font-weight:800;"><td colspan="3">📊 Part 1: KNEC Table 1 Readings (${(examMarks.tableScore || 0).toFixed(1)} / 5.0 Marks)</td></tr>
+        ${tableRows}
+        <tr style="background:var(--card-bg-hover);font-weight:800;"><td colspan="3">🧮 Part 2: Stoichiometry Calculations (${(examMarks.calcTotalMarks || 0).toFixed(1)} / 10.0 Marks)</td></tr>
+        <tr><td>(a) Average Titre Calculation</td><td style="text-align:center;">2.0</td><td style="text-align:center;font-weight:700;">${(examMarks.qAMarks || 0).toFixed(1)}</td></tr>
+        <tr><td>(b) Moles of Titrant in Average Titre</td><td style="text-align:center;">2.0</td><td style="text-align:center;font-weight:700;">${(examMarks.qBMarks || 0).toFixed(1)}</td></tr>
+        <tr><td>(c) Moles of Analyte (Mole Ratio)</td><td style="text-align:center;">2.0</td><td style="text-align:center;font-weight:700;">${(examMarks.qCMarks || 0).toFixed(1)}</td></tr>
+        <tr><td>(d) Molar Concentration of Analyte</td><td style="text-align:center;">2.0</td><td style="text-align:center;font-weight:700;">${(examMarks.qDMarks || 0).toFixed(1)}</td></tr>
+        <tr><td>(e) Mass Concentration / RFM / Stoichiometry</td><td style="text-align:center;">2.0</td><td style="text-align:center;font-weight:700;">${(examMarks.qEMarks || 0).toFixed(1)}</td></tr>
+        <tr style="border-top:2px solid var(--card-border);font-weight:800;background:var(--card-bg-hover);">
+          <td>Total Paper 3 Question 1 Mark</td>
+          <td style="text-align:center;">15.0</td>
+          <td style="text-align:center;color:var(--cyan-accent);font-size:0.95rem;">${Number(examMarks.totalMarks).toFixed(1)}</td>
+        </tr>
       `;
     }
+
 
     let notes = '';
     if (examMarks.totalMarks >= 13) {

@@ -340,14 +340,15 @@
 .resume-hero-card {
   position: relative !important;
   display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  gap: clamp(14px, 2vw, 20px) !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: 10px !important;
   background: var(--card-bg, #FFFFFF) !important;
   border: 1px solid var(--card-border, #E2E8F0) !important;
   border-left: 4.5px solid var(--cyan-accent, #0284C7) !important;
   border-radius: 16px !important;
-  padding: clamp(12px, 1.6vw, 18px) clamp(16px, 2vw, 22px) !important;
+  padding: 14px 18px !important;
   margin-bottom: clamp(14px, 1.8vw, 20px) !important;
   box-shadow: var(--vlk-card-shadow) !important;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
@@ -361,94 +362,172 @@
   box-shadow: var(--vlk-card-shadow-hover) !important;
 }
 
+.resume-hero-content,
 .resume-hero-left {
-  flex: 1 1 auto;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
 }
 
 .resume-badge-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-wrap: wrap !important;
 }
 
 .resume-badge-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  background: rgba(2, 132, 199, 0.12);
-  color: var(--cyan-accent);
-  border: 1px solid rgba(2, 132, 199, 0.24);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.68rem;
-  font-weight: 800;
-  padding: 2px 8px;
-  border-radius: 999px;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  background: rgba(2, 132, 199, 0.12) !important;
+  color: var(--cyan-accent) !important;
+  border: 1px solid rgba(2, 132, 199, 0.24) !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 0.68rem !important;
+  font-weight: 800 !important;
+  padding: 2px 8px !important;
+  border-radius: 999px !important;
+  letter-spacing: 0.03em !important;
+  text-transform: uppercase !important;
+}
+
+.resume-pulse-dot {
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50% !important;
+  background: var(--cyan-accent) !important;
+  box-shadow: 0 0 6px var(--cyan-accent) !important;
+  animation: resumePulse 2s infinite ease-in-out !important;
+}
+
+@keyframes resumePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
+}
+
+.resume-syllabus-tag {
+  display: inline-flex !important;
+  align-items: center !important;
+  background: rgba(16, 185, 129, 0.10) !important;
+  color: #059669 !important;
+  border: 1px solid rgba(16, 185, 129, 0.22) !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  padding: 2px 8px !important;
+  border-radius: 6px !important;
+}
+
+.resume-topic-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  background: rgba(99, 102, 241, 0.10) !important;
+  color: #6366F1 !important;
+  border: 1px solid rgba(99, 102, 241, 0.22) !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  padding: 2px 8px !important;
+  border-radius: 6px !important;
 }
 
 .resume-title {
   font-family: 'Plus Jakarta Sans', sans-serif !important;
-  font-size: clamp(1.05rem, 1.4cqw + 0.35rem, 1.24rem) !important;
+  font-size: clamp(1.05rem, 1.2cqw + 0.35rem, 1.22rem) !important;
   font-weight: 850 !important;
   color: var(--heading-color) !important;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.02em !important;
   margin: 0 !important;
-  line-height: 1.25;
+  line-height: 1.25 !important;
+  width: 100% !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
 }
 
 .resume-desc {
-  font-size: clamp(0.78rem, 0.6cqw + 0.4rem, 0.84rem) !important;
+  font-size: clamp(0.76rem, 0.5cqw + 0.4rem, 0.82rem) !important;
   color: var(--text-muted) !important;
-  line-height: 1.45;
+  line-height: 1.4 !important;
   margin: 0 !important;
   display: -webkit-box !important;
   -webkit-line-clamp: 2 !important;
   -webkit-box-orient: vertical !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
+  width: 100% !important;
+}
+
+.resume-hero-footer {
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 14px !important;
+  margin-top: 2px !important;
+  flex-wrap: wrap !important;
 }
 
 .resume-progress-container {
-  margin-top: 4px !important;
-  max-width: 440px !important;
+  flex: 1 1 220px !important;
+  max-width: 380px !important;
+  min-width: 180px !important;
+  margin-top: 0 !important;
 }
 
 .resume-progress-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 4px;
-  font-size: 0.72rem;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 3px !important;
+  font-size: 0.70rem !important;
+}
+
+.resume-progress-label {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-weight: 700 !important;
+  color: var(--text-muted) !important;
+}
+
+.resume-status-highlight {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 0.65rem !important;
+  color: var(--cyan-accent) !important;
+  background: rgba(2, 132, 199, 0.10) !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+}
+
+.resume-progress-pct {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-weight: 800 !important;
+  color: var(--heading-color) !important;
 }
 
 .resume-progress-track {
-  width: 100%;
+  width: 100% !important;
   height: 5px !important;
   background: rgba(148, 163, 184, 0.18) !important;
-  border-radius: 999px;
-  overflow: hidden;
+  border-radius: 999px !important;
+  overflow: hidden !important;
 }
 
 .resume-progress-fill {
-  height: 100%;
+  height: 100% !important;
   background: linear-gradient(90deg, #0284C7 0%, #10B981 100%) !important;
-  border-radius: 999px;
-  transition: width 0.4s ease;
+  border-radius: 999px !important;
+  transition: width 0.4s ease !important;
 }
 
 .resume-hero-right {
   display: flex !important;
   flex-direction: row !important;
   align-items: center !important;
-  justify-content: flex-end !important;
   gap: 8px !important;
-  flex-shrink: 0 !important;
 }
 
 .resume-icon-badge {
@@ -459,25 +538,26 @@
   display: flex !important;
   align-items: center !important;
   gap: 8px !important;
-  flex-wrap: wrap !important;
+  flex-shrink: 0 !important;
+  margin-left: auto !important;
 }
 
 .btn-resume-primary {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 8px !important;
-  min-height: 42px !important;
-  padding: 9px 18px !important;
-  border-radius: 11px !important;
+  gap: 7px !important;
+  min-height: 38px !important;
+  padding: 8px 16px !important;
+  border-radius: 10px !important;
   background: linear-gradient(135deg, #0284C7 0%, #0369A1 45%, #1D4ED8 100%) !important;
   color: #FFFFFF !important;
   font-family: 'Plus Jakarta Sans', sans-serif !important;
-  font-size: 0.90rem !important;
+  font-size: 0.85rem !important;
   font-weight: 800 !important;
   letter-spacing: -0.01em !important;
   text-decoration: none !important;
-  box-shadow: 0 4px 14px -1px rgba(2, 132, 199, 0.42), 0 1px 3px rgba(14, 165, 233, 0.25) !important;
+  box-shadow: 0 3px 12px -1px rgba(2, 132, 199, 0.40) !important;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
   white-space: nowrap !important;
   position: relative !important;
@@ -486,7 +566,7 @@
 
 .btn-resume-primary:hover {
   transform: translateY(-2px) scale(1.015) !important;
-  box-shadow: 0 8px 22px rgba(2, 132, 199, 0.52), 0 0 0 2px rgba(255, 255, 255, 0.2) inset !important;
+  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.50), 0 0 0 2px rgba(255, 255, 255, 0.2) inset !important;
   filter: brightness(1.06) !important;
 }
 
@@ -496,27 +576,36 @@
 }
 
 .btn-resume-primary .btn-play-icon {
-  font-size: 0.72rem !important;
+  font-size: 0.70rem !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  width: 18px !important;
-  height: 18px !important;
+  width: 17px !important;
+  height: 17px !important;
   border-radius: 50% !important;
   background: rgba(255, 255, 255, 0.22) !important;
+}
+
+.btn-resume-primary .btn-arrow {
+  font-size: 0.82rem !important;
+  transition: transform 0.15s ease !important;
+}
+
+.btn-resume-primary:hover .btn-arrow {
+  transform: translateX(2px) !important;
 }
 
 .btn-resume-secondary {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  min-height: 38px !important;
-  padding: 7px 13px !important;
-  border-radius: 10px !important;
+  min-height: 36px !important;
+  padding: 6px 12px !important;
+  border-radius: 9px !important;
   background: var(--card-bg-hover, transparent) !important;
   color: var(--text-main) !important;
   font-family: 'Plus Jakarta Sans', sans-serif !important;
-  font-size: 0.80rem !important;
+  font-size: 0.78rem !important;
   font-weight: 700 !important;
   text-decoration: none !important;
   border: 1.5px solid var(--card-border) !important;
@@ -532,19 +621,19 @@
 }
 
 /* ── Container Queries: Adapt smoothly to any card width ── */
-@container resume-hero (max-width: 580px) {
-  .resume-hero-card {
+@container resume-hero (max-width: 520px) {
+  .resume-hero-footer {
     flex-direction: column !important;
     align-items: stretch !important;
-    gap: 12px !important;
-    padding: 14px 16px !important;
+    gap: 10px !important;
   }
-  .resume-hero-right {
+  .resume-progress-container {
+    max-width: 100% !important;
     width: 100% !important;
-    justify-content: stretch !important;
   }
   .resume-action-btns {
     width: 100% !important;
+    margin-left: 0 !important;
     flex-direction: row !important;
     gap: 8px !important;
   }
@@ -556,7 +645,7 @@
   }
 }
 
-@container resume-hero (max-width: 380px) {
+@container resume-hero (max-width: 360px) {
   .resume-action-btns {
     flex-direction: column !important;
     width: 100% !important;
@@ -573,9 +662,9 @@
 @media (max-width: 640px) {
   .resume-hero-card {
     border-radius: 14px !important;
-    padding: 14px 14px !important;
+    padding: 13px 14px !important;
     margin-bottom: 14px !important;
-    gap: 12px !important;
+    gap: 10px !important;
   }
   .resume-title {
     font-size: 1.05rem !important;
@@ -588,17 +677,18 @@
 /* ── Landscape Mode Optimization (Phones & Tablets) ── */
 @media (orientation: landscape) and (max-height: 720px) {
   .resume-hero-card {
-    padding: 10px 16px !important;
-    margin-bottom: 12px !important;
-    gap: 14px !important;
+    padding: 8px 14px !important;
+    margin-bottom: 10px !important;
+    gap: 6px !important;
     border-radius: 12px !important;
     border-left-width: 3.5px !important;
   }
+  .resume-hero-content,
   .resume-hero-left {
-    gap: 4px !important;
+    gap: 3px !important;
   }
   .resume-badge-row {
-    gap: 5px !important;
+    gap: 4px !important;
   }
   .resume-badge-primary,
   .resume-syllabus-tag,
@@ -607,39 +697,49 @@
     padding: 1.5px 6px !important;
   }
   .resume-title {
-    font-size: 0.98rem !important;
+    font-size: 0.95rem !important;
     line-height: 1.20 !important;
   }
   .resume-desc {
-    font-size: 0.76rem !important;
-    line-height: 1.35 !important;
+    font-size: 0.74rem !important;
+    line-height: 1.30 !important;
     -webkit-line-clamp: 1 !important;
   }
+  .resume-hero-footer {
+    gap: 10px !important;
+    margin-top: 0 !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+  }
   .resume-progress-container {
-    margin-top: 2px !important;
-    max-width: 320px !important;
+    max-width: 280px !important;
+    min-width: 150px !important;
+    margin-top: 0 !important;
   }
   .resume-progress-track {
     height: 4px !important;
   }
   .resume-progress-header {
-    font-size: 0.66rem !important;
+    font-size: 0.65rem !important;
     margin-bottom: 2px !important;
   }
   .resume-action-btns {
     gap: 6px !important;
+    margin-left: auto !important;
+    flex-shrink: 0 !important;
   }
   .btn-resume-primary {
-    min-height: 36px !important;
-    padding: 6px 14px !important;
-    font-size: 0.82rem !important;
-    border-radius: 9px !important;
+    min-height: 32px !important;
+    padding: 5px 12px !important;
+    font-size: 0.78rem !important;
+    border-radius: 8px !important;
   }
   .btn-resume-secondary {
-    min-height: 34px !important;
-    padding: 6px 10px !important;
-    font-size: 0.76rem !important;
-    border-radius: 8px !important;
+    min-height: 30px !important;
+    padding: 4px 9px !important;
+    font-size: 0.74rem !important;
+    border-radius: 7px !important;
   }
 }
 
@@ -1650,19 +1750,20 @@
 
   /* Up-Next Lab Mission Hero Card on Tablet (Compact & Proportional) */
   .resume-hero-card {
-    padding: 13px 18px !important;
-    gap: 16px !important;
-    margin-bottom: 16px !important;
-    align-items: center !important;
+    padding: 12px 16px !important;
+    gap: 10px !important;
+    margin-bottom: 14px !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
   }
   .resume-title {
-    font-size: 1.15rem !important;
+    font-size: 1.10rem !important;
   }
   .resume-desc {
-    font-size: 0.82rem !important;
+    font-size: 0.80rem !important;
     -webkit-line-clamp: 2 !important;
   }
-  .resume-hero-right {
+  .resume-hero-footer {
     flex-direction: row !important;
     align-items: center !important;
   }
@@ -1672,14 +1773,10 @@
     gap: 8px !important;
   }
   .btn-resume-primary {
-    min-height: 40px !important;
-    padding: 8px 16px !important;
-    font-size: 0.88rem !important;
+    min-height: 38px !important;
   }
   .btn-resume-secondary {
-    min-height: 38px !important;
-    padding: 7px 12px !important;
-    font-size: 0.80rem !important;
+    min-height: 36px !important;
   }
 
   /* 2x2 Diagnostic Coaching Quadrant for Sidebar on Tablet */

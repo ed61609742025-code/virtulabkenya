@@ -579,7 +579,6 @@ requireStudentLogin();
 
   async function loadAssignments() {
     const box = document.getElementById('assignmentsList');
-    if (!box) return;
     try {
       const data = await Assignments.getMine();
       const rawAssignments = data.assignments || [];
@@ -596,6 +595,8 @@ requireStudentLogin();
       window._vlk_student_assignments = assignments;
 
       updateNotificationsUI(assignments);
+
+      if (!box) return;
 
       const progressHeader = document.getElementById('caProgressHeader');
       const hasTeacher = !!(currentStudentUser && (currentStudentUser.teacherName || currentStudentUser.teacherId || currentStudentUser.teacherCode));

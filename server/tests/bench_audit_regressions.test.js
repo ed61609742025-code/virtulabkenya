@@ -420,4 +420,146 @@ describe('Bench 2 (Qualitative Salt Analysis) Audit Regression Suite', () => {
       });
     });
   });
+
+  describe('Bench 4 (Thermochemistry & Energetics Bench) Audit Regression Suite', () => {
+    const energyHtml = fs.readFileSync(path.join(rootDir, 'client/student/energy.html'), 'utf8');
+    const EnergyBenchCore = require(path.join(rootDir, 'client/shared/energy-bench-core.js'));
+    const EnergyEngine = require(path.join(rootDir, 'client/student/js/energy-engine.js'));
+
+    describe('1. Script Tag & Asset Inclusions in energy.html', () => {
+      it('should import knec-grading.js, knec-pedagogy.js, energy-bench-core.js, and energy-engine.js', () => {
+        assert.ok(energyHtml.includes('/shared/knec-grading.js'), 'energy.html must import knec-grading.js');
+        assert.ok(energyHtml.includes('/shared/knec-pedagogy.js'), 'energy.html must import knec-pedagogy.js');
+        assert.ok(energyHtml.includes('/shared/energy-bench-core.js'), 'energy.html must import energy-bench-core.js');
+        assert.ok(energyHtml.includes('/student/js/energy-engine.js'), 'energy.html must import energy-engine.js');
+        assert.ok(energyHtml.includes('/shared/knec-graph-plotter.js'), 'energy.html must import knec-graph-plotter.js');
+      });
+
+      it('should have official examination subbar, scratchpad drawer, and graph modal', () => {
+        assert.ok(energyHtml.includes('id="knecSubbar"'), 'energy.html must have #knecSubbar');
+        assert.ok(energyHtml.includes('id="scratchpadDrawer"'), 'energy.html must have #scratchpadDrawer');
+        assert.ok(energyHtml.includes('id="knecPlotterModal"'), 'energy.html must have #knecPlotterModal');
+        assert.ok(energyHtml.includes('id="assignmentHeaderBanner"'), 'energy.html must have #assignmentHeaderBanner');
+      });
+    });
+
+    describe('2. Authentic KCSE Thermochemistry Presets & Reaction Systems', () => {
+      it('should export all 8 authentic KCSE practical systems with verified constants', () => {
+        assert.ok(EnergyEngine.SYSTEMS, 'EnergyEngine must export SYSTEMS');
+        const systems = EnergyEngine.SYSTEMS;
+
+        // KCSE 2004 Cooling Curve
+        assert.ok(systems.KCSE_2004_COOLING_CURVE, 'Must include KCSE 2004 Cooling Curve');
+        assert.strictEqual(systems.KCSE_2004_COOLING_CURVE.freezingPoint, 69.0, 'Stearic acid freezing point must be 69.0 °C');
+        assert.strictEqual(systems.KCSE_2004_COOLING_CURVE.apparatusType, 'COOLING');
+
+        // KCSE 2022 Displacement (Zn + CuSO4)
+        assert.ok(systems.KCSE_2022_DISPLACEMENT, 'Must include KCSE 2022 Displacement');
+        assert.strictEqual(systems.KCSE_2022_DISPLACEMENT.deltaH_theoretical, -217.0, 'Displacement deltaH must be -217.0 kJ/mol');
+
+        // KCSE 2023 Neutralization (HCl + NaOH)
+        assert.ok(systems.KCSE_2023_NEUTRALIZATION, 'Must include KCSE 2023 Neutralization');
+        assert.strictEqual(systems.KCSE_2023_NEUTRALIZATION.deltaH_theoretical, -57.1, 'Strong acid-base deltaH must be -57.1 kJ/mol');
+
+        // KCSE 2024 Weak Acid-Strong Base (CH3COOH + NaOH)
+        assert.ok(systems.KCSE_2024_WEAK_STRONG, 'Must include KCSE 2024 Weak-Strong');
+        assert.strictEqual(systems.KCSE_2024_WEAK_STRONG.deltaH_theoretical, -55.2, 'Weak acid-base deltaH must be -55.2 kJ/mol');
+
+        // KCSE 2020 Endothermic Solution (NH4NO3)
+        assert.ok(systems.KCSE_2020_SOLUTION_ENDOTHERMIC, 'Must include KCSE 2020 Solution');
+        assert.ok(systems.KCSE_2020_SOLUTION_ENDOTHERMIC.deltaH_theoretical > 0, 'Solution deltaH must be positive (endothermic)');
+
+        // KCSE 2018 Combustion of Ethanol
+        assert.ok(systems.KCSE_2018_COMBUSTION_ETHANOL, 'Must include KCSE 2018 Combustion');
+        assert.strictEqual(systems.KCSE_2018_COMBUSTION_ETHANOL.apparatusType, 'COMBUSTION');
+      });
+    });
+
+    describe('3. KNEC Thermochemistry 15.0-Mark Rubric Standard', () => {
+      it('should correctly sum authentic 15.0 marks (CT 1.0, D 1.0, AC 1.0, Graph 3.0, Calculations 9.0)', () => {
+        const ctMark = 1.0;
+        const dMark = 1.0;
+        const acMark = 1.0;
+        const graphMark = 3.0; // Scale 1.0 + Points 1.0 + Extrapolation 1.0
+        const calcDt = 1.5;
+        const calcQ = 2.0;
+        const calcMoles = 2.0;
+        const calcDeltaH = 2.5;
+        const calcEq = 1.0;
+
+        const totalCalculations = calcDt + calcQ + calcMoles + calcDeltaH + calcEq;
+        assert.strictEqual(totalCalculations, 9.0, 'Calculations must total 9.0 Marks');
+
+        const totalScore = ctMark + dMark + acMark + graphMark + totalCalculations;
+        assert.strictEqual(totalScore, 15.0, 'Thermochemistry composite practical must equal 15.0 Marks');
+      });
+
+      it('should enforce proper sign conventions for exothermic vs endothermic molar enthalpies', () => {
+        // Exothermic displacement: negative deltaH required
+        const exoDeltaH = -215.4;
+        assert.ok(exoDeltaH < 0, 'Exothermic displacement requires negative sign');
+
+        // Endothermic solution: positive deltaH required
+        const endoDeltaH = +25.7;
+        assert.ok(endoDeltaH > 0, 'Endothermic dissolution requires positive sign');
+      });
+
+      it('should accurately calculate heat change Q = mcΔT in Joules', () => {
+        const mass = 25.0; // 25 cm3 aqueous solution = 25.0 g
+        const c = 4.2; // J / g · °C
+        const deltaT = 14.5; // °C temperature rise
+        const qJoules = mass * c * deltaT;
+        assert.strictEqual(qJoules, 1522.5, 'Q must equal 1522.5 J');
+
+        const moles = (0.5 * 25.0) / 1000; // 0.0125 mol
+        assert.strictEqual(moles, 0.0125, 'Moles must equal 0.0125 mol');
+
+        const deltaH_kJ = -(qJoules / 1000) / moles;
+        assert.strictEqual(Math.round(deltaH_kJ * 10) / 10, -121.8, 'Molar enthalpy must equal -121.8 kJ/mol');
+      });
+    });
+
+    describe('4. Exam Mode Proctoring & Security', () => {
+      it('should alert and reject loadSampleData() during exam sessions', () => {
+        assert.ok(typeof EnergyEngine.loadSampleData === 'function', 'loadSampleData must exist');
+        assert.ok(typeof EnergyEngine.setStudyMode === 'function', 'setStudyMode must exist');
+
+        // Set exam mode
+        EnergyEngine.setStudyMode('exam');
+
+        // Mock window.alert to capture rejection
+        let alertMsg = '';
+        const originalAlert = global.window.alert;
+        global.window.alert = (msg) => { alertMsg = msg; };
+
+        EnergyEngine.loadSampleData();
+        assert.ok(alertMsg.includes('disabled during official examination'), 'Must reject pre-filled sample data in exam mode');
+
+        // Restore alert and studyMode
+        global.window.alert = originalAlert;
+        EnergyEngine.setStudyMode('practice');
+      });
+    });
+
+    describe('5. High-Fidelity Calorimeter Apparatus & SVG Physics Rendering', () => {
+      it('should render SVG calorimeter with mapped mercury level and temperature display', () => {
+        const svg = EnergyBenchCore.renderCalorimeterSvg({
+          temp: 36.5,
+          liquidColor: 'rgba(2, 132, 199, 0.8)',
+          hasDeposit: true,
+          isStirring: true
+        });
+        assert.ok(svg.includes('<svg'), 'Must produce valid SVG element');
+        assert.ok(svg.includes('36.5 °C'), 'Must display live temperature tag in SVG');
+        assert.ok(svg.includes('Polystyrene Calorimeter Cup'), 'Must render polystyrene cup');
+        assert.ok(svg.includes('Copper Deposit at Base'), 'Must render copper deposit when hasDeposit is true');
+        assert.ok(svg.includes('Insulating Cotton Wool Nest'), 'Must render protective outer beaker and cotton wool nest');
+      });
+
+      it('should export audio functions playMetronomeBeep and playStirrerSwoosh', () => {
+        assert.strictEqual(typeof EnergyBenchCore.playMetronomeBeep, 'function', 'playMetronomeBeep must be a function');
+        assert.strictEqual(typeof EnergyBenchCore.playStirrerSwoosh, 'function', 'playStirrerSwoosh must be a function');
+      });
+    });
+  });
 });

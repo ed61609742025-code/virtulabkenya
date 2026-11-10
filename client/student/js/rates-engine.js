@@ -1,3 +1,7 @@
+if (typeof window === 'undefined') {
+  global.window = global;
+}
+
 /**
  * VirtuLab Kenya — Reaction Rates & Chemical Kinetics Engine
  * Aligned with KNEC KCSE Chemistry Form 4 Topic 1 & Paper 3 Practical Standards
@@ -15,7 +19,7 @@ const RatesEngine = (function () {
     assignmentId: null,
     currentExp: 'cross', // 'cross' | 'syringe' | 'mass' | 'catalyst' | 'collision'
     studyMode: 'practice', // 'practice' | 'exam'
-    language: localStorage.getItem('vlk_lang') || 'en',
+    language: (typeof localStorage !== 'undefined' ? localStorage.getItem('vlk_lang') : 'en') || 'en',
     soundEnabled: true,
     isRunning: false,
     timer: 0.0, // in seconds
@@ -317,15 +321,17 @@ const RatesEngine = (function () {
 
   function setStudyMode(mode) {
     state.studyMode = mode;
-    const btnPrac = document.getElementById('btnModePractice');
-    const btnExam = document.getElementById('btnModeExam');
-    if (btnPrac && btnExam) {
-      btnPrac.classList.toggle('active', mode === 'practice');
-      btnExam.classList.toggle('active', mode === 'exam');
-    }
-    const examCard = document.getElementById('knecExamCard');
-    if (examCard) {
-      examCard.style.border = mode === 'exam' ? '2px solid #EF4444' : '2px solid var(--rate-amber)';
+    if (typeof document !== 'undefined') {
+      const btnPrac = document.getElementById('btnModePractice');
+      const btnExam = document.getElementById('btnModeExam');
+      if (btnPrac && btnExam) {
+        btnPrac.classList.toggle('active', mode === 'practice');
+        btnExam.classList.toggle('active', mode === 'exam');
+      }
+      const examCard = document.getElementById('knecExamCard');
+      if (examCard) {
+        examCard.style.border = mode === 'exam' ? '2px solid #EF4444' : '2px solid var(--rate-amber)';
+      }
     }
   }
 
@@ -937,6 +943,10 @@ const RatesEngine = (function () {
   }
 
   function loadSampleData() {
+    if (state.studyMode === 'exam') {
+      if (typeof alert === 'function') alert('Pre-filled sample data is disabled during official examination sessions.');
+      return;
+    }
     if (state.currentExp === 'cross') {
       state.cross.recordedData = [
         { vThio: 50.0, vWater: 0.0, time: 20.8, rate: 1.0 / 20.8 },
@@ -1247,11 +1257,13 @@ const RatesEngine = (function () {
     }
   }
 
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && !ratesRafId && isRatesActivelyAnimating()) {
-      wakeRenderLoop();
-    }
-  });
+  if (typeof document !== 'undefined') {
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && !ratesRafId && isRatesActivelyAnimating()) {
+        wakeRenderLoop();
+      }
+    });
+  }
 
   function drawApparatus() {
     if (!ctx || !canvas) return;
@@ -2727,6 +2739,23 @@ const RatesEngine = (function () {
       grade,
       feedback
     };
+
+    // Notify parent frame (composite exam runner)
+    if (typeof window !== 'undefined' && window.parent && window.parent !== window) {
+      try {
+        window.parent.postMessage({
+          type: 'PRACTICAL_EXAM_SUBMITTED',
+          question: 'q2',
+          score: Math.min(15.0, total)
+        }, '*');
+        window.parent.postMessage({
+          type: 'VLK_Q_SCORED',
+          qNum: 2,
+          score: Math.min(15.0, total),
+          details: { tableScore, graphScore, calcScore, totalScore: Math.min(15.0, total) }
+        }, '*');
+      } catch (e) {}
+    }
 
     saveRatesSessionToServer();
     showResultModal();

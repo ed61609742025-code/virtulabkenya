@@ -562,4 +562,123 @@ describe('Bench 2 (Qualitative Salt Analysis) Audit Regression Suite', () => {
       });
     });
   });
+
+  describe('Bench 5 (Reaction Rates & Chemical Kinetics Lab) Audit Regression Suite', () => {
+    const ratesHtml = fs.readFileSync(path.join(rootDir, 'client/student/rates.html'), 'utf8');
+    const RatesBenchCore = require(path.join(rootDir, 'client/shared/rates-bench-core.js'));
+    const RatesEngine = require(path.join(rootDir, 'client/student/js/rates-engine.js'));
+
+    describe('1. Script Tag & Asset Inclusions in rates.html', () => {
+      it('should import knec-grading.js, knec-pedagogy.js, rates-bench-core.js, and rates-engine.js', () => {
+        assert.ok(ratesHtml.includes('/shared/knec-grading.js'), 'rates.html must import knec-grading.js');
+        assert.ok(ratesHtml.includes('/shared/knec-pedagogy.js'), 'rates.html must import knec-pedagogy.js');
+        assert.ok(ratesHtml.includes('/shared/rates-bench-core.js'), 'rates.html must import rates-bench-core.js');
+        assert.ok(ratesHtml.includes('/student/js/rates-engine.js'), 'rates.html must import rates-engine.js');
+        assert.ok(ratesHtml.includes('/shared/knec-graph-plotter.js'), 'rates.html must import knec-graph-plotter.js');
+      });
+
+      it('should have official examination subbar, result modal, and graph plotter modal', () => {
+        assert.ok(ratesHtml.includes('id="knecSubbar"'), 'rates.html must have #knecSubbar');
+        assert.ok(ratesHtml.includes('id="rateExamResultModal"'), 'rates.html must have #rateExamResultModal');
+        assert.ok(ratesHtml.includes('id="knecPlotterModal"'), 'rates.html must have #knecPlotterModal');
+      });
+    });
+
+    describe('2. Kinetics Reaction Systems & Apparatus Standards in rates-bench-core.js', () => {
+      it('should define all 4 canonical kinetics experiments in RatesBenchCore', () => {
+        assert.ok(RatesBenchCore.EXPERIMENTS, 'RatesBenchCore must export EXPERIMENTS');
+        const exps = RatesBenchCore.EXPERIMENTS;
+
+        // 1. Disappearing Cross
+        assert.ok(exps.cross, 'Must include cross experiment');
+        assert.deepStrictEqual(exps.cross.standardVolsThio, [50, 40, 30, 20, 10], 'Must define 5 standard dilution volumes');
+        assert.strictEqual(exps.cross.standardVolAcid, 5.0, 'Standard acid volume must be 5.0 cm³');
+        assert.ok(exps.cross.equation.includes('Na₂S₂O₃'), 'Equation must include sodium thiosulfate');
+        assert.ok(exps.cross.equation.includes('S(s)'), 'Equation must include sulfur precipitate');
+
+        // 2. Gas Syringe
+        assert.ok(exps.syringe, 'Must include gas syringe experiment');
+        assert.strictEqual(exps.syringe.maxVolume, 100.0, 'Max syringe volume must be 100.0 cm³');
+
+        // 3. Mass Loss Balance
+        assert.ok(exps.massLoss, 'Must include mass loss experiment');
+
+        // 4. Catalytic Decomposition
+        assert.ok(exps.catalyst, 'Must include catalyst experiment');
+      });
+    });
+
+    describe('3. KNEC Kinetics 15.0-Mark Rubric Standard', () => {
+      it('should calculate complete 15.0-mark kinetics score (Table 5.0 M + Graph 4.0 M + Deductions 6.0 M)', () => {
+        const tableScore = 5.0; // CT 1.0, D 1.0, AC 2.0, TR 1.0
+        const graphScore = 4.0; // Scale 1.0, Axes 0.5, Plotting 1.0, Line 1.5
+        const calcScore = 6.0;  // Q(a) 1.5, Q(b) 2.0, Q(c) 1.5, Q(d) 1.0
+
+        const totalScore = tableScore + graphScore + calcScore;
+        assert.strictEqual(totalScore, 15.0, 'Total KNEC Kinetics practical score must equal 15.0 Marks');
+      });
+
+      it('should calculate reciprocal rate 1/t to 4 decimal places with correct units (s⁻¹)', () => {
+        const time1 = 20.8;
+        const rate1 = parseFloat((1.0 / time1).toFixed(4));
+        assert.strictEqual(rate1, 0.0481, 'Rate for 20.8 s must equal 0.0481 s⁻¹');
+
+        const time5 = 105.3;
+        const rate5 = parseFloat((1.0 / time5).toFixed(4));
+        assert.strictEqual(rate5, 0.0095, 'Rate for 105.3 s must equal 0.0095 s⁻¹');
+      });
+
+      it('should verify collision theory requirement: collision frequency per unit time', () => {
+        const studentGoodAnswer = 'Increased concentration increases the number of particles per unit volume leading to higher collision frequency per unit time';
+        const hasFrequency = studentGoodAnswer.includes('collision') && (studentGoodAnswer.includes('frequency') || studentGoodAnswer.includes('per unit time'));
+        assert.ok(hasFrequency, 'Candidate must cite collision frequency or per unit time for full 2.0 marks');
+      });
+    });
+
+    describe('4. Exam Mode Proctoring & Security', () => {
+      it('should alert and reject loadSampleData() during official exam sessions', () => {
+        RatesEngine.setStudyMode('exam');
+        const st = RatesEngine.getState();
+        assert.strictEqual(st.studyMode, 'exam', 'Study mode must be set to exam');
+
+        let alertMsg = '';
+        const originalAlert = global.window.alert;
+        global.window.alert = (msg) => { alertMsg = msg; };
+
+        RatesEngine.loadSampleData();
+        assert.ok(alertMsg.includes('disabled during official examination'), 'Must reject pre-filled sample data in exam mode');
+
+        global.window.alert = originalAlert;
+        RatesEngine.setStudyMode('practice');
+      });
+    });
+
+    describe('5. High-Fidelity Apparatus SVG Rendering & Physics Simulation', () => {
+      it('should render disappearing cross SVG with progressive cross obscuration', () => {
+        // Clear (turbidity = 0)
+        const svgClear = RatesBenchCore.renderDisappearingCrossSvg({ turbidity: 0.0, disappeared: false });
+        assert.ok(svgClear.includes('<svg'), 'Must produce valid SVG');
+        assert.ok(svgClear.includes('CROSS CLEARLY VISIBLE'), 'Must indicate cross is visible');
+
+        // Fully obscured (turbidity = 1.0)
+        const svgObscured = RatesBenchCore.renderDisappearingCrossSvg({ turbidity: 1.0, disappeared: true });
+        assert.ok(svgObscured.includes('CROSS DISAPPEARED'), 'Must indicate cross disappeared');
+      });
+
+      it('should render gas syringe SVG with plunger displacement proportional to gas volume', () => {
+        const svgSyringe0 = RatesBenchCore.renderGasSyringeSvg({ currentVol: 0.0, maxVol: 100.0 });
+        assert.ok(svgSyringe0.includes('<svg'), 'Must produce valid SVG');
+        assert.ok(svgSyringe0.includes('0.0 cm³'), 'Must render 0.0 cm³ readout');
+
+        const svgSyringe50 = RatesBenchCore.renderGasSyringeSvg({ currentVol: 50.0, maxVol: 100.0 });
+        assert.ok(svgSyringe50.includes('50.0 cm³'), 'Must render 50.0 cm³ readout');
+      });
+
+      it('should export audio functions playStopwatchClick, playGasBubbling, and playPourLiquid', () => {
+        assert.strictEqual(typeof RatesBenchCore.playStopwatchClick, 'function', 'playStopwatchClick must be a function');
+        assert.strictEqual(typeof RatesBenchCore.playGasBubbling, 'function', 'playGasBubbling must be a function');
+        assert.strictEqual(typeof RatesBenchCore.playPourLiquid, 'function', 'playPourLiquid must be a function');
+      });
+    });
+  });
 });

@@ -229,7 +229,7 @@
     </nav>
 
     <!-- Official KNEC Practical Ledger Sub-Header -->
-    <div class="knec-exam-subbar">
+    <div class="knec-exam-subbar" id="knecSubbar">
       <div class="knec-subbar-item">
         <span class="knec-subbar-label">Examination:</span>
         <span class="knec-subbar-val">KCSE Chemistry Paper 3</span>
@@ -762,6 +762,8 @@
   <script src="/shared/page-transitions.js"></script>
   <script src="/shared/brilliant-ui.js"></script>
   <script src="/shared/tutorial-engine.js"></script>
+  <script defer src="/shared/knec-grading.js"></script>
+  <script defer src="/shared/knec-pedagogy.js"></script>
   <script src="/shared/solubility-bench-core.js"></script>
   <script src="/student/js/solubility-engine.js"></script>
   <script src="/shared/knec-graph-plotter.js"></script>
@@ -870,6 +872,17 @@
       const t = document.getElementById('sessionTimerText');
       if (t) t.textContent = `${m}:${s}`;
     }, 1000);
+
+    window.addEventListener('message', (event) => {
+      if (!event || !event.data) return;
+      if (event.data.type === 'VLK_SET_EXAM_MODE') {
+        SolubilityEngine.setStudyMode('exam');
+      } else if (event.data.type === 'VLK_LOAD_SAMPLE' && event.data.soluteKey) {
+        SolubilityEngine.setSolute(event.data.soluteKey);
+      } else if (event.data.type === 'VLK_APPLY_SCENARIO' && event.data.scenarioId) {
+        SolubilityEngine.applyScenario(event.data.scenarioId);
+      }
+    });
 
     document.addEventListener('DOMContentLoaded', () => {
       SolubilityEngine.init();

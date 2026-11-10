@@ -838,4 +838,142 @@ describe('Bench 2 (Qualitative Salt Analysis) Audit Regression Suite', () => {
       });
     });
   });
+
+  describe('Bench 7 (Solubility Curves & Crystallization Bench) Audit Regression Suite', () => {
+    const SolubilityBenchCore = require('../../client/shared/solubility-bench-core.js');
+    const engineModule = require('../../client/student/js/solubility-engine.js');
+    const SolubilityEngine = engineModule.SolubilityEngine;
+    const SALT_MODELS = engineModule.SALT_MODELS;
+    const SCENARIOS = engineModule.SCENARIOS;
+    const calculateRubric = engineModule.calculateRubric;
+
+    describe('1. Curriculum Alignment & Salt Thermodynamic Registry (Form 3 Topic 4 & Paper 3)', () => {
+      it('should register all 5 KNEC practical salts with verified thermodynamic coefficients', () => {
+        const expectedSalts = ['KNO3', 'KClO3', 'CuSO4', 'PbNO3', 'NaCl'];
+        expectedSalts.forEach(s => {
+          assert.ok(SALT_MODELS[s], `Salt model ${s} must exist in engine registry`);
+          assert.strictEqual(typeof SALT_MODELS[s].solubilityAtTemp, 'function', `${s} must have solubilityAtTemp function`);
+          assert.strictEqual(typeof SALT_MODELS[s].tempFromSolubility, 'function', `${s} must have tempFromSolubility inverter`);
+        });
+      });
+
+      it('should accurately calculate KNO3 solubility and invert temperature round-trip', () => {
+        const kno3 = SALT_MODELS.KNO3;
+        const solAt60 = kno3.solubilityAtTemp(60.0);
+        // At 60C: 13.3 + 0.57*60 + 0.015*3600 = 13.3 + 34.2 + 54 = 101.5 g/100g
+        assert.ok(Math.abs(solAt60 - 101.5) < 0.1, `Expected KNO3 solubility at 60C to be ~101.5, got ${solAt60}`);
+
+        const tempRoundTrip = kno3.tempFromSolubility(solAt60);
+        assert.ok(Math.abs(tempRoundTrip - 60.0) < 0.5, `Inversion tempFromSolubility must return ~60.0C, got ${tempRoundTrip}`);
+      });
+
+      it('should accurately calculate KClO3 solubility at 40C and 80C', () => {
+        const kclo3 = SALT_MODELS.KClO3;
+        const solAt40 = kclo3.solubilityAtTemp(40.0);
+        // 3.3 + 0.25*40 + 0.005*1600 = 3.3 + 10 + 8 = 21.3 g/100g
+        assert.ok(Math.abs(solAt40 - 21.3) < 0.1, `Expected KClO3 solubility at 40C to be ~21.3, got ${solAt40}`);
+      });
+
+      it('should resolve salt models flexibly via resolveSaltModel in core', () => {
+        assert.strictEqual(SolubilityBenchCore.resolveSaltModel('KClO3').formula, 'KClO₃');
+        assert.strictEqual(SolubilityBenchCore.resolveSaltModel('copper sulfate').formula, 'CuSO₄·5H₂O');
+        assert.strictEqual(SolubilityBenchCore.resolveSaltModel('lead nitrate').formula, 'Pb(NO₃)₂');
+        assert.strictEqual(SolubilityBenchCore.resolveSaltModel('NaCl').formula, 'NaCl');
+      });
+    });
+
+    describe('2. KNEC Scenarios & Serial Dilution Workflows', () => {
+      it('should define KCSE 2018 (Solid W), KCSE 2021, and KCSE 2015 examination scenarios', () => {
+        assert.ok(SCENARIOS.KCSE_2018, 'KCSE 2018 must exist');
+        assert.strictEqual(SCENARIOS.KCSE_2018.solute, 'KNO3');
+        assert.strictEqual(SCENARIOS.KCSE_2018.initialMass, 5.0);
+        assert.strictEqual(SCENARIOS.KCSE_2018.initialVolume, 10.0);
+        assert.strictEqual(SCENARIOS.KCSE_2018.incrementVolume, 2.0);
+
+        assert.ok(SCENARIOS.KCSE_2015, 'KCSE 2015 must exist');
+        assert.strictEqual(SCENARIOS.KCSE_2015.solute, 'PbNO3');
+      });
+
+      it('should demonstrate decreasing crystallization temperatures with successive dilutions', () => {
+        const kno3 = SALT_MODELS.KNO3;
+        const mass = 5.0; // grams
+        const vols = [10.0, 12.0, 14.0, 16.0, 18.0, 20.0];
+        const temps = vols.map(v => {
+          const s = (mass / v) * 100;
+          return kno3.tempFromSolubility(s);
+        });
+
+        for (let i = 1; i < temps.length; i++) {
+          assert.ok(temps[i] < temps[i - 1], `Temp at vol ${vols[i]} (${temps[i]}C) must be lower than at vol ${vols[i-1]} (${temps[i-1]}C)`);
+        }
+      });
+    });
+
+    describe('3. KNEC Paper 3 Question 1 Official 15.0 Marks Rubric Scoring', () => {
+      it('should award full 15.0 marks for complete high-precision experimental booklet submission', () => {
+        const trials = [
+          { mass: 5.0, volume: 10.0, temp: 75.0, candidateSolubility: 50.0, diff: 0.5 },
+          { mass: 5.0, volume: 12.0, temp: 64.0, candidateSolubility: 41.7, diff: 0.6 },
+          { mass: 5.0, volume: 14.0, temp: 56.0, candidateSolubility: 35.7, diff: 0.4 },
+          { mass: 5.0, volume: 16.0, temp: 49.0, candidateSolubility: 31.3, diff: 0.5 }
+        ];
+        const answers = { q1: '85.5', q2: '25.0', q3: 'ENDOTHERMIC' };
+        const result = calculateRubric(trials, answers);
+
+        assert.strictEqual(result.maxScore, 15.0, 'Max score must be 15.0');
+        assert.strictEqual(result.tableScore, 5.0, 'Table score must be 5.0');
+        assert.strictEqual(result.graphScore, 5.0, 'Graph score must be 5.0');
+        assert.strictEqual(result.calcScore, 5.0, 'Calculations score must be 5.0');
+        assert.strictEqual(result.totalScore, 15.0, 'Grand total must be 15.0');
+        assert.strictEqual(result.correctSolCount, 4, 'All 4 calculated solubilities must be accurate');
+      });
+
+      it('should penalize incomplete trials, inaccurate solubility math, and non-decreasing trends', () => {
+        const poorTrials = [
+          { mass: 5.0, volume: 10.0, temp: 75.0, candidateSolubility: 20.0, diff: 4.5 },
+          { mass: 5.0, volume: 12.0, temp: 80.0, candidateSolubility: 41.7, diff: 5.2 }
+        ];
+        const poorAnswers = { q1: '30.0', q2: '5.0', q3: 'EXOTHERMIC' };
+        const result = calculateRubric(poorTrials, poorAnswers);
+
+        assert.ok(result.totalScore < 8.0, `Poor trials must score below 8.0, got ${result.totalScore}`);
+        assert.strictEqual(result.breakdown.completenessScore, 0.0, 'Less than 3 trials scores 0 for completeness');
+        assert.strictEqual(result.breakdown.calcQ3, 0.0, 'Exothermic answer for KNO3 dissolution earns 0 marks');
+      });
+    });
+
+    describe('4. Simulation Physics & High-Fidelity SVG Apparatus Rendering', () => {
+      it('should render complete hot water bath apparatus SVG with thermometer and boiling tube', () => {
+        const svg = SolubilityBenchCore.renderSolubilityBathSvg({
+          saltKey: 'KNO3',
+          temp: 65.0,
+          isHeating: true,
+          isDissolved: true,
+          width: 240,
+          height: 290
+        });
+        assert.ok(svg.includes('<svg'), 'Must render valid SVG');
+        assert.ok(svg.includes('anim-flame'), 'Must render heating flame when isHeating is true');
+        assert.ok(svg.includes('65.0 °C'), 'Must render thermometer digital readout');
+      });
+
+      it('should safely execute procedural web audio triggers in headless Node environment', () => {
+        assert.strictEqual(typeof SolubilityBenchCore.playCrystalNucleationChime, 'function');
+        assert.strictEqual(typeof SolubilityBenchCore.playWaterSimmer, 'function');
+        assert.doesNotThrow(() => SolubilityBenchCore.playCrystalNucleationChime());
+        assert.doesNotThrow(() => SolubilityBenchCore.playWaterSimmer());
+      });
+    });
+
+    describe('5. UI, PWA Resilience & Telemetry Integration', () => {
+      it('should verify solubility.html contains knecSubbar, grading scripts, and cross-frame listeners', () => {
+        const html = fs.readFileSync('client/student/solubility.html', 'utf8');
+        assert.ok(html.includes('id="knecSubbar"'), 'solubility.html must have id="knecSubbar"');
+        assert.ok(html.includes('src="/shared/knec-grading.js"'), 'solubility.html must load knec-grading.js');
+        assert.ok(html.includes('src="/shared/knec-pedagogy.js"'), 'solubility.html must load knec-pedagogy.js');
+        assert.ok(html.includes('VLK_SET_EXAM_MODE'), 'solubility.html must handle VLK_SET_EXAM_MODE message');
+      });
+    });
+  });
+
 });

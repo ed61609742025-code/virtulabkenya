@@ -56,6 +56,22 @@
         return Math.max(0, parseFloat(((-b + Math.sqrt(disc)) / (2 * a)).toFixed(1)));
       }
     },
+    'PbNO3': {
+      name: 'Lead(II) Nitrate (Pb(NO₃)₂)',
+      formula: 'Pb(NO₃)₂',
+      knecYear: 'KCSE 2015',
+      color: '#E2E8F0',
+      solutionColor: 'rgba(241, 245, 249, 0.25)',
+      crystalHabit: 'Isometric / Cubic Sparkling Octahedra',
+      crystalColor: '#E2E8F0',
+      solubilityAtTemp: (t) => 38.8 + (0.65 * t) + (0.003 * Math.pow(t, 2)),
+      tempFromSolubility: (s) => {
+        const a = 0.003, b = 0.65, c = 38.8 - s;
+        const disc = b * b - 4 * a * c;
+        if (disc < 0) return 0;
+        return Math.max(0, parseFloat(((-b + Math.sqrt(disc)) / (2 * a)).toFixed(1)));
+      }
+    },
     'NaCl': {
       name: 'Sodium Chloride (NaCl)',
       formula: 'NaCl',
@@ -74,6 +90,7 @@
     const norm = String(key).toUpperCase().trim();
     if (norm.includes('CLO3')) return SALT_MODELS.KClO3;
     if (norm.includes('CUSO4') || norm.includes('COPPER')) return SALT_MODELS.CuSO4;
+    if (norm.includes('PB') || norm.includes('LEAD')) return SALT_MODELS.PbNO3;
     if (norm.includes('NACL') || norm.includes('SODIUM CHLORIDE')) return SALT_MODELS.NaCl;
     return SALT_MODELS.KNO3;
   }
@@ -82,11 +99,12 @@
   let audioCtx = null;
 
   function isAudioMuted() {
-    return localStorage.getItem('vlk_muted') === 'true';
+    return (typeof localStorage !== 'undefined' ? localStorage.getItem('vlk_muted') : 'false') === 'true';
   }
 
   function getAudioContext() {
     if (isAudioMuted()) return null;
+    if (typeof window === 'undefined') return null;
     if (!audioCtx) {
       const AudioContextClass = window.AudioContext || window.webkitAudioContext;
       if (AudioContextClass) audioCtx = new AudioContextClass();

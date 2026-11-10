@@ -1,4 +1,8 @@
 
+if (typeof window === 'undefined') {
+  global.window = global;
+}
+
   /* ══════════════════════════════════════════════════════════
      ORGANIC PRACTICAL WORKFLOW STEPPER & KNEC TELEMETRY
   ══════════════════════════════════════════════════════════ */
@@ -130,6 +134,13 @@ if (typeof window === 'undefined') {
      SAMPLES REGISTRY & TEST DEFINITIONS
      Exact KNEC KCSE Paper 3 Standard Rubric
   ══════════════════════════════════════ */
+  const EXAM_PRACTICAL_ORGANIC_KEYS = [
+    'org_alkene',   // Hex-1-ene (C6H12)
+    'org_alcohol',  // Ethanol (C2H5OH)
+    'org_acid',     // Ethanoic Acid (CH3COOH)
+    'org_alkane'    // Hexane (C6H14)
+  ];
+
   const SAMPLES = {
     'org_alkene': {
       key: 'org_alkene',
@@ -360,7 +371,13 @@ if (typeof window === 'undefined') {
   /* ══════════════════════════════════════
      STATE
   ══════════════════════════════════════ */
-  let currentSampleKey = 'org_alcohol';
+  const urlParams = (typeof window !== 'undefined' && window.location) ? new URLSearchParams(window.location.search) : new URLSearchParams('');
+  const isExamMode = urlParams.get('mode') === 'exam' || Boolean(typeof window !== 'undefined' && window.isExamMode);
+  let currentSampleKey = (urlParams.get('sample') && SAMPLES[urlParams.get('sample')]) 
+    ? urlParams.get('sample') 
+    : (urlParams.get('compound') && SAMPLES[urlParams.get('compound')])
+      ? urlParams.get('compound')
+      : 'org_alcohol';
   let testStates = {};
   let examSeconds = 2700;
   let timerInterval = null;
@@ -476,25 +493,25 @@ if (typeof window === 'undefined') {
     const obsVal = (obsElem ? obsElem.value : '').trim();
     const infVal = (infElem ? infElem.value : '').trim();
 
-    // Observation feedback
+    // Observation feedback (strictly suppressed in exam mode)
     if (obsFeedback) {
       const lines = [];
-      if (window.KnecPedagogy) {
-        const hits = KnecPedagogy.detectTabooPhrases(obsVal, 'observation');
+      if (!isExamMode && window.KnecPedagogy) {
+        const hits = KnecPedagogy.detectTabooPhrases(obsVal, 'observation', isExamMode);
         hits.forEach(h => lines.push(`<div class="taboo-nudge-alert ${h.severity}">${h.alert}</div>`));
       }
       obsFeedback.innerHTML = lines.join('');
     }
 
-    // Inference feedback & live formula preview
+    // Inference feedback & live formula preview (strictly suppressed in exam mode)
     if (infFeedback) {
       const lines = [];
-      if (infVal && window.KnecPedagogy) {
+      if (infVal && !isExamMode && window.KnecPedagogy) {
         const prev = KnecPedagogy.getFormulaPreview(infVal, 'organic');
         if (prev.isValid) {
           lines.push(`<div class="chem-preview-box"><span class="chem-preview-badge valid">Formatted: ${prev.formattedText}</span></div>`);
         }
-        const hits = KnecPedagogy.detectTabooPhrases(infVal, 'organic_neutral');
+        const hits = KnecPedagogy.detectTabooPhrases(infVal, 'organic_neutral', isExamMode);
         hits.forEach(h => lines.push(`<div class="taboo-nudge-alert ${h.severity}">${h.alert}</div>`));
       }
       infFeedback.innerHTML = lines.join('');
@@ -1337,12 +1354,18 @@ if (typeof window === 'undefined') {
   ══════════════════════════════════════ */
   window.newSample = function() {
     if (typeof updateWorkflowStepper === "function") updateWorkflowStepper(0);
-    const reg = (window.OrganicBenchCore && window.OrganicBenchCore.SAMPLES) || SAMPLES;
-    const keys = Object.keys(reg);
-    const otherKeys = keys.filter(k => k !== currentSampleKey);
-    currentSampleKey = otherKeys[Math.floor(Math.random() * otherKeys.length)] || keys[0];
+    const pool = (typeof EXAM_PRACTICAL_ORGANIC_KEYS !== 'undefined' && Array.isArray(EXAM_PRACTICAL_ORGANIC_KEYS)) 
+      ? EXAM_PRACTICAL_ORGANIC_KEYS 
+      : Object.keys(SAMPLES);
+    const urlSample = urlParams.get('sample') || urlParams.get('compound');
+    if (urlSample && SAMPLES[urlSample]) {
+      currentSampleKey = urlSample;
+    } else {
+      const otherKeys = pool.filter(k => k !== currentSampleKey);
+      currentSampleKey = otherKeys[Math.floor(Math.random() * otherKeys.length)] || pool[0];
+    }
 
-    const sample = reg[currentSampleKey];
+    const sample = SAMPLES[currentSampleKey];
     const badge = document.getElementById('sampleIdBadge');
     if (badge) badge.textContent = `Sample: ${sample.label}`;
     const subbarSample = document.getElementById('knecSubbarSample');
@@ -1579,9 +1602,10 @@ if (typeof window === 'undefined') {
     });
 
     testMarks = parseFloat(testMarks.toFixed(1));
-    const deductionMarks = (fgCorrect ? 2.5 : 0) + (compCorrect ? 2.5 : 0);
-    const totalScore = parseFloat((testMarks + deductionMarks).toFixed(1));
-    const maxScore = 14.8;
+    const scaledTableMarks = parseFloat(Math.min(7.0, (testMarks / 9.8) * 7.0).toFixed(1));
+    const deductionMarks = (fgCorrect ? 1.5 : 0) + (compCorrect ? 1.5 : 0);
+    const totalScore = parseFloat(Math.min(10.0, scaledTableMarks + deductionMarks).toFixed(1));
+    const maxScore = 10.0;
     const percentage = Math.round((totalScore / maxScore) * 100);
 
     resBox.style.display = 'block';
@@ -1596,9 +1620,9 @@ if (typeof window === 'undefined') {
           <h3>KCSE Examination Performance: ${totalScore} / ${maxScore} Marks (${percentage}%)</h3>
           <p><strong>Actual Sample Identity:</strong> ${sample.name} (${sample.fgName})</p>
           <p style="margin-top:4px;">
-            • <b>Functional Group:</b> ${fgCorrect ? '<span style="color:var(--green-accent); font-weight:700;">Correct (+2.5 Marks)</span>' : '<span style="color:var(--red-accent); font-weight:700;">Incorrect (Expected: ' + sample.fgName + ')</span>'}<br>
-            • <b>Molecular Formula:</b> ${compCorrect ? '<span style="color:var(--green-accent); font-weight:700;">Correct (+2.5 Marks)</span>' : '<span style="color:var(--red-accent); font-weight:700;">Incorrect (Expected: ' + sample.name + ')</span>'}<br>
-            • <b>Observations &amp; Inferences Score:</b> ${testMarks.toFixed(1)} / 9.8 Marks (${testsCorrectCount} / 7 Tests Verified Correct)
+            • <b>Functional Group:</b> ${fgCorrect ? '<span style="color:var(--green-accent); font-weight:700;">Correct (+1.5 Marks)</span>' : '<span style="color:var(--red-accent); font-weight:700;">Incorrect (Expected: ' + sample.fgName + ')</span>'}<br>
+            • <b>Molecular Formula:</b> ${compCorrect ? '<span style="color:var(--green-accent); font-weight:700;">Correct (+1.5 Marks)</span>' : '<span style="color:var(--red-accent); font-weight:700;">Incorrect (Expected: ' + sample.name + ')</span>'}<br>
+            • <b>Observations &amp; Inferences Score:</b> ${scaledTableMarks.toFixed(1)} / 7.0 Marks (${testsCorrectCount} / 7 Tests Verified Correct)
           </p>
 
           <div style="margin-top:12px; display:flex; flex-direction:column; gap:8px;">
@@ -1706,103 +1730,182 @@ if (typeof window === 'undefined') {
   window.evaluateKnecMarking = function() {
     const m = document.getElementById('knecEvalModal');
     const res = document.getElementById('knecEvalResults');
-    if (res) {
-      const sample = SAMPLES[currentSampleKey];
-      let totalMarks = 0;
-      let performedCount = 0;
-      let correctCount = 0;
-      let breakdownHtml = '';
+    if (!res) return;
 
-      TESTS.forEach((t, i) => {
-        const st = testStates[t.key] || {};
-        const done = st.performed;
-        if (done) performedCount++;
-        const userObs = (st.obsText || '').trim();
-        const userInf = (st.infText || '').trim();
+    // 1. Synchronize any active text inputs from DOM into testStates
+    TESTS.forEach(t => {
+      const obsElem = document.getElementById(`obs_${t.key}`);
+      const infElem = document.getElementById(`inf_${t.key}`);
+      if (!testStates[t.key]) testStates[t.key] = {};
+      if (obsElem && obsElem.value.trim()) testStates[t.key].obsText = obsElem.value.trim();
+      if (infElem && infElem.value.trim()) testStates[t.key].infText = infElem.value.trim();
+    });
 
-        const obsEval = evaluateOrganicObservation(t.key, sample, userObs);
-        const infEval = evaluateOrganicInference(t.key, sample, userInf);
-        const testScore = parseFloat((obsEval.score + infEval.score).toFixed(1));
-        totalMarks += testScore;
-        const isPassed = obsEval.pass && infEval.pass;
-        if (isPassed) correctCount++;
+    const sample = SAMPLES[currentSampleKey];
+    let rawTotalMarks = 0;
+    let performedCount = 0;
+    let correctCount = 0;
+    let breakdownHtml = '';
 
-        breakdownHtml += `
-          <div style="background:var(--card-bg-hover, rgba(255,255,255,0.04)); border:1px solid var(--card-border); border-radius:8px; padding:10px 14px; margin-bottom:8px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-              <span style="font-weight:700; color:var(--purple-accent); font-size:0.85rem;">
-                ${isPassed ? '<span style="color:var(--green-accent);font-weight:800;margin-right:4px;">&#10003;</span>' : '<span style="color:var(--red-accent);font-weight:800;margin-right:4px;">&#10005;</span>'} (${String.fromCharCode(97 + i)}) ${t.label}
-              </span>
-              <span style="font-weight:800; font-family:var(--font-mono); color:${isPassed ? 'var(--green-accent)' : 'var(--red-accent)'}; font-size:0.85rem;">
-                ${testScore.toFixed(1)} / 1.4 Mks
-              </span>
-            </div>
-            <div style="font-size:0.8rem; color:var(--text-main); margin-bottom:3px;">
-              <b>Obs:</b> "${escapeHtml(userObs || '(None recorded)')}" — 
-              <span style="color:${obsEval.pass ? 'var(--green-accent)' : 'var(--red-accent)'}; font-weight:600;">${obsEval.note}</span>
-            </div>
-            <div style="font-size:0.8rem; color:var(--text-muted);">
-              <b>Inf:</b> "${escapeHtml(userInf || '(None recorded)')}" — 
-              <span style="color:${infEval.pass ? 'var(--green-accent)' : 'var(--red-accent)'}; font-weight:600;">${infEval.note}</span>
-            </div>
+    TESTS.forEach((t, i) => {
+      const st = testStates[t.key] || {};
+      const done = st.performed;
+      if (done) performedCount++;
+      const userObs = (st.obsText || '').trim();
+      const userInf = (st.infText || '').trim();
 
-            ${(() => {
-              if (window.KnecPedagogy) {
-                const rat = KnecPedagogy.getExaminerRationale({
-                  testLabel: t.label,
-                  stepLetter: String.fromCharCode(97 + i),
-                  score: testScore,
-                  maxScore: 1.4,
-                  candidateText: `${userObs || ''} | ${userInf || ''}`,
-                  expectedText: `${t.correctObs || ''} | ${t.correctInf || ''}`,
-                  testKey: t.key,
-                  type: 'organic'
-                });
-                return `
-                  <div class="examiner-rationale-box ${rat.isFullMark ? 'full-marks' : ''}">
-                    <div class="examiner-rationale-header">
-                      <span>KNEC Examiner Rationale &bull; ${rat.knecClause}</span>
-                      <span>${rat.isFullMark ? 'Satisfied' : 'Deduction'}</span>
-                    </div>
-                    <div class="examiner-rationale-text">${rat.rationale}</div>
-                    ${rat.pedagogicalTip ? `<div class="examiner-rationale-tip">Revision Pointer: ${rat.pedagogicalTip}</div>` : ''}
+      const obsEval = evaluateOrganicObservation(t.key, sample, userObs);
+      const infEval = evaluateOrganicInference(t.key, sample, userInf);
+      const testScore = parseFloat((obsEval.score + infEval.score).toFixed(1));
+      rawTotalMarks += testScore;
+      const isPassed = obsEval.pass && infEval.pass;
+      if (isPassed) correctCount++;
+
+      breakdownHtml += `
+        <div style="background:var(--card-bg-hover, rgba(255,255,255,0.04)); border:1px solid var(--card-border); border-radius:8px; padding:10px 14px; margin-bottom:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <span style="font-weight:700; color:var(--purple-accent); font-size:0.85rem;">
+              ${isPassed ? '<span style="color:var(--green-accent);font-weight:800;margin-right:4px;">&#10003;</span>' : '<span style="color:var(--red-accent);font-weight:800;margin-right:4px;">&#10005;</span>'} (${String.fromCharCode(97 + i)}) ${t.label}
+            </span>
+            <span style="font-weight:800; font-family:var(--font-mono); color:${isPassed ? 'var(--green-accent)' : 'var(--red-accent)'}; font-size:0.85rem;">
+              ${(testScore / 1.4).toFixed(1)} / 1.0 Mk
+            </span>
+          </div>
+          <div style="font-size:0.8rem; color:var(--text-main); margin-bottom:3px;">
+            <b>Obs:</b> "${escapeHtml(userObs || '(None recorded)')}" — 
+            <span style="color:${obsEval.pass ? 'var(--green-accent)' : 'var(--red-accent)'}; font-weight:600;">${obsEval.note}</span>
+          </div>
+          <div style="font-size:0.8rem; color:var(--text-muted);">
+            <b>Inf:</b> "${escapeHtml(userInf || '(None recorded)')}" — 
+            <span style="color:${infEval.pass ? 'var(--green-accent)' : 'var(--red-accent)'}; font-weight:600;">${infEval.note}</span>
+          </div>
+
+          ${(() => {
+            if (window.KnecPedagogy) {
+              const rat = KnecPedagogy.getExaminerRationale({
+                testLabel: t.label,
+                stepLetter: String.fromCharCode(97 + i),
+                score: testScore,
+                maxScore: 1.4,
+                candidateText: `${userObs || ''} | ${userInf || ''}`,
+                expectedText: `${sample[t.key]?.obs || ''} | ${sample[t.key]?.inf || ''}`,
+                testKey: t.key,
+                type: 'organic'
+              });
+              return `
+                <div class="examiner-rationale-box ${rat.isFullMark ? 'full-marks' : ''}">
+                  <div class="examiner-rationale-header">
+                    <span>KNEC Examiner Rationale &bull; ${rat.knecClause}</span>
+                    <span>${rat.isFullMark ? 'Satisfied' : 'Deduction'}</span>
                   </div>
-                `;
-              }
-              return '';
-            })()}
-          </div>
-        `;
-      });
-
-      totalMarks = parseFloat(totalMarks.toFixed(1));
-      const grade = totalMarks >= 8.0 ? 'A (Distinction Standard)'
-                  : totalMarks >= 6.0 ? 'B (Good Recording)'
-                  : totalMarks >= 4.0 ? 'C (Average Competence)'
-                  : 'D (Below Standard - Incorrect Deductions)';
-      const gradeColor = totalMarks >= 8.0 ? 'var(--green-accent)'
-                       : totalMarks >= 6.0 ? 'var(--blue-accent)'
-                       : totalMarks >= 4.0 ? 'var(--amber-accent)'
-                       : 'var(--red-accent)';
-
-      res.innerHTML = `
-        <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:12px; padding:16px; margin-bottom:16px; text-align:center;">
-          <div style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; font-weight:800;">KNEC Paper 3 Organic Rubric Evaluation</div>
-          <div style="font-family:var(--font-heading); font-size:2.4rem; font-weight:800; color:${gradeColor}; margin:8px 0;">
-            ${totalMarks.toFixed(1)} <span style="font-size:1.2rem; color:var(--text-muted); font-weight:600;">/ 9.8 Mks</span>
-          </div>
-          <div style="display:inline-block; font-size:0.85rem; font-weight:800; color:${gradeColor}; background:var(--card-bg); padding:4px 14px; border-radius:20px; border:1px solid var(--card-border);">
-            ${grade} (${correctCount} / ${TESTS.length} Tests Passed)
-          </div>
-        </div>
-        <div style="max-height:360px; overflow-y:auto; margin-bottom:16px;">
-          ${breakdownHtml}
-        </div>
-        <div style="text-align:right;">
-          <button class="btn-primary-solid" onclick="closeKnecEvalModal()" style="padding:8px 20px;">Done</button>
+                  <div class="examiner-rationale-text">${rat.rationale}</div>
+                  ${rat.pedagogicalTip ? `<div class="examiner-rationale-tip">Revision Pointer: ${rat.pedagogicalTip}</div>` : ''}
+                </div>
+              `;
+            }
+            return '';
+          })()}
         </div>
       `;
+    });
+
+    // 2. Part 2: Final Organic Identification
+    const fgSelect = document.getElementById('fgSelect');
+    const compSelect = document.getElementById('compoundSelect');
+    const chosenFg = fgSelect ? fgSelect.value : '';
+    const chosenComp = compSelect ? compSelect.value : '';
+    const fgCorrect = chosenFg === sample.fgKey;
+    const compCorrect = chosenComp === sample.compoundKey;
+    const fgMarks = fgCorrect ? 1.5 : 0.0;
+    const compMarks = compCorrect ? 1.5 : 0.0;
+    const idMarks = parseFloat((fgMarks + compMarks).toFixed(1));
+
+    // 3. Composite 10.0 Marks (Part 1 Table: 7.0 M + Part 2 ID: 3.0 M = 10.0 M)
+    const scaledTableMarks = parseFloat(Math.min(7.0, (rawTotalMarks / 9.8) * 7.0).toFixed(1));
+    const totalQ3Score = parseFloat(Math.min(10.0, scaledTableMarks + idMarks).toFixed(1));
+    const percentage = Math.round((totalQ3Score / 10.0) * 100);
+
+    // Notify parent frame (composite exam runner)
+    if (typeof window !== 'undefined' && window.parent && window.parent !== window) {
+      try {
+        window.parent.postMessage({
+          type: 'VLK_Q_SCORED',
+          qNum: 3,
+          score: totalQ3Score,
+          details: { tableScore: scaledTableMarks, idScore: idMarks, totalScore: totalQ3Score }
+        }, '*');
+      } catch(e) {}
     }
+
+    const grade = totalQ3Score >= 8.0 ? 'A (Distinction Standard)'
+                : totalQ3Score >= 6.5 ? 'B (Good Recording)'
+                : totalQ3Score >= 5.0 ? 'C (Average Competence)'
+                : 'D (Below Standard - Incorrect Deductions)';
+    const gradeColor = totalQ3Score >= 8.0 ? 'var(--green-accent)'
+                     : totalQ3Score >= 6.5 ? 'var(--blue-accent)'
+                     : totalQ3Score >= 5.0 ? 'var(--amber-accent)'
+                     : 'var(--red-accent)';
+
+    res.innerHTML = `
+      <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:12px; padding:16px; margin-bottom:16px; text-align:center;">
+        <div style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; font-weight:800;">Official KNEC Paper 3 Question 3 Evaluation</div>
+        
+        <div style="display:flex; align-items:center; justify-content:center; gap:20px; margin:12px 0; flex-wrap:wrap;">
+          <div>
+            <div style="font-family:var(--font-heading); font-size:2.2rem; font-weight:800; color:var(--purple-accent); line-height:1;">
+              ${scaledTableMarks.toFixed(1)} <span style="font-size:1.1rem; color:var(--text-muted); font-weight:600;">/ 7.0</span>
+            </div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Part 1: Tests Table</div>
+          </div>
+          <div style="width:1px; height:40px; background:var(--card-border);"></div>
+          <div>
+            <div style="font-family:var(--font-heading); font-size:2.2rem; font-weight:800; color:${idMarks >= 2.0 ? 'var(--green-accent)' : 'var(--amber-accent)'}; line-height:1;">
+              ${idMarks.toFixed(1)} <span style="font-size:1.1rem; color:var(--text-muted); font-weight:600;">/ 3.0</span>
+            </div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Part 2: Deduction</div>
+          </div>
+          <div style="width:1px; height:40px; background:var(--card-border);"></div>
+          <div>
+            <div style="font-family:var(--font-heading); font-size:2.4rem; font-weight:800; color:${gradeColor}; line-height:1;">
+              ${totalQ3Score.toFixed(1)} <span style="font-size:1.2rem; color:var(--text-muted); font-weight:600;">/ 10.0</span>
+            </div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Total Q3 Marks</div>
+          </div>
+        </div>
+
+        <div style="display:inline-block; font-size:0.85rem; font-weight:800; color:${gradeColor}; background:var(--card-bg); padding:4px 14px; border-radius:20px; border:1px solid var(--card-border);">
+          ${grade} (${correctCount} / ${TESTS.length} Tests Passed · ${percentage}%)
+        </div>
+
+        <!-- Part 2 Deduction Summary -->
+        <div style="margin-top:14px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:10px; padding:10px 14px; text-align:left; font-size:0.82rem; line-height:1.6;">
+          <div style="font-weight:800; color:var(--heading-color); margin-bottom:4px; display:flex; justify-content:space-between;">
+            <span>Part 2: Final Deduction (${idMarks.toFixed(1)} / 3.0 Marks)</span>
+            <span style="font-family:var(--font-mono); color:var(--cyan-accent);">Actual: ${escapeHtml(sample.name)} (${escapeHtml(sample.fgName)})</span>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div>
+              <b>Functional Group:</b> ${chosenFg 
+                ? (fgCorrect ? '<span style="color:var(--green-accent); font-weight:700;">✓ Correct (+1.5 Mks)</span>' : '<span style="color:var(--red-accent); font-weight:700;">✗ Expected ' + escapeHtml(sample.fgName) + ' [0.0 Mk]</span>') 
+                : '<span style="color:var(--amber-accent); font-weight:700;">⚠️ Not selected [0.0 / 1.5 Mks]</span>'}
+            </div>
+            <div>
+              <b>Compound Identity:</b> ${chosenComp 
+                ? (compCorrect ? '<span style="color:var(--green-accent); font-weight:700;">✓ Correct (+1.5 Mks)</span>' : '<span style="color:var(--red-accent); font-weight:700;">✗ Expected ' + escapeHtml(sample.name) + ' [0.0 Mk]</span>') 
+                : '<span style="color:var(--amber-accent); font-weight:700;">⚠️ Not selected [0.0 / 1.5 Mks]</span>'}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="max-height:340px; overflow-y:auto; margin-bottom:16px;">
+        ${breakdownHtml}
+      </div>
+
+      <div style="text-align:right;">
+        <button class="btn-primary-solid" onclick="closeKnecEvalModal()" style="padding:8px 24px;">Close Evaluation</button>
+      </div>
+    `;
     if (m) m.style.display = 'flex';
   };
   window.closeKnecEvalModal = function() {
@@ -1918,6 +2021,7 @@ if (typeof window === 'undefined') {
 
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
+      EXAM_PRACTICAL_ORGANIC_KEYS,
       SAMPLES,
       TESTS,
       evaluateOrganicObservation,

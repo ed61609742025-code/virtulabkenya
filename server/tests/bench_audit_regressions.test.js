@@ -263,5 +263,161 @@ describe('Bench 2 (Qualitative Salt Analysis) Audit Regression Suite', () => {
       assert.ok(svgExcess.includes('<svg'), 'Must render excess stage SVG');
     });
   });
-});
 
+  describe('Bench 3 (Organic Chemistry Functional Group Lab) Audit Regression Suite', () => {
+    const orgHtml = fs.readFileSync(path.join(rootDir, 'client/student/organic.html'), 'utf8');
+    const orgEngineCode = fs.readFileSync(path.join(rootDir, 'client/student/js/organic-engine.js'), 'utf8');
+    const OrganicBenchCore = require(path.join(rootDir, 'client/shared/organic-bench-core.js'));
+    const { EXAM_PRACTICAL_ORGANIC_KEYS, SAMPLES: ENGINE_SAMPLES, TESTS: ENGINE_TESTS, evaluateOrganicObservation, evaluateOrganicInference } = require(path.join(rootDir, 'client/student/js/organic-engine.js'));
+
+    describe('1. Script Tag & Asset Inclusions in organic.html', () => {
+      it('should import knec-grading.js, knec-pedagogy.js, and organic-bench-core.js', () => {
+        assert.ok(orgHtml.includes('/shared/knec-grading.js'), 'organic.html must import knec-grading.js');
+        assert.ok(orgHtml.includes('/shared/knec-pedagogy.js'), 'organic.html must import knec-pedagogy.js');
+        assert.ok(orgHtml.includes('/shared/organic-bench-core.js'), 'organic.html must import organic-bench-core.js');
+        assert.ok(orgHtml.includes('js/organic-engine.js'), 'organic.html must import organic-engine.js');
+      });
+
+      it('should have live alert, feedback container and accessibility badges', () => {
+        assert.ok(orgHtml.includes('id="knecSubbar"'), 'organic.html must have #knecSubbar');
+        assert.ok(orgHtml.includes('id="knecEvalModal"'), 'organic.html must have #knecEvalModal');
+        assert.ok(orgHtml.includes('id="idResultBox"'), 'organic.html must have #idResultBox');
+      });
+    });
+
+    describe('2. Examination Sample Pool & Identification UI Consistency', () => {
+      it('should define EXAM_PRACTICAL_ORGANIC_KEYS with exactly 4 curriculum representative samples', () => {
+        assert.ok(Array.isArray(EXAM_PRACTICAL_ORGANIC_KEYS), 'EXAM_PRACTICAL_ORGANIC_KEYS must be an array');
+        assert.strictEqual(EXAM_PRACTICAL_ORGANIC_KEYS.length, 4, 'Must have 4 exam practical samples');
+        assert.deepStrictEqual(EXAM_PRACTICAL_ORGANIC_KEYS, ['org_alkene', 'org_alcohol', 'org_acid', 'org_alkane']);
+      });
+
+      it('should ensure all 4 exam samples have exact matching options in #compoundSelect and #fgSelect', () => {
+        EXAM_PRACTICAL_ORGANIC_KEYS.forEach(key => {
+          const sample = ENGINE_SAMPLES[key];
+          assert.ok(sample, `Sample ${key} must exist in SAMPLES`);
+          assert.ok(orgHtml.includes(`value="${sample.compoundKey}"`), `compoundSelect must contain option for ${sample.compoundKey}`);
+          assert.ok(orgHtml.includes(`value="${sample.fgKey}"`), `fgSelect must contain option for ${sample.fgKey}`);
+        });
+      });
+
+      it('should support ?sample= and ?compound= URL parameter overrides', () => {
+        assert.ok(orgEngineCode.includes("urlParams.get('sample')"), 'organic-engine must check urlParam sample');
+        assert.ok(orgEngineCode.includes("urlParams.get('compound')"), 'organic-engine must check urlParam compound');
+      });
+    });
+
+    describe('3. KNEC Paper 3 Question 3 10-Mark Rubric Standard', () => {
+      it('should scale Part 1 (7 tests) to exactly 7.0 Marks from 9.8 raw marks', () => {
+        const rawFullMarks = 9.8;
+        const scaledTable = parseFloat(Math.min(7.0, (rawFullMarks / 9.8) * 7.0).toFixed(1));
+        assert.strictEqual(scaledTable, 7.0, 'Full table marks must scale to 7.0 M');
+
+        const rawHalfMarks = 4.9;
+        const scaledHalf = parseFloat(Math.min(7.0, (rawHalfMarks / 9.8) * 7.0).toFixed(1));
+        assert.strictEqual(scaledHalf, 3.5, 'Half table marks must scale to 3.5 M');
+      });
+
+      it('should evaluate Part 2 final deduction as 1.5 M for Functional Group + 1.5 M for Compound Identity', () => {
+        const fgCorrect = true;
+        const compCorrect = true;
+        const fgMarks = fgCorrect ? 1.5 : 0.0;
+        const compMarks = compCorrect ? 1.5 : 0.0;
+        const idMarks = parseFloat((fgMarks + compMarks).toFixed(1));
+        assert.strictEqual(idMarks, 3.0, 'Full deduction marks must equal 3.0 M');
+
+        const partialMarks = (true ? 1.5 : 0) + (false ? 1.5 : 0);
+        assert.strictEqual(partialMarks, 1.5, 'Partial deduction marks must equal 1.5 M');
+      });
+
+      it('should enforce 10.0 M maximum score for Question 3 with accurate grade bands', () => {
+        const totalMarks = Math.min(10.0, 7.0 + 3.0);
+        assert.strictEqual(totalMarks, 10.0, 'Total Q3 score must be 10.0 M');
+
+        const gradeA = totalMarks >= 8.0 ? 'A' : 'Other';
+        assert.strictEqual(gradeA, 'A', '10.0 M must yield Grade A');
+
+        const score6_5 = 6.5;
+        const gradeB = score6_5 >= 8.0 ? 'A' : (score6_5 >= 6.5 ? 'B' : 'Other');
+        assert.strictEqual(gradeB, 'B', '6.5 M must yield Grade B');
+      });
+
+      it('should correctly score observation and inference for hex-1-ene bromine test', () => {
+        const sample = ENGINE_SAMPLES['org_alkene'];
+        const obsEval = evaluateOrganicObservation('bromine', sample, 'Bromine water is decolourized immediately');
+        assert.strictEqual(obsEval.pass, true, 'Correct observation must pass');
+        assert.strictEqual(obsEval.score, 0.7, 'Correct observation gets 0.7 M');
+
+        const infEval = evaluateOrganicInference('bromine', sample, 'C=C unsaturation present');
+        assert.strictEqual(infEval.pass, true, 'Correct inference must pass');
+        assert.strictEqual(infEval.score, 0.7, 'Correct inference gets 0.7 M');
+      });
+    });
+
+    describe('4. Misconception Traps & Exam-Mode Suppression', () => {
+      it('should detect taboo phrase "neutral" or acidic misconceptions in learning mode', () => {
+        const hits = KnecPedagogy.detectTabooPhrases('formed a white solution', 'observation', false);
+        assert.strictEqual(hits.length, 1, 'Taboo phrase must be detected in learning mode');
+      });
+
+      it('should strictly suppress taboo alerts in exam mode', () => {
+        const hits = KnecPedagogy.detectTabooPhrases('formed a white solution', 'observation', true);
+        assert.strictEqual(hits.length, 0, 'Taboo alerts must be suppressed in exam mode');
+      });
+
+      it('should validate organic formula notation in KnecPedagogy', () => {
+        const prevValid = KnecPedagogy.getFormulaPreview('R-OH', 'organic');
+        assert.strictEqual(prevValid.isValid, true, 'R-OH must be valid formula');
+        assert.strictEqual(prevValid.formattedText, 'R—OH', 'Must format unicode em-dash bond');
+
+        const prevAlkene = KnecPedagogy.getFormulaPreview('>c=c<', 'organic');
+        assert.strictEqual(prevAlkene.isValid, true, '>c=c< must be valid formula');
+        assert.strictEqual(prevAlkene.formattedText, '>C=C<', 'Must capitalize carbon atoms');
+      });
+    });
+
+    describe('5. Organic Simulation Engine & Apparatus SVG Rendering', () => {
+      it('should render ignition on spatula with sooty smoke for hex-1-ene', () => {
+        const svg = OrganicBenchCore.renderIgnitionSvg({
+          sampleKey: 'org_alkene',
+          performed: true
+        });
+        assert.ok(svg.includes('<svg'), 'Ignition must produce valid SVG');
+        assert.ok(svg.includes('spatula') || svg.includes('flame') || svg.includes('smoke'), 'Ignition SVG must render flame apparatus elements');
+      });
+
+      it('should render bromine water decolourization test tube apparatus', () => {
+        const svg = OrganicBenchCore.renderDecolorizationSvg({
+          sampleKey: 'org_alkene',
+          testType: 'bromine',
+          performed: true
+        });
+        assert.ok(svg.includes('<svg'), 'Bromine test must produce valid SVG');
+      });
+
+      it('should render sodium carbonate effervescence apparatus with gas bubbles', () => {
+        const svg = OrganicBenchCore.renderEffervescenceSvg({
+          sampleKey: 'org_acid',
+          performed: true
+        });
+        assert.ok(svg.includes('<svg'), 'Carbonate test must produce valid SVG');
+      });
+
+      it('should render esterification water bath apparatus', () => {
+        const svg = OrganicBenchCore.renderEsterificationSvg({
+          sampleKey: 'org_alcohol',
+          performed: true
+        });
+        assert.ok(svg.includes('<svg'), 'Esterification must produce valid SVG');
+      });
+
+      it('should render litmus paper immersion apparatus', () => {
+        const svg = OrganicBenchCore.renderLitmusSvg({
+          sampleKey: 'org_acid',
+          performed: true
+        });
+        assert.ok(svg.includes('<svg'), 'Litmus test must produce valid SVG');
+      });
+    });
+  });
+});

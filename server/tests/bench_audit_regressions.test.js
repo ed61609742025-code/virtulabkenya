@@ -681,4 +681,161 @@ describe('Bench 2 (Qualitative Salt Analysis) Audit Regression Suite', () => {
       });
     });
   });
+
+  describe('Bench 6 (Gas Preparation & Identification Lab) Audit Regression Suite', () => {
+    const gasHtml = fs.readFileSync(path.join(rootDir, 'client/student/gas_prep.html'), 'utf8');
+    const GasPrepBenchCore = require(path.join(rootDir, 'client/shared/gas-prep-bench-core.js'));
+    const { GAS_DATABASE, GasPrepEngine } = require(path.join(rootDir, 'client/student/js/gas-prep-engine.js'));
+
+    describe('1. Script Tag & Asset Inclusions in gas_prep.html', () => {
+      it('should import knec-grading.js, knec-pedagogy.js, gas-prep-bench-core.js, and gas-prep-engine.js', () => {
+        assert.ok(gasHtml.includes('/shared/gas-prep-bench-core.js'), 'Must import gas-prep-bench-core.js');
+        assert.ok(gasHtml.includes('/student/js/gas-prep-engine.js'), 'Must import gas-prep-engine.js');
+        assert.ok(gasHtml.includes('/shared/knec-grading.js'), 'Must import knec-grading.js');
+        assert.ok(gasHtml.includes('/shared/knec-pedagogy.js'), 'Must import knec-pedagogy.js');
+      });
+
+      it('should include unified examination subbar with id="knecSubbar" and Question 3 Inorganic header', () => {
+        assert.ok(gasHtml.includes('id="knecSubbar"'), 'Must have id="knecSubbar"');
+        assert.ok(gasHtml.includes('Question 3 (Inorganic Gas Preparation)'), 'Must declare Question 3 Section');
+        assert.ok(gasHtml.includes('10.0 Marks'), 'Must state 10.0 Marks standard');
+      });
+    });
+
+    describe('2. Canonical KCSE Syllabus Gases & Chemical Incompatibility Rules', () => {
+      it('should define all 6 canonical KCSE practical gases in both core and engine databases', () => {
+        const requiredGases = ['O2', 'CO2', 'Cl2', 'NH3', 'SO2', 'H2'];
+        requiredGases.forEach(gKey => {
+          assert.ok(GAS_DATABASE[gKey], `GAS_DATABASE must contain ${gKey}`);
+          assert.ok(GasPrepBenchCore.GAS_DATABASE[gKey], `GasPrepBenchCore must contain ${gKey}`);
+        });
+      });
+
+      it('should enforce that basic NH3 can ONLY be dried with Quicklime (CaO), rejecting conc H2SO4 and CaCl2', () => {
+        const nh3 = GAS_DATABASE.NH3;
+        assert.deepStrictEqual(nh3.compatibleDrying, ['quicklimeCaO'], 'NH3 must only allow quicklimeCaO');
+        assert.ok(nh3.dryingExplanations.concH2SO4.includes('FATAL ERROR'), 'Must highlight reaction with H2SO4');
+        assert.ok(nh3.dryingExplanations.anhydrousCaCl2.includes('FATAL ERROR'), 'Must highlight complex with CaCl2');
+      });
+
+      it('should enforce that acidic gases (CO2, SO2, Cl2) reject basic Quicklime (CaO)', () => {
+        assert.ok(!GAS_DATABASE.CO2.compatibleDrying.includes('quicklimeCaO'), 'CO2 cannot use CaO');
+        assert.ok(!GAS_DATABASE.SO2.compatibleDrying.includes('quicklimeCaO'), 'SO2 cannot use CaO');
+        assert.ok(!GAS_DATABASE.Cl2.compatibleDrying.includes('quicklimeCaO'), 'Cl2 cannot use CaO');
+      });
+
+      it('should enforce correct collection methods based on density and water solubility', () => {
+        assert.ok(GAS_DATABASE.O2.compatibleCollection.includes('overWater'), 'O2 over water');
+        assert.ok(GAS_DATABASE.CO2.compatibleCollection.includes('downwardDelivery'), 'CO2 downward delivery');
+        assert.ok(GAS_DATABASE.NH3.compatibleCollection.includes('upwardDelivery'), 'NH3 upward delivery');
+        assert.ok(!GAS_DATABASE.NH3.compatibleCollection.includes('overWater'), 'NH3 cannot be collected over water');
+        assert.ok(GAS_DATABASE.H2.compatibleCollection.includes('overWater') && GAS_DATABASE.H2.compatibleCollection.includes('upwardDelivery'), 'H2 over water or upward');
+      });
+
+      it('should correctly enforce Bunsen heating requirements (Cl2, NH3 require heat; O2, CO2, H2, SO2 are cold)', () => {
+        assert.strictEqual(GAS_DATABASE.O2.heatingRequired, false, 'O2 no heat');
+        assert.strictEqual(GAS_DATABASE.CO2.heatingRequired, false, 'CO2 no heat');
+        assert.strictEqual(GAS_DATABASE.H2.heatingRequired, false, 'H2 no heat');
+        assert.strictEqual(GAS_DATABASE.SO2.heatingRequired, false, 'SO2 no heat');
+        assert.strictEqual(GAS_DATABASE.Cl2.heatingRequired, true, 'Cl2 requires heat');
+        assert.strictEqual(GAS_DATABASE.NH3.heatingRequired, true, 'NH3 requires heat');
+      });
+    });
+
+    describe('3. KNEC Paper 3 Question 3 10.0-Mark Rubric Standard', () => {
+      it('should score an optimal assembly, qualitative tests, and theoretical questions full 10.0 Marks', () => {
+        const eng = new GasPrepEngine();
+        eng.selectGas('O2');
+        eng.setDryingAgent('concH2SO4');
+        eng.setCollectionMethod('overWater');
+        eng.runReaction();
+
+        // Perform positive confirmatory tests
+        eng.performTest('glowingSplint');
+        eng.performTest('dampLitmus');
+
+        // Answer theory questions correctly
+        eng.answerQuestion('q_o2_role', 0);
+        eng.answerQuestion('q_o2_coll', 0);
+
+        const rubric = eng.calculateRubric();
+        assert.strictEqual(rubric.dryingScore, 2.0, 'Drying agent should score 2.0 Marks');
+        assert.strictEqual(rubric.collectionScore, 2.0, 'Collection method should score 2.0 Marks');
+        assert.strictEqual(rubric.heatingScore, 1.0, 'Heating match should score 1.0 Mark');
+        assert.strictEqual(rubric.setupScore, 5.0, 'Setup subtotal should score 5.0 Marks');
+        assert.strictEqual(rubric.testScore, 3.0, 'Confirmatory tests should score 3.0 Marks');
+        assert.strictEqual(rubric.theoryScore, 2.0, 'Theory questions should score 2.0 Marks');
+        assert.strictEqual(rubric.totalScore, 10.0, 'Total score should be exactly 10.0 Marks');
+        assert.strictEqual(rubric.isPassing, true, 'Score >= 6.5 must be passing');
+      });
+
+      it('should penalize incompatible drying agents (e.g. NH3 with conc H2SO4) and collection failures', () => {
+        const eng = new GasPrepEngine();
+        eng.selectGas('NH3');
+        eng.setDryingAgent('concH2SO4'); // WRONG
+        eng.setCollectionMethod('overWater'); // WRONG
+        eng.heatingEnabled = true; // correct heating
+
+        const rubric = eng.calculateRubric();
+        assert.strictEqual(rubric.dryingScore, 0.0, 'Incompatible drying forfeits 2.0 Marks');
+        assert.strictEqual(rubric.collectionScore, 0.0, 'Incompatible collection forfeits 2.0 Marks');
+        assert.strictEqual(rubric.heatingScore, 1.0, 'Heating match receives 1.0 Mark');
+        assert.strictEqual(rubric.setupScore, 1.0, 'Setup should only score 1.0 Mark');
+      });
+
+      it('should build complete session payload with rubric breakdown and duration', () => {
+        const eng = new GasPrepEngine();
+        eng.selectGas('CO2');
+        eng.setDryingAgent('concH2SO4');
+        eng.setCollectionMethod('downwardDelivery');
+        eng.runReaction();
+        eng.performTest('limeWater');
+
+        const payload = eng.buildSessionPayload(101, 'exam');
+        assert.strictEqual(payload.assignment_id, 101, 'Assignment ID preserved');
+        assert.strictEqual(payload.gas_key, 'CO2', 'Gas key preserved');
+        assert.strictEqual(payload.mode, 'exam', 'Mode preserved');
+        assert.strictEqual(payload.max_score, 10.0, 'Max score must be 10.0');
+        assert.ok(payload.total_score > 0, 'Total score calculated');
+      });
+    });
+
+    describe('4. Simulation Physics & High-Fidelity SVG Apparatus Rendering', () => {
+      it('should render complete gas apparatus SVG for over-water collection', () => {
+        const svgWater = GasPrepBenchCore.renderCompleteGasApparatusSvg({
+          gasKey: 'O2',
+          isGenerating: true,
+          heatingEnabled: false,
+          dryingAgent: 'concH2SO4',
+          collectionMethod: 'overWater',
+          width: 500,
+          height: 280
+        });
+        assert.ok(svgWater.includes('<svg'), 'Must render valid SVG');
+        assert.ok(svgWater.includes('O₂: GENERATING'), 'Must display generating status badge');
+        assert.ok(svgWater.includes('Pneumatic Trough'), 'Must render pneumatic trough');
+      });
+
+      it('should render complete gas apparatus SVG for downward delivery with heating', () => {
+        const svgHeated = GasPrepBenchCore.renderCompleteGasApparatusSvg({
+          gasKey: 'Cl2',
+          isGenerating: true,
+          heatingEnabled: true,
+          dryingAgent: 'concH2SO4',
+          collectionMethod: 'downwardDelivery',
+          width: 500,
+          height: 280
+        });
+        assert.ok(svgHeated.includes('<svg'), 'Must render valid SVG');
+        assert.ok(svgHeated.includes('anim-flame'), 'Must render Bunsen flame');
+        assert.ok(svgHeated.includes('Cl₂: GENERATING'), 'Must display Cl2 formula');
+      });
+
+      it('should export procedural audio synthesizer triggers playGasBubbling, playSqueakyPop, and playFlameWhoosh', () => {
+        assert.strictEqual(typeof GasPrepBenchCore.playGasBubbling, 'function', 'playGasBubbling must be a function');
+        assert.strictEqual(typeof GasPrepBenchCore.playSqueakyPop, 'function', 'playSqueakyPop must be a function');
+        assert.strictEqual(typeof GasPrepBenchCore.playFlameWhoosh, 'function', 'playFlameWhoosh must be a function');
+      });
+    });
+  });
 });

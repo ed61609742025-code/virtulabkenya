@@ -158,7 +158,7 @@
   </nav>
 
   <!-- Official KNEC Practical Ledger Sub-Header -->
-  <div class="knec-exam-subbar">
+  <div class="knec-exam-subbar" id="knecSubbar">
     <div class="knec-subbar-item">
       <span class="knec-subbar-label">Examination:</span>
       <span class="knec-subbar-val">KCSE Chemistry Paper 3</span>
@@ -1234,6 +1234,8 @@
 <script src="/shared/ai-tutor.js"></script>
 <script src="/shared/gas-prep-bench-core.js"></script>
 <script src="/student/js/gas-prep-engine.js?v=167"></script>
+<script defer src="/shared/knec-grading.js"></script>
+<script defer src="/shared/knec-pedagogy.js"></script>
 
 <script>
   const urlParams = new URLSearchParams(window.location.search);
@@ -1428,6 +1430,10 @@
   }
 
   function openBlueprintModal() {
+    if (engine.studyMode === 'exam') {
+      alert('Official schematic blueprints and model apparatus setups are restricted during Examination Mode.');
+      return;
+    }
     const modal = document.getElementById('blueprintDiagramModal');
     if (!modal) return;
     modal.style.display = 'flex';
@@ -2353,18 +2359,44 @@
   async function saveSession() {
     const payload = engine.buildSessionPayload();
     if (assignmentId) payload.assignment_id = assignmentId;
+    const rubric = payload.rubric_breakdown || {};
+
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'PRACTICAL_EXAM_SUBMITTED',
+        question: 'q3',
+        bench: 'gas_prep',
+        score: payload.total_score,
+        maxScore: payload.max_score || 10.0,
+        rubric: rubric
+      }, '*');
+      window.parent.postMessage({
+        type: 'VLK_Q_SCORED',
+        qNum: 3,
+        score: payload.total_score,
+        maxScore: payload.max_score || 10.0,
+        details: rubric
+      }, '*');
+    }
+
     try {
       if (window.API && API.saveGasSession) {
         await API.saveGasSession(payload);
-        alert('Practical session recorded successfully to your student log!');
+        if (engine.studyMode !== 'exam' && (!window.parent || window.parent === window)) {
+          alert('Practical session recorded successfully to your student log!');
+        }
       } else {
         localStorage.setItem('vlk_last_gas_session', JSON.stringify(payload));
-        alert('Session saved to local storage (Offline Mode)!');
+        if (engine.studyMode !== 'exam' && (!window.parent || window.parent === window)) {
+          alert('Session saved to local storage (Offline Mode)!');
+        }
       }
     } catch (err) {
       console.warn('Session save fallback:', err);
       localStorage.setItem('vlk_last_gas_session', JSON.stringify(payload));
-      alert('Session saved to local device!');
+      if (engine.studyMode !== 'exam' && (!window.parent || window.parent === window)) {
+        alert('Session saved to local device!');
+      }
     }
   }
 
@@ -2392,9 +2424,24 @@
     });
   }
 
+  // Cross-frame and URL query param initialization
+  window.addEventListener('message', (event) => {
+    if (!event || !event.data) return;
+    if (event.data.type === 'VLK_SET_EXAM_MODE') {
+      setStudyMode('exam');
+    } else if (event.data.type === 'VLK_LOAD_SAMPLE' && event.data.gasKey) {
+      selectGas(event.data.gasKey);
+    }
+  });
+
   // Initialize workbench & inspection tooltips
   initApparatusInspectionTooltips();
-  selectGas('O2');
+  const initMode = urlParams.get('mode') || (urlParams.get('exam') === '1' ? 'exam' : 'practice');
+  const initGas = urlParams.get('gas') || urlParams.get('sample') || 'O2';
+  if (initMode === 'exam') {
+    setStudyMode('exam');
+  }
+  selectGas(initGas);
 </script>
 </body>
 </html>

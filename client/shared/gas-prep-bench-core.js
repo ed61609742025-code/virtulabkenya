@@ -90,6 +90,23 @@
       tests: {
         dampLitmus: { result: 'Moist blue litmus paper turns red, then is bleached white.', inference: 'Acidic & strong bleaching agent; confirms Chlorine (Cl₂).' }
       }
+    },
+    SO2: {
+      key: 'SO2',
+      name: 'Sulphur Dioxide',
+      formula: 'SO₂',
+      equation: 'Na₂SO₃(s) + H₂SO₄(aq) —[Heat]→ Na₂SO₄(aq) + H₂O(l) + SO₂(g)↑',
+      reactants: 'Sodium Sulphite (Na₂SO₃) + Dilute Sulphuric Acid (H₂SO₄)',
+      heatingRequired: false,
+      densityVsAir: 'Denser than air (approx 2.2x)',
+      solubilityInWater: 'Highly soluble in water (forms sulphurous acid, H₂SO₃)',
+      compatibleDrying: ['concH2SO4', 'anhydrousCaCl2'],
+      compatibleCollection: ['downwardDelivery'],
+      colorHex: '#FDE047',
+      tests: {
+        dichromate: { result: 'Turns acidified Potassium Dichromate(VI) paper from orange to green (Cr³⁺ formed).', inference: 'Reducing agent; confirms Sulphur Dioxide (SO₂).' },
+        dampLitmus: { result: 'Moist blue litmus paper turns red, then slowly bleaches white.', inference: 'Acidic reducing bleaching gas; confirms Sulphur Dioxide (SO₂).' }
+      }
     }
   };
 
@@ -100,6 +117,7 @@
     if (norm.includes('H2') || norm.includes('HYDROGEN')) return GAS_DATABASE.H2;
     if (norm.includes('NH3') || norm.includes('AMMONIA')) return GAS_DATABASE.NH3;
     if (norm.includes('CL2') || norm.includes('CHLORINE')) return GAS_DATABASE.Cl2;
+    if (norm.includes('SO2') || norm.includes('SULPHUR') || norm.includes('SULFUR')) return GAS_DATABASE.SO2;
     return GAS_DATABASE.O2;
   }
 
@@ -107,11 +125,12 @@
   let audioCtx = null;
 
   function isAudioMuted() {
-    return localStorage.getItem('vlk_muted') === 'true';
+    return (typeof localStorage !== 'undefined' ? localStorage.getItem('vlk_muted') : 'false') === 'true';
   }
 
   function getAudioContext() {
     if (isAudioMuted()) return null;
+    if (typeof window === 'undefined') return null;
     if (!audioCtx) {
       const AudioContextClass = window.AudioContext || window.webkitAudioContext;
       if (AudioContextClass) audioCtx = new AudioContextClass();

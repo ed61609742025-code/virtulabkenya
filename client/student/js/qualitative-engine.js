@@ -395,6 +395,13 @@ if (typeof window !== 'undefined') {
   };
   Object.keys(SALTS).forEach(k => { SALTS[k].key = k; });
 
+  const EXAM_PRACTICAL_SALT_KEYS = [
+    'ammoniumChloride', 'copperSulfate', 'ironSulfate', 'sodiumCarbonate',
+    'sodiumHydrogenCarbonate', 'calciumChloride', 'potassiumChloride', 'leadNitrate',
+    'zincSulfate', 'aluminumNitrate', 'ironChloride', 'ammoniumCarbonate',
+    'zincNitrate', 'sodiumSulfite', 'potassiumBromide', 'sodiumIodide'
+  ];
+
   const TESTS = [
     {
       key:'heat_solid',
@@ -586,6 +593,7 @@ if (typeof window !== 'undefined') {
   let sessionSaved = false;
   const urlParams = (typeof window !== 'undefined' && window.location) ? new URLSearchParams(window.location.search) : new URLSearchParams('');
   const assignmentId = urlParams.get('assignment');
+  const isExamMode = urlParams.get('mode') === 'exam' || Boolean(typeof window !== 'undefined' && window.isExamMode);
 
   /* ══════════════════════════════════════
      INIT
@@ -634,8 +642,13 @@ if (typeof window !== 'undefined') {
 
   function newSample() {
     if (typeof updateWorkflowStepper === "function") updateWorkflowStepper(0);
-    const keys = Object.keys(SALTS);
-    currentSaltKey = keys[Math.floor(Math.random() * keys.length)];
+    const keys = (typeof EXAM_PRACTICAL_SALT_KEYS !== 'undefined' && Array.isArray(EXAM_PRACTICAL_SALT_KEYS)) ? EXAM_PRACTICAL_SALT_KEYS : Object.keys(SALTS);
+    const urlSalt = urlParams.get('salt');
+    if (urlSalt && SALTS[urlSalt]) {
+      currentSaltKey = urlSalt;
+    } else {
+      currentSaltKey = keys[Math.floor(Math.random() * keys.length)];
+    }
     sampleCounter++;
     Object.keys(testStates).forEach(k => delete testStates[k]);
     revealedRubricMap = {};
@@ -1395,21 +1408,23 @@ if (typeof window !== 'undefined') {
     // Live Observation Feedback
     if (obsFeedback) {
       const obsLines = [];
-      if (window.KnecPedagogy) {
-        const tabooHits = KnecPedagogy.detectTabooPhrases(obsVal, 'observation');
-        tabooHits.forEach(hit => {
-          obsLines.push(`<div class="taboo-nudge-alert ${hit.severity}">${hit.alert}</div>`);
-        });
-      } else {
-        if (/white solution/i.test(obsVal)) {
-          obsLines.push('<div class="feedback-line penalty">KNEC Penalty: Never write "white solution" (-0.5 Mk). Use "white precipitate" or "colorless solution".</div>');
+      if (!isExamMode) {
+        if (window.KnecPedagogy) {
+          const tabooHits = KnecPedagogy.detectTabooPhrases(obsVal, 'observation', isExamMode);
+          tabooHits.forEach(hit => {
+            obsLines.push(`<div class="taboo-nudge-alert ${hit.severity}">${hit.alert}</div>`);
+          });
+        } else {
+          if (/white solution/i.test(obsVal)) {
+            obsLines.push('<div class="feedback-line penalty">KNEC Penalty: Never write "white solution" (-0.5 Mk). Use "white precipitate" or "colorless solution".</div>');
+          }
         }
-      }
-      if (/gas (evolved|produced|given off)/i.test(obsVal) && !/(effervescence|limewater|litmus|ammonia|pungent|choking|brown|relight|pop)/i.test(obsVal)) {
-        obsLines.push('<div class="feedback-line warning">State specific gas properties (effervescence, odor, color, litmus/limewater test).</div>');
-      }
-      if (/(precipitate|ppt)/i.test(obsVal) && !/(no ppt|no precipitate|no white ppt)/i.test(obsVal) && !/(excess|soluble|insoluble|dissolv)/i.test(obsVal) && ['naoh','nh3','agno3'].includes(testKey)) {
-        obsLines.push('<div class="feedback-line info">Tip: Always specify precipitate solubility in excess reagent.</div>');
+        if (/gas (evolved|produced|given off)/i.test(obsVal) && !/(effervescence|limewater|litmus|ammonia|pungent|choking|brown|relight|pop)/i.test(obsVal)) {
+          obsLines.push('<div class="feedback-line warning">State specific gas properties (effervescence, odor, color, litmus/limewater test).</div>');
+        }
+        if (/(precipitate|ppt)/i.test(obsVal) && !/(no ppt|no precipitate|no white ppt)/i.test(obsVal) && !/(excess|soluble|insoluble|dissolv)/i.test(obsVal) && ['naoh','nh3','agno3'].includes(testKey)) {
+          obsLines.push('<div class="feedback-line info">Tip: Always specify precipitate solubility in excess reagent.</div>');
+        }
       }
       obsFeedback.innerHTML = obsLines.join('');
     }
@@ -1417,13 +1432,13 @@ if (typeof window !== 'undefined') {
     // Live Inference Feedback
     if (infFeedback) {
       const infLines = [];
-      if (infVal) {
+      if (infVal && !isExamMode) {
         if (window.KnecPedagogy) {
           const preview = KnecPedagogy.getFormulaPreview(infVal, 'inorganic');
           if (preview.isValid) {
             infLines.push(`<div class="chem-preview-box"><span class="chem-preview-badge valid">Formatted: ${preview.formattedText}</span></div>`);
           }
-          const tabooHits = KnecPedagogy.detectTabooPhrases(infVal, 'inference');
+          const tabooHits = KnecPedagogy.detectTabooPhrases(infVal, 'inference', isExamMode);
           tabooHits.forEach(hit => {
             infLines.push(`<div class="taboo-nudge-alert ${hit.severity}">${hit.alert}</div>`);
           });
@@ -3397,8 +3412,8 @@ if (typeof window !== 'undefined') {
       const cationMarks = cationCorrect ? 2.5 : 0;
       const anionMarks = anionCorrect ? 2.5 : 0;
       const testMarksRaw = observations.reduce((acc, o) => acc + (o.totalItemScore || 0), 0);
-      const testMarks = parseFloat(testMarksRaw.toFixed(1));
-      const totalScore = parseFloat((cationMarks + anionMarks + testMarks).toFixed(1));
+      const testMarks = parseFloat(Math.min(10.0, testMarksRaw).toFixed(1));
+      const totalScore = parseFloat(Math.min(15.0, cationMarks + anionMarks + testMarks).toFixed(1));
       const maxScore = 15.0; // Scaled KCSE Q2 standard: 5.0 marks for ID, 10.0 marks for observations/inferences
       const percentage = Math.round((totalScore / maxScore) * 100);
 
@@ -3888,6 +3903,16 @@ if (typeof window !== 'undefined') {
   /* KNEC Auto-Marking Evaluator Handler */
   window.evaluateKnecMarking = function() {
     if (typeof updateWorkflowStepper === "function") updateWorkflowStepper(5);
+
+    // 1. Synchronize any active text inputs from DOM into testStates
+    TESTS.forEach(test => {
+      const obsElem = document.getElementById(`obs_${test.key}`);
+      const infElem = document.getElementById(`inf_${test.key}`);
+      if (!testStates[test.key]) testStates[test.key] = {};
+      if (obsElem && obsElem.value.trim()) testStates[test.key].obsText = obsElem.value.trim();
+      if (infElem && infElem.value.trim()) testStates[test.key].infText = infElem.value.trim();
+    });
+
     let totalScore = 0;
     const feedbackItems = [];
     const salt = SALTS[currentSaltKey] || {};
@@ -3934,16 +3959,44 @@ if (typeof window !== 'undefined') {
       });
     });
 
-    const finalScore = Math.min(10.0, Math.max(0, totalScore)).toFixed(1);
-    openKnecEvalModal(finalScore, feedbackItems, {
+    // 2. Part 2: Cation & Anion Final Identification Scoring
+    const cationElem = document.getElementById('cationSelect');
+    const anionElem = document.getElementById('anionSelect');
+    const selectedCation = cationElem ? cationElem.value : '';
+    const selectedAnion = anionElem ? anionElem.value : '';
+    const cationCorrect = selectedCation === salt.cation;
+    const anionCorrect = selectedAnion === salt.anion;
+    const cationMarks = cationCorrect ? 2.5 : 0.0;
+    const anionMarks = anionCorrect ? 2.5 : 0.0;
+    const idMarks = parseFloat((cationMarks + anionMarks).toFixed(1));
+
+    // 3. Composite Question 2 Marks (10.0 M Tests Table + 5.0 M Salt ID = 15.0 M)
+    const finalTableScore = parseFloat(Math.min(10.0, Math.max(0, totalScore)).toFixed(1));
+    const totalQ2Score = parseFloat(Math.min(15.0, finalTableScore + idMarks).toFixed(1));
+
+    openKnecEvalModal(finalTableScore, feedbackItems, {
       totalCiPenalties: parseFloat(totalCiPenalties.toFixed(1)),
       totalChargePenalties: parseFloat(totalChargePenalties.toFixed(1)),
-      totalTabooPenalties: parseFloat(totalTabooPenalties.toFixed(1))
+      totalTabooPenalties: parseFloat(totalTabooPenalties.toFixed(1)),
+      cationScore: cationMarks,
+      anionScore: anionMarks,
+      idScore: idMarks,
+      totalQ2Score: totalQ2Score,
+      selectedCation,
+      selectedAnion,
+      expectedCation: salt.cationDisplay || salt.cation,
+      expectedAnion: salt.anionDisplay || salt.anion,
+      cationCorrect,
+      anionCorrect,
+      saltName: salt.name || 'Unknown Salt S',
+      saltFormula: salt.formula || ''
     });
   };
 
-  function openKnecEvalModal(finalScore, feedbackItems, penalties = {}) {
-    const q2Score = Math.min(15.0, Math.round((parseFloat(finalScore) * 1.5) * 10) / 10);
+  function openKnecEvalModal(finalTableScore, feedbackItems, penalties = {}) {
+    const q2Score = typeof penalties.totalQ2Score === 'number' 
+      ? penalties.totalQ2Score 
+      : Math.min(15.0, Math.round((parseFloat(finalTableScore) * 1.5) * 10) / 10);
     window.currentQualScore = q2Score;
     if (typeof window !== 'undefined' && window.parent && window.parent !== window) {
       try {
@@ -3951,7 +4004,7 @@ if (typeof window !== 'undefined') {
           type: 'VLK_Q_SCORED',
           qNum: 2,
           score: q2Score,
-          details: { finalScore, feedbackItems, penalties }
+          details: { finalScore: finalTableScore, feedbackItems, penalties }
         }, '*');
       } catch(e) {}
     }
@@ -3961,31 +4014,64 @@ if (typeof window !== 'undefined') {
     const resBox = document.getElementById('knecEvalResults');
     if (!resBox) return;
 
-    const numScore = parseFloat(finalScore);
-    const grade = numScore >= 8.5 ? 'A (Excellent KCSE Distinction Standard)' 
-                : numScore >= 6.5 ? 'B (Good Practical Recording)' 
-                : numScore >= 4.5 ? 'C (Average Practical Competence)' 
+    const numScore = q2Score;
+    const grade = numScore >= 12.0 ? 'A (Excellent KCSE Distinction Standard)' 
+                : numScore >= 9.5  ? 'B (Good Practical Recording)' 
+                : numScore >= 7.0  ? 'C (Average Practical Competence)' 
                 : 'D (Below KCSE Standard - Needs Revision)';
-    const gradeColor = numScore >= 8.5 ? 'var(--green-accent)' 
-                     : numScore >= 6.5 ? 'var(--blue-accent)' 
-                     : numScore >= 4.5 ? 'var(--amber-accent)' 
+    const gradeColor = numScore >= 12.0 ? 'var(--green-accent)' 
+                     : numScore >= 9.5  ? 'var(--blue-accent)' 
+                     : numScore >= 7.0  ? 'var(--amber-accent)' 
                      : 'var(--red-accent)';
 
     resBox.innerHTML = `
       <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:14px; padding:20px; margin-bottom:20px; text-align:center;">
         <div style="font-size:0.82rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; font-weight:800;">Official KNEC Paper 3 Question 2 Performance</div>
-        <div style="display:flex; align-items:center; justify-content:center; gap:24px; margin:10px 0;">
-          <div>
-            <div style="font-family:var(--font-heading); font-size:2.6rem; font-weight:800; color:${gradeColor}; line-height:1;">${finalScore} <span style="font-size:1.3rem; color:var(--text-muted); font-weight:600;">/ 10.0</span></div>
-            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Raw Rubric Score</div>
+        
+        <!-- Score Split: Part 1 Table (10.0 M) + Part 2 ID (5.0 M) = 15.0 M -->
+        <div style="display:flex; align-items:center; justify-content:center; gap:20px; margin:14px 0; flex-wrap:wrap;">
+          <div style="min-width:110px;">
+            <div style="font-family:var(--font-heading); font-size:2.2rem; font-weight:800; color:var(--blue-accent); line-height:1;">${finalTableScore} <span style="font-size:1.1rem; color:var(--text-muted); font-weight:600;">/ 10.0</span></div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Part 1: Tests Table</div>
           </div>
           <div style="width:1px; height:44px; background:var(--card-border);"></div>
-          <div>
-            <div style="font-family:var(--font-heading); font-size:2.6rem; font-weight:800; color:var(--purple-accent); line-height:1;">${q2Score.toFixed(1)} <span style="font-size:1.3rem; color:var(--text-muted); font-weight:600;">/ 15.0</span></div>
-            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">KNEC Scaled Q2 Marks</div>
+          <div style="min-width:110px;">
+            <div style="font-family:var(--font-heading); font-size:2.2rem; font-weight:800; color:${penalties.idScore >= 4.0 ? 'var(--green-accent)' : 'var(--amber-accent)'}; line-height:1;">${(penalties.idScore || 0).toFixed(1)} <span style="font-size:1.1rem; color:var(--text-muted); font-weight:600;">/ 5.0</span></div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Part 2: Salt ID</div>
+          </div>
+          <div style="width:1px; height:44px; background:var(--card-border);"></div>
+          <div style="min-width:130px;">
+            <div style="font-family:var(--font-heading); font-size:2.4rem; font-weight:800; color:${gradeColor}; line-height:1;">${q2Score.toFixed(1)} <span style="font-size:1.2rem; color:var(--text-muted); font-weight:600;">/ 15.0</span></div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Total Q2 Mark</div>
           </div>
         </div>
         <div style="display:inline-block; font-size:0.88rem; font-weight:800; color:${gradeColor}; background:var(--card-bg); padding:4px 14px; border-radius:20px; border:1px solid var(--card-border);">${grade}</div>
+
+        <!-- Part 2 Salt Deduction Status -->
+        <div style="margin-top:16px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:10px; padding:12px; text-align:left; font-size:0.82rem; line-height:1.6;">
+          <div style="font-weight:800; color:var(--heading-color); margin-bottom:4px; display:flex; justify-content:space-between;">
+            <span>Part 2: Final Deduction Summary (${(penalties.idScore || 0).toFixed(1)} / 5.0 Marks)</span>
+            <span style="font-family:var(--font-mono); color:var(--cyan-accent);">Actual Salt: ${esc(penalties.saltName)} (${esc(penalties.saltFormula)})</span>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div>
+              <b>Cation Identified:</b> 
+              ${penalties.selectedCation 
+                ? (penalties.cationCorrect 
+                    ? '<span style="color:var(--green-accent); font-weight:700;">&#10003; ' + esc(penalties.expectedCation) + ' (+2.5 Mks)</span>' 
+                    : '<span style="color:var(--red-accent); font-weight:700;">&#10005; ' + esc(penalties.selectedCation) + ' (Exp: ' + esc(penalties.expectedCation) + ') [0.0 Mk]</span>') 
+                : '<span style="color:var(--amber-accent); font-weight:700;">&#9888; Not selected [0.0 / 2.5 Mks]</span>'}
+            </div>
+            <div>
+              <b>Anion Identified:</b> 
+              ${penalties.selectedAnion 
+                ? (penalties.anionCorrect 
+                    ? '<span style="color:var(--green-accent); font-weight:700;">&#10003; ' + esc(penalties.expectedAnion) + ' (+2.5 Mks)</span>' 
+                    : '<span style="color:var(--red-accent); font-weight:700;">&#10005; ' + esc(penalties.selectedAnion) + ' (Exp: ' + esc(penalties.expectedAnion) + ') [0.0 Mk]</span>') 
+                : '<span style="color:var(--amber-accent); font-weight:700;">&#9888; Not selected [0.0 / 2.5 Mks]</span>'}
+            </div>
+          </div>
+        </div>
 
         <!-- Penalty Badges Row -->
         <div style="display:flex; justify-content:center; gap:10px; margin-top:14px; flex-wrap:wrap;">

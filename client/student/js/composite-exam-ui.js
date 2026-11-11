@@ -4341,6 +4341,33 @@ requireStudentLogin();
     } catch (clearErr) {
       console.warn('Could not clear exam draft on submission:', clearErr);
     }
+
+    if (typeof window !== 'undefined' && window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'PRACTICAL_EXAM_SUBMITTED',
+        paper: 'composite',
+        score: evalData.totalScore,
+        maxScore: 40.0,
+        grade: evalData.grade,
+        percentage: evalData.percentage,
+        q1Score: evalData.q1Score,
+        q2Score: evalData.q2Score,
+        q3Score: evalData.q3Score,
+        breakdown: {
+          q1: evalData.q1Score,
+          q2: evalData.q2Score,
+          q3: evalData.q3Score
+        }
+      }, '*');
+      window.parent.postMessage({
+        type: 'VLK_COMPOSITE_EXAM_SUBMITTED',
+        score: evalData.totalScore,
+        maxScore: 40.0,
+        grade: evalData.grade,
+        percentage: evalData.percentage,
+        evalData
+      }, '*');
+    }
   }
 
   function printKCSEBooklet() {
@@ -4986,3 +5013,15 @@ requireStudentLogin();
   window.loadEntireExamSampleData = loadEntireExamSampleData;
 
   initExamUI();
+
+// Cross-frame communications listener for LMS / parent integration
+if (typeof window !== 'undefined') {
+  window.addEventListener('message', (event) => {
+    if (!event || !event.data) return;
+    if (event.data.type === 'VLK_SET_EXAM_MODE') {
+      window.currentExamMode = 'strict';
+    } else if (event.data.type === 'VLK_Q_SCORED' && event.data.qNum) {
+      console.log(`[CompositeExam] Received score for Question ${event.data.qNum}:`, event.data.score);
+    }
+  });
+}

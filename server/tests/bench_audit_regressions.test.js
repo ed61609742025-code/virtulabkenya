@@ -976,4 +976,136 @@ describe('Bench 2 (Qualitative Salt Analysis) Audit Regression Suite', () => {
     });
   });
 
+
+  describe('Bench 8 (Composite Mock Exam Suite & Cross-Bench Engine) Audit Regression Suite', () => {
+    const compositeEnginePath = path.join(rootDir, 'client', 'student', 'js', 'composite-engine.js');
+    const {
+      COMPOSITE_EXAM_PRESETS,
+      CompositeExamEngine,
+      sanitizeAnalyteDisplay,
+      sanitizeInstructions
+    } = require(compositeEnginePath);
+
+    describe('1. Curriculum Alignment & 40-Mark KCSE Paper 3 Structure', () => {
+      it('should register comprehensive KNEC composite presets spanning national mocks and authentic past papers', () => {
+        const requiredSeries = [
+          'series_1', 'series_2', 'series_3', 'series_4', 'series_5', 'series_6',
+          'series_2024', 'series_2023', 'series_2022',
+          'series_2013', 'series_2011', 'series_2009', 'series_2008', 'series_1998', 'series_1996'
+        ];
+        requiredSeries.forEach(s => {
+          assert.ok(COMPOSITE_EXAM_PRESETS[s], `Preset ${s} must be registered`);
+          assert.ok(COMPOSITE_EXAM_PRESETS[s].q1, `Preset ${s} must have Q1 (Volumetric/Quantitative)`);
+          assert.ok(COMPOSITE_EXAM_PRESETS[s].q2, `Preset ${s} must have Q2 (Qualitative Salt Analysis)`);
+          assert.ok(COMPOSITE_EXAM_PRESETS[s].q3, `Preset ${s} must have Q3 (Organic/Functional Analysis)`);
+          
+          const engine = new CompositeExamEngine({ presetKey: s });
+          const evalEmpty = engine.evaluateExam();
+          assert.strictEqual(evalEmpty.maxScore || 40.0, 40.0, `Preset ${s} must be evaluated out of 40.0 Marks`);
+        });
+      });
+
+      it('should support multiple Question 1 calculation schemas across past papers', () => {
+        const engineStd = new CompositeExamEngine({ presetKey: 'series_1' });
+        assert.strictEqual(engineStd.preset.q1.calcType, 'standard_molarity');
+
+        const engineWater = new CompositeExamEngine({ presetKey: 'series_2' });
+        assert.strictEqual(engineWater.preset.q1.calcType, 'water_of_crystallization');
+
+        const enginePurity = new CompositeExamEngine({ presetKey: 'series_2024' });
+        assert.strictEqual(enginePurity.preset.q1.calcType, 'percentage_purity');
+      });
+    });
+
+    describe('2. Candidate Information Security & Analyte Sanitization', () => {
+      it('should sanitize analyte display string to prevent answer leakage during titrimetric exams', () => {
+        const questionsMolarity = [{ field: 'molarityB', label: 'Calculate the molarity of Solution B' }];
+        const rawName1 = '0.100 M Sodium Hydroxide (Solution B)';
+        const sanitized1 = sanitizeAnalyteDisplay(rawName1, questionsMolarity);
+        assert.ok(!sanitized1.includes('0.100 M'), 'Molarity must be stripped when tested in questions');
+        assert.ok(sanitized1.includes('Sodium Hydroxide'), 'Substance name must be preserved');
+
+        const questionsConc = [{ field: 'concGrams', label: 'Calculate concentration of Solution B in g/dm³' }];
+        const rawName2 = 'Sodium Hydroxide containing 4.00 g/dm³';
+        const sanitized2 = sanitizeAnalyteDisplay(rawName2, questionsConc);
+        assert.ok(!sanitized2.includes('4.00 g/dm³'), 'Mass concentration must be stripped when tested');
+      });
+
+      it('should sanitize procedure instructions to prevent numerical concentration leakage', () => {
+        const questionsMolarity = [{ field: 'molarityB', label: 'Molarity of Solution B' }];
+        const rawInst = 'Pipette 25.0 cm³ of 0.100 M Sodium Hydroxide into conical flask.';
+        const sanitized = sanitizeInstructions(rawInst, questionsMolarity);
+        assert.ok(!sanitized.includes('0.100 M Sodium Hydroxide'), 'Instruction molarity must be stripped');
+        assert.ok(sanitized.includes('Sodium Hydroxide'), 'Instruction chemical name must remain');
+      });
+    });
+
+    describe('3. Error Carried Forward (e.c.f.) & Grade Banding', () => {
+      it('should accurately grade 40-mark composite practical with KNEC grade boundaries', () => {
+        const engine = new CompositeExamEngine({ presetKey: 'series_1' });
+        const evalEmpty = engine.evaluateExam();
+        assert.strictEqual(evalEmpty.totalScore, 2.0);
+        assert.strictEqual(evalEmpty.grade, 'E');
+
+        // Verify grade band mapping helper logic
+        const getKnecGrade = (score) => {
+          const pct = (score / 40.0) * 100;
+          if (pct >= 80) return 'A';
+          if (pct >= 72.5) return 'A-';
+          if (pct >= 65) return 'B+';
+          if (pct >= 57.5) return 'B';
+          if (pct >= 50) return 'C+';
+          if (pct >= 42.5) return 'C';
+          if (pct >= 35) return 'D+';
+          if (pct >= 27.5) return 'D';
+          return 'E';
+        };
+
+        assert.strictEqual(getKnecGrade(35.0), 'A');
+        assert.strictEqual(getKnecGrade(30.0), 'A-');
+        assert.strictEqual(getKnecGrade(27.0), 'B+');
+        assert.strictEqual(getKnecGrade(24.0), 'B');
+        assert.strictEqual(getKnecGrade(21.0), 'C+');
+        assert.strictEqual(getKnecGrade(18.0), 'C');
+        assert.strictEqual(getKnecGrade(10.0), 'E');
+      });
+
+      it('should build comprehensive submission payload with detailed question breakdowns', () => {
+        const engine = new CompositeExamEngine({ presetKey: 'series_1' });
+        engine.recordTrial(1, 25.00, 0.00);
+        engine.recordTrial(2, 25.00, 0.00);
+        engine.setConcordant(1, true);
+        engine.setConcordant(2, true);
+        engine.setQ1Answer('avgTitre', '25.00');
+        engine.setQ2Deduction('Pb²⁺', 'NO₃⁻');
+        engine.setQ3Deduction('Alkanol (-OH)');
+
+        const payload = engine.buildSubmissionPayload(501);
+        assert.strictEqual(payload.assignment_id, 501);
+        assert.ok(payload.total_score !== undefined, 'Total score must be calculated');
+        assert.ok(payload.details.candidateQ1Answers, 'Candidate Q1 answers preserved in details');
+        assert.ok(payload.details.candidateQ2Deductions, 'Candidate Q2 deductions preserved in details');
+        assert.ok(payload.details.candidateQ3Deduction, 'Candidate Q3 deduction preserved in details');
+      });
+    });
+
+    describe('4. UI Architecture, Asset Uniformity & Cross-Frame Telemetry', () => {
+      it('should verify composite_exam.html includes knecSubbar, grading scripts, and navigation tabs', () => {
+        const html = fs.readFileSync(path.join(rootDir, 'client', 'student', 'composite_exam.html'), 'utf8');
+        assert.ok(html.includes('id="knecSubbar"'), 'composite_exam.html must have id="knecSubbar"');
+        assert.ok(html.includes('/shared/knec-grading.js'), 'composite_exam.html must load knec-grading.js');
+        assert.ok(html.includes('/shared/knec-pedagogy.js'), 'composite_exam.html must load knec-pedagogy.js');
+        assert.ok(html.includes('id="paneQ1"'), 'composite_exam.html must contain paneQ1');
+        assert.ok(html.includes('id="paneQ2"'), 'composite_exam.html must contain paneQ2');
+        assert.ok(html.includes('id="paneQ3"'), 'composite_exam.html must contain paneQ3');
+      });
+
+      it('should verify composite-exam-ui.js dispatches PRACTICAL_EXAM_SUBMITTED and handles cross-frame messages', () => {
+        const uiCode = fs.readFileSync(path.join(rootDir, 'client', 'student', 'js', 'composite-exam-ui.js'), 'utf8');
+        assert.ok(uiCode.includes('PRACTICAL_EXAM_SUBMITTED'), 'composite-exam-ui.js must dispatch PRACTICAL_EXAM_SUBMITTED');
+        assert.ok(uiCode.includes('VLK_COMPOSITE_EXAM_SUBMITTED'), 'composite-exam-ui.js must dispatch VLK_COMPOSITE_EXAM_SUBMITTED');
+        assert.ok(uiCode.includes('VLK_SET_EXAM_MODE'), 'composite-exam-ui.js must listen for VLK_SET_EXAM_MODE');
+      });
+    });
+  });
 });

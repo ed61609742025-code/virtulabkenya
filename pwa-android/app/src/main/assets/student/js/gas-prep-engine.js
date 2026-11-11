@@ -674,16 +674,33 @@ class GasPrepEngine {
       }
     });
 
-    const setupScore = (validation.isDryingCorrect ? 2.5 : 0) + (validation.isCollectionCorrect ? 2.5 : 0);
-    const testScore = Math.min(3.0, (this.testsCorrect / Math.max(1, Object.keys(this.currentGas.tests).length)) * 3.0);
-    const theoryScore = qList.length > 0 ? (qCorrect / qList.length) * 2.0 : 2.0;
+    // 1. Setup & Apparatus Compatibility (Max 5.0 Marks)
+    // Drying Agent selection: 2.0 Marks
+    // Collection Method selection: 2.0 Marks
+    // Heat requirement match: 1.0 Mark
+    const dryingScore = validation.isDryingCorrect ? 2.0 : 0.0;
+    const collectionScore = validation.isCollectionCorrect ? 2.0 : 0.0;
+    const heatingScore = validation.heatingMatch ? 1.0 : 0.0;
+    const setupScore = parseFloat((dryingScore + collectionScore + heatingScore).toFixed(2));
 
-    const totalScore = parseFloat((setupScore + testScore + theoryScore).toFixed(2));
+    // 2. Confirmatory Qualitative Testing (Max 3.0 Marks)
+    // Positive/diagnostic tests defined for this gas (up to 2 required for full marks)
+    const positiveTests = Object.values(this.currentGas.tests || {}).filter(t => t.status === 'success');
+    const targetCount = Math.min(2, Math.max(1, positiveTests.length));
+    const testScore = Math.min(3.0, parseFloat(((this.testsCorrect / targetCount) * 3.0).toFixed(2)));
+
+    // 3. KNEC Theory Practical Questions & Equations (Max 2.0 Marks)
+    const theoryScore = qList.length > 0 ? parseFloat(((qCorrect / qList.length) * 2.0).toFixed(2)) : 2.0;
+
+    const totalScore = parseFloat(Math.min(10.0, setupScore + testScore + theoryScore).toFixed(2));
     const maxScore = 10.0;
     const isPassing = totalScore >= 6.5;
 
     return {
       setupScore,
+      dryingScore,
+      collectionScore,
+      heatingScore,
       testScore,
       theoryScore,
       totalScore,
@@ -692,6 +709,7 @@ class GasPrepEngine {
       qTotal: qList.length,
       isDryingCorrect: validation.isDryingCorrect,
       isCollectionCorrect: validation.isCollectionCorrect,
+      heatingMatch: validation.heatingMatch,
       isPassing,
       durationSeconds: Math.round((Date.now() - this.startTime) / 1000)
     };
@@ -710,11 +728,13 @@ class GasPrepEngine {
       collection_method: this.selectedCollection,
       drying_correct: validation.isDryingCorrect,
       collection_correct: validation.isCollectionCorrect,
+      heating_match: validation.heatingMatch,
       tests_performed: this.testsPerformed,
       tests_correct: this.testsCorrect,
       test_observations: this.testObservations,
       questions_score: rubric.theoryScore,
       total_score: rubric.totalScore,
+      max_score: rubric.maxScore,
       rubric_breakdown: rubric,
       correct: rubric.isPassing,
       mode: mode || this.studyMode || 'practice',

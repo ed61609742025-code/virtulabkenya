@@ -742,11 +742,13 @@ const SolubilityEngine = (() => {
     }
   }
 
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && !solRafId && isSolubilityActivelyAnimating()) {
-      wakeSolubilityLoop();
-    }
-  });
+  if (typeof document !== 'undefined') {
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && !solRafId && isSolubilityActivelyAnimating()) {
+        wakeSolubilityLoop();
+      }
+    });
+  }
 
   function toggleDigitalTemp() {
     state.showDigitalTemp = !state.showDigitalTemp;
@@ -1948,43 +1950,65 @@ const SolubilityEngine = (() => {
   // ── Session Submission & Saving ─────────────────────────────────────
   async function submitSession() {
     if (state.trials.length === 0) {
-      alert('Please perform at least one trial measurement before saving your practical session.');
+      if (typeof alert === 'function') {
+        alert('Please perform at least one trial measurement before saving your practical session.');
+      }
       return;
     }
 
     const lastTrial = state.trials[state.trials.length - 1];
-    const avgDiff = state.trials.reduce((acc, t) => acc + t.diff, 0) / state.trials.length;
-    const accuracyScore = avgDiff <= 2.0 ? 2.0 : avgDiff <= 4.0 ? 1.0 : 0.0;
-    const graphScore = state.trials.length >= 4 ? 3.0 : (state.trials.length * 0.75);
+    const rubric = calculateRubric(state.trials);
+    const totalScore = rubric.totalScore;
 
     try {
-      const res = await apiRequest('POST', '/solubility', {
+      const payload = {
         assignment_id: state.assignmentId || undefined,
         solute_key: state.solute,
-        solute_name: SALT_MODELS[state.solute].name,
-        experiment_title: `Solubility Determination of ${SALT_MODELS[state.solute].name}`,
+        solute_name: (SALT_MODELS[state.solute] && SALT_MODELS[state.solute].name) || state.solute,
+        experiment_title: `Solubility Determination of ${(SALT_MODELS[state.solute] && SALT_MODELS[state.solute].name) || state.solute}`,
         solute_mass: lastTrial.mass,
         solvent_volume: lastTrial.volume,
         crystallization_temp: lastTrial.temp,
-        accuracy_score: accuracyScore,
-        graph_score: graphScore,
+        accuracy_score: rubric.breakdown.accuracyScore,
+        graph_score: rubric.graphScore,
         trials_data: state.trials,
-        mode: state.isEmbedded ? 'exam' : 'selfPaced'
-      });
+        mode: (state.isEmbedded || state.isExamMode) ? 'exam' : 'selfPaced'
+      };
 
-      const totalScore = res.analysis?.totalScore || (accuracyScore + graphScore);
+      if (typeof Solubility !== 'undefined' && Solubility.save) {
+        await Solubility.save(payload);
+      } else if (typeof apiRequest === 'function') {
+        await apiRequest('POST', '/solubility', payload);
+      } else if (typeof window !== 'undefined' && window.VLKApi && typeof window.VLKApi.saveSolubilitySession === 'function') {
+        await window.VLKApi.saveSolubilitySession(payload);
+      }
 
-      if (window.parent && window.parent !== window) {
+      if (typeof window !== 'undefined' && window.parent && window.parent !== window) {
         window.parent.postMessage({
           type: 'PRACTICAL_EXAM_SUBMITTED',
+          bench: 'solubility',
           question: 'q1',
-          score: Math.min(15.0, totalScore * 3.0)
+          score: totalScore,
+          maxScore: 15.0,
+          breakdown: rubric.breakdown
+        }, '*');
+        window.parent.postMessage({
+          type: 'VLK_Q_SCORED',
+          qNum: 1,
+          bench: 'solubility',
+          score: totalScore,
+          maxScore: 15.0,
+          details: rubric
         }, '*');
       }
 
-      alert(`🎉 Solubility practical session saved successfully! (KNEC Score: ${totalScore.toFixed(1)} / 5.0)`);
+      if (!state.isEmbedded && !state.isExamMode && typeof alert === 'function') {
+        alert(`🎉 Solubility practical session saved successfully! (KNEC Score: ${totalScore.toFixed(1)} / 15.0)`);
+      }
     } catch (err) {
-      alert('Saved locally in offline sync queue. Will synchronize when online.');
+      if (!state.isEmbedded && !state.isExamMode && typeof alert === 'function') {
+        alert('Saved locally in offline sync queue. Will synchronize when online.');
+      }
     }
   }
 
@@ -2105,74 +2129,140 @@ const SolubilityEngine = (() => {
     }
   }
 
-  async function submitExamBooklet() {
-    if (state.trials.length < 3) {
-      if (!confirm(`⚠️ You have only recorded ${state.trials.length} trial(s). KNEC requires at least 4 readings to draw a valid solubility curve. Submit examination anyway?`)) {
-        return;
-      }
-    }
+  // ── Official KNEC 15.0 Mark Rubric Evaluator ────────────────────────
+  function calculateRubric(trials = state.trials, answers = {}, options = {}) {
+    const trialsList = Array.isArray(trials) ? trials : [];
 
-    // 1. Table Marks (5.0 Marks Total)
-    const completenessScore = state.trials.length >= 4 ? 1.0 : (state.trials.length >= 3 ? 0.5 : 0.0);
-    const decimalScore = 1.0;
+    // 1. Table 1 Marks (5.0 Marks Total)
+    // Completeness (1.0 M): >= 4 readings recorded
+    const completenessScore = trialsList.length >= 4 ? 1.0 : (trialsList.length >= 3 ? 0.5 : 0.0);
     
-    // Evaluation of student's calculated solubility values (1.0m)
+    // Decimals (1.0 M): Readings given to constant 1 decimal place or whole numbers
+    const decimalScore = trialsList.length > 0 ? 1.0 : 0.0;
+
+    // Accuracy Score (1.0 M): Comparison to theoretical / supervisor crystallization temperatures
+    let avgDiff = 99.0;
+    if (trialsList.length > 0) {
+      const sumDiff = trialsList.reduce((acc, t) => acc + (typeof t.diff === 'number' ? Math.abs(t.diff) : 0), 0);
+      avgDiff = sumDiff / trialsList.length;
+    }
+    const accuracyScore = avgDiff <= 2.0 ? 1.0 : (avgDiff <= 3.5 ? 0.8 : (avgDiff <= 5.0 ? 0.5 : (avgDiff <= 7.0 ? 0.2 : 0.0)));
+
+    // Solubility Calculations (1.0 M): Candidate solubility (Mass / Vol) * 100 within +/- 0.6
     let correctSolCount = 0;
-    state.trials.forEach(tr => {
-      const trueSol = (tr.mass / tr.volume) * 100;
-      const candSol = parseFloat(tr.candidateSolubility);
+    trialsList.forEach(tr => {
+      const vol = typeof tr.volume === 'number' ? tr.volume : parseFloat(tr.volume);
+      const mass = typeof tr.mass === 'number' ? tr.mass : parseFloat(tr.mass);
+      const trueSol = (vol > 0) ? (mass / vol) * 100 : 0;
+      const rawCandSol = tr.candidateSolubility !== undefined ? tr.candidateSolubility : tr.solubility;
+      const candSol = parseFloat(rawCandSol);
       if (!isNaN(candSol) && Math.abs(candSol - trueSol) <= 0.6) {
         correctSolCount++;
       }
     });
-    const solCalcScore = state.trials.length > 0 ? parseFloat(((correctSolCount / state.trials.length) * 1.0).toFixed(1)) : 0.0;
+    const solCalcScore = trialsList.length > 0 ? parseFloat(((correctSolCount / trialsList.length) * 1.0).toFixed(1)) : 0.0;
 
-    let avgDiff = 99.0;
-    if (state.trials.length > 0) {
-      const sumDiff = state.trials.reduce((acc, t) => acc + (t.diff || 0), 0);
-      avgDiff = sumDiff / state.trials.length;
-    }
-    const accuracyScore = avgDiff <= 2.0 ? 1.0 : (avgDiff <= 3.5 ? 0.8 : (avgDiff <= 5.0 ? 0.5 : 0.2));
-    
+    // Trend (1.0 M): Crystallization temperatures decrease with increasing solvent volume (cooling/dilution)
     let isDecreasing = true;
-    for (let i = 1; i < state.trials.length; i++) {
-      if (state.trials[i].temp > state.trials[i - 1].temp + 1.5) isDecreasing = false;
+    for (let i = 1; i < trialsList.length; i++) {
+      const prevT = typeof trialsList[i - 1].temp === 'number' ? trialsList[i - 1].temp : parseFloat(trialsList[i - 1].crystallizationTemp || 0);
+      const currT = typeof trialsList[i].temp === 'number' ? trialsList[i].temp : parseFloat(trialsList[i].crystallizationTemp || 0);
+      if (currT > prevT + 1.5) isDecreasing = false;
     }
-    const trendScore = (state.trials.length >= 3 && isDecreasing) ? 1.0 : 0.5;
-    const tableTotal = completenessScore + decimalScore + solCalcScore + accuracyScore + trendScore;
+    const trendScore = (trialsList.length >= 3 && isDecreasing) ? 1.0 : (trialsList.length >= 2 ? 0.5 : 0.0);
+    const tableTotal = Math.min(5.0, parseFloat((completenessScore + decimalScore + solCalcScore + accuracyScore + trendScore).toFixed(1)));
 
     // 2. Graph Marks (5.0 Marks Total)
-    const graphPointsScore = state.trials.length >= 4 ? 2.0 : (state.trials.length >= 2 ? 1.0 : 0.0);
-    const graphScaleScore = 1.0;
-    const graphCurveScore = 1.0;
-    const graphLabelScore = 1.0;
-    const graphTotal = graphPointsScore + graphScaleScore + graphCurveScore + graphLabelScore;
+    const graphPointsScore = trialsList.length >= 4 ? 2.0 : (trialsList.length >= 2 ? 1.0 : 0.0);
+    const graphScaleScore = trialsList.length >= 2 ? 1.0 : 0.0;
+    const graphCurveScore = trialsList.length >= 2 ? 1.0 : 0.0;
+    const graphLabelScore = trialsList.length >= 1 ? 1.0 : 0.0;
+    const graphTotal = Math.min(5.0, parseFloat((graphPointsScore + graphScaleScore + graphCurveScore + graphLabelScore).toFixed(1)));
 
-    // 3. Calculations Marks (5.0 Marks Total)
+    // 3. Post-Lab Calculations & Questions (5.0 Marks Total)
     let calcTotal = 0.0;
-    const q1Input = document.getElementById('calcInput-q1');
-    const q2Input = document.getElementById('calcInput-q2');
-    const q3Sel = document.getElementById('calcInput-q3');
+    const expSol50 = typeof options.expSol50 === 'number' ? options.expSol50 : 85.5;
+    const q1Raw = answers.q1 !== undefined ? answers.q1 : (typeof document !== 'undefined' ? document.getElementById('calcInput-q1')?.value : '');
+    const q1Val = parseFloat(q1Raw);
+    let calcQ1 = 0.0;
+    if (!isNaN(q1Val)) {
+      if (Math.abs(q1Val - expSol50) <= 6.0) calcQ1 = 2.0;
+      else if (Math.abs(q1Val - expSol50) <= 12.0) calcQ1 = 1.0;
+    }
+    calcTotal += calcQ1;
 
-    const expSol50 = 85.5;
-    if (q1Input && q1Input.value) {
-      const userVal = parseFloat(q1Input.value);
-      if (Math.abs(userVal - expSol50) <= 6.0) calcTotal += 2.0;
-      else if (Math.abs(userVal - expSol50) <= 12.0) calcTotal += 1.0;
+    const expCrystMass = typeof options.expCrystMass === 'number' ? options.expCrystMass : 25.0;
+    const q2Raw = answers.q2 !== undefined ? answers.q2 : (typeof document !== 'undefined' ? document.getElementById('calcInput-q2')?.value : '');
+    const q2Val = parseFloat(q2Raw);
+    let calcQ2 = 0.0;
+    if (!isNaN(q2Val)) {
+      if (Math.abs(q2Val - expCrystMass) <= 4.0) calcQ2 = 2.0;
+      else if (Math.abs(q2Val - expCrystMass) <= 8.0) calcQ2 = 1.0;
+    }
+    calcTotal += calcQ2;
+
+    const q3Val = answers.q3 !== undefined ? answers.q3 : (typeof document !== 'undefined' ? document.getElementById('calcInput-q3')?.value : '');
+    let calcQ3 = 0.0;
+    if (q3Val === 'ENDOTHERMIC' || String(q3Val).toUpperCase().includes('ENDOTHERMIC')) {
+      calcQ3 = 1.0;
+    }
+    calcTotal += calcQ3;
+
+    const grandTotal = Math.min(15.0, parseFloat((tableTotal + graphTotal + calcTotal).toFixed(1)));
+
+    return {
+      tableScore: tableTotal,
+      graphScore: graphTotal,
+      calcScore: calcTotal,
+      totalScore: grandTotal,
+      maxScore: 15.0,
+      breakdown: {
+        completenessScore,
+        decimalScore,
+        solCalcScore,
+        accuracyScore,
+        trendScore,
+        graphPointsScore,
+        graphScaleScore,
+        graphCurveScore,
+        graphLabelScore,
+        calcQ1,
+        calcQ2,
+        calcQ3
+      },
+      correctSolCount,
+      avgDiff
+    };
+  }
+
+  async function submitExamBooklet() {
+    if (state.trials.length < 3) {
+      if (typeof confirm === 'function' && !confirm(`⚠️ You have only recorded ${state.trials.length} trial(s). KNEC requires at least 4 readings to draw a valid solubility curve. Submit examination anyway?`)) {
+        return;
+      }
     }
 
-    const expCrystMass = 25.0;
-    if (q2Input && q2Input.value) {
-      const userVal = parseFloat(q2Input.value);
-      if (Math.abs(userVal - expCrystMass) <= 4.0) calcTotal += 2.0;
-      else if (Math.abs(userVal - expCrystMass) <= 8.0) calcTotal += 1.0;
-    }
+    const q1Input = typeof document !== 'undefined' ? document.getElementById('calcInput-q1') : null;
+    const q2Input = typeof document !== 'undefined' ? document.getElementById('calcInput-q2') : null;
+    const q3Sel = typeof document !== 'undefined' ? document.getElementById('calcInput-q3') : null;
+    const answers = {
+      q1: q1Input?.value,
+      q2: q2Input?.value,
+      q3: q3Sel?.value
+    };
 
-    if (q3Sel && q3Sel.value === 'ENDOTHERMIC') {
-      calcTotal += 1.0;
-    }
-
-    const grandTotal = Math.min(15.0, tableTotal + graphTotal + calcTotal);
+    const rubric = calculateRubric(state.trials, answers);
+    const tableTotal = rubric.tableScore;
+    const graphTotal = rubric.graphScore;
+    const calcTotal = rubric.calcScore;
+    const grandTotal = rubric.totalScore;
+    const completenessScore = rubric.breakdown.completenessScore;
+    const decimalScore = rubric.breakdown.decimalScore;
+    const trendScore = rubric.breakdown.trendScore;
+    const solCalcScore = rubric.breakdown.solCalcScore;
+    const accuracyScore = rubric.breakdown.accuracyScore;
+    const correctSolCount = rubric.correctSolCount;
+    const avgDiff = rubric.avgDiff;
 
     let grade = 'Grade E';
     if (grandTotal >= 13.0) grade = 'Grade A (Distinction)';
@@ -2183,57 +2273,59 @@ const SolubilityEngine = (() => {
     else if (grandTotal >= 5.5) grade = 'Grade C (Average)';
     else if (grandTotal >= 4.0) grade = 'Grade D (Pass)';
 
-    const gradeEl = document.getElementById('solExamFinalGrade');
-    const scoreEl = document.getElementById('solExamFinalScore');
-    const tbody = document.getElementById('solExamBreakdownTableBody');
-    const notesEl = document.getElementById('solExamFeedbackNotes');
+    if (typeof document !== 'undefined') {
+      const gradeEl = document.getElementById('solExamFinalGrade');
+      const scoreEl = document.getElementById('solExamFinalScore');
+      const tbody = document.getElementById('solExamBreakdownTableBody');
+      const notesEl = document.getElementById('solExamFeedbackNotes');
 
-    if (gradeEl) gradeEl.textContent = grade;
-    if (scoreEl) scoreEl.textContent = `${grandTotal.toFixed(1)} / 15.0 Marks`;
+      if (gradeEl) gradeEl.textContent = grade;
+      if (scoreEl) scoreEl.textContent = `${grandTotal.toFixed(1)} / 15.0 Marks`;
 
-    if (tbody) {
-      tbody.innerHTML = `
-        <tr>
-          <td><b>Table of Results:</b> Completeness (1m), Decimals (1m), Trend (1m)</td>
-          <td style="text-align:center;">3.0</td>
-          <td style="text-align:center;font-weight:800;color:#10B981;">${(completenessScore + decimalScore + trendScore).toFixed(1)}</td>
-        </tr>
-        <tr>
-          <td><b>Solubility Calculations:</b> Calculated: (Mass / Volume) × 100</td>
-          <td style="text-align:center;">1.0</td>
-          <td style="text-align:center;font-weight:800;color:#10B981;">${solCalcScore.toFixed(1)}</td>
-        </tr>
-        <tr>
-          <td><b>Temperature Accuracy:</b> Comparison to standard supervisor values (±2.0°C)</td>
-          <td style="text-align:center;">1.0</td>
-          <td style="text-align:center;font-weight:800;color:#10B981;">${accuracyScore.toFixed(1)}</td>
-        </tr>
-        <tr>
-          <td><b>Graph Construction:</b> Scale (1m), Axes (1m), Points (2m), Smooth Curve (1m)</td>
-          <td style="text-align:center;">5.0</td>
-          <td style="text-align:center;font-weight:800;color:#10B981;">${graphTotal.toFixed(1)}</td>
-        </tr>
-        <tr>
-          <td><b>Calculations & Questions:</b> Solubility interpolation, crystal mass, thermo</td>
-          <td style="text-align:center;">5.0</td>
-          <td style="text-align:center;font-weight:800;color:#10B981;">${calcTotal.toFixed(1)}</td>
-        </tr>
-        <tr style="border-top:2px solid var(--card-border);font-weight:800;">
-          <td>Total Question 1 Score</td>
-          <td style="text-align:center;">15.0</td>
-          <td style="text-align:center;color:#EF4444;font-size:1.05rem;">${grandTotal.toFixed(1)}</td>
-        </tr>
-      `;
-    }
+      if (tbody) {
+        tbody.innerHTML = `
+          <tr>
+            <td><b>Table of Results:</b> Completeness (1m), Decimals (1m), Trend (1m)</td>
+            <td style="text-align:center;">3.0</td>
+            <td style="text-align:center;font-weight:800;color:#10B981;">${(completenessScore + decimalScore + trendScore).toFixed(1)}</td>
+          </tr>
+          <tr>
+            <td><b>Solubility Calculations:</b> Calculated: (Mass / Volume) × 100</td>
+            <td style="text-align:center;">1.0</td>
+            <td style="text-align:center;font-weight:800;color:#10B981;">${solCalcScore.toFixed(1)}</td>
+          </tr>
+          <tr>
+            <td><b>Temperature Accuracy:</b> Comparison to standard supervisor values (±2.0°C)</td>
+            <td style="text-align:center;">1.0</td>
+            <td style="text-align:center;font-weight:800;color:#10B981;">${accuracyScore.toFixed(1)}</td>
+          </tr>
+          <tr>
+            <td><b>Graph Construction:</b> Scale (1m), Axes (1m), Points (2m), Smooth Curve (1m)</td>
+            <td style="text-align:center;">5.0</td>
+            <td style="text-align:center;font-weight:800;color:#10B981;">${graphTotal.toFixed(1)}</td>
+          </tr>
+          <tr>
+            <td><b>Calculations & Questions:</b> Solubility interpolation, crystal mass, thermo</td>
+            <td style="text-align:center;">5.0</td>
+            <td style="text-align:center;font-weight:800;color:#10B981;">${calcTotal.toFixed(1)}</td>
+          </tr>
+          <tr style="border-top:2px solid var(--card-border);font-weight:800;">
+            <td>Total Question 1 Score</td>
+            <td style="text-align:center;">15.0</td>
+            <td style="text-align:center;color:#EF4444;font-size:1.05rem;">${grandTotal.toFixed(1)}</td>
+          </tr>
+        `;
+      }
 
-    if (notesEl) {
-      notesEl.innerHTML = `
-        <b>KNEC Examiner Assessment:</b><br>
-        • <b>Solubility Calculations:</b> ${correctSolCount} / ${state.trials.length} solubility values calculated accurately from (Mass / Vol) × 100.<br>
-        • <b>Table & Analogue Stem Reading:</b> Average reading deviation was ${avgDiff < 90 ? avgDiff.toFixed(1) + '°C' : 'N/A'}. ${avgDiff <= 2.0 ? 'Demonstrated exceptional precision matching official standard values.' : 'Ensure meniscus sightline is checked carefully at eye level.'}<br>
-        • <b>Graph & Interpolation:</b> Plotted ${state.trials.length} coordinate points on the millimeter grid.<br>
-        • <b>Post-Lab Questions:</b> Awarded ${calcTotal.toFixed(1)} / 5.0 marks for graphical interpolation and crystal precipitation math.
-      `;
+      if (notesEl) {
+        notesEl.innerHTML = `
+          <b>KNEC Examiner Assessment:</b><br>
+          • <b>Solubility Calculations:</b> ${correctSolCount} / ${state.trials.length} solubility values calculated accurately from (Mass / Vol) × 100.<br>
+          • <b>Table & Analogue Stem Reading:</b> Average reading deviation was ${avgDiff < 90 ? avgDiff.toFixed(1) + '°C' : 'N/A'}. ${avgDiff <= 2.0 ? 'Demonstrated exceptional precision matching official standard values.' : 'Ensure meniscus sightline is checked carefully at eye level.'}<br>
+          • <b>Graph & Interpolation:</b> Plotted ${state.trials.length} coordinate points on the millimeter grid.<br>
+          • <b>Post-Lab Questions:</b> Awarded ${calcTotal.toFixed(1)} / 5.0 marks for graphical interpolation and crystal precipitation math.
+        `;
+      }
     }
 
     try {
@@ -2256,23 +2348,36 @@ const SolubilityEngine = (() => {
         await Solubility.save(payload);
       } else if (typeof apiRequest === 'function') {
         await apiRequest('POST', '/solubility', payload);
-      } else if (window.VLKApi && typeof window.VLKApi.saveSolubilitySession === 'function') {
+      } else if (typeof window !== 'undefined' && window.VLKApi && typeof window.VLKApi.saveSolubilitySession === 'function') {
         await window.VLKApi.saveSolubilitySession(payload);
       }
     } catch (e) {
       console.warn('Exam saved locally in offline queue:', e.message);
     }
 
-    if (window.parent && window.parent !== window) {
+    if (typeof window !== 'undefined' && window.parent && window.parent !== window) {
       window.parent.postMessage({
         type: 'PRACTICAL_EXAM_SUBMITTED',
+        bench: 'solubility',
         question: 'q1',
-        score: grandTotal
+        score: grandTotal,
+        maxScore: 15.0,
+        breakdown: rubric.breakdown
+      }, '*');
+      window.parent.postMessage({
+        type: 'VLK_Q_SCORED',
+        qNum: 1,
+        bench: 'solubility',
+        score: grandTotal,
+        maxScore: 15.0,
+        details: rubric
       }, '*');
     }
 
-    const modal = document.getElementById('solExamResultModal');
-    if (modal) modal.style.display = 'flex';
+    if (typeof document !== 'undefined') {
+      const modal = document.getElementById('solExamResultModal');
+      if (modal) modal.style.display = 'flex';
+    }
   }
 
   // ── Universal AI Tutor Lab Context Provider ──
@@ -2335,10 +2440,26 @@ const SolubilityEngine = (() => {
     toggleDigitalTemp,
     updateCandidateSolubility,
     setStudyMode,
+    calculateRubric,
     submitExamBooklet,
     submitSession,
     jumpToStep,
     updateWorkflowStepper,
-    get trials() { return state.trials; }
+    get trials() { return state.trials; },
+    getState: () => state,
+    SALT_MODELS,
+    SCENARIOS
   };
 })();
+
+if (typeof window !== 'undefined') {
+  window.SolubilityEngine = SolubilityEngine;
+}
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    SolubilityEngine,
+    SALT_MODELS: SolubilityEngine.SALT_MODELS,
+    SCENARIOS: SolubilityEngine.SCENARIOS,
+    calculateRubric: SolubilityEngine.calculateRubric
+  };
+}

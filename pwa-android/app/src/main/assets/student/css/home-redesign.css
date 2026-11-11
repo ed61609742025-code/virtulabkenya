@@ -68,16 +68,35 @@
 }
 
 .mini-hero-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.70rem !important;
-  font-weight: 800;
-  color: var(--cyan-accent, #0284C7);
-  background: rgba(2, 132, 199, 0.1);
-  border: 1px solid rgba(2, 132, 199, 0.22);
-  border-radius: 6px;
-  padding: 2px 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-family: 'Plus Jakarta Sans', 'JetBrains Mono', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-size: 0.72rem !important;
+  font-weight: 800 !important;
+  color: var(--cyan-accent, #0284C7) !important;
+  background: rgba(2, 132, 199, 0.08) !important;
+  border: 1.5px solid rgba(2, 132, 199, 0.28) !important;
+  border-radius: 6px !important;
+  padding: 3px 9px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.04em !important;
+  line-height: 1.25 !important;
+  white-space: nowrap !important;
+  box-shadow: 0 1px 2px rgba(2, 132, 199, 0.06) !important;
+}
+
+[data-theme="dark"] .mini-hero-tag {
+  color: #38BDF8 !important;
+  background: rgba(56, 189, 248, 0.12) !important;
+  border-color: rgba(56, 189, 248, 0.32) !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+[data-theme="green"] .mini-hero-tag {
+  color: #34D399 !important;
+  background: rgba(52, 211, 153, 0.12) !important;
+  border-color: rgba(52, 211, 153, 0.32) !important;
 }
 
 .mini-hero-syllabus {
@@ -1964,8 +1983,8 @@
   }
 
   .mini-hero-tag {
-    font-size: 0.65rem !important;
-    padding: 2px 7px !important;
+    font-size: 0.72rem !important;
+    padding: 3px 9px !important;
   }
 
   .mini-hero-syllabus {

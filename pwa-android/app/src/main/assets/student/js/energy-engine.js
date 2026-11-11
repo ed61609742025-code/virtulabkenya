@@ -1,3 +1,7 @@
+if (typeof window === 'undefined') {
+  global.window = global;
+}
+
 // ============================================================
 //  VirtuLab Kenya — Energy Changes in Reactions Simulation Engine
 //  KNEC Chemistry Paper 3 (Quantitative Practical / Thermochemistry)
@@ -530,6 +534,8 @@ const EnergyEngine = (() => {
     initConvectionCurrents();
 
     const urlParams = new URLSearchParams(window.location.search);
+    const isExamMode = urlParams.get('mode') === 'exam' || Boolean(typeof window !== 'undefined' && window.isExamMode);
+    if (isExamMode) setStudyMode('exam');
     const scenarioParam = urlParams.get('scenario') || urlParams.get('preset') || 'KCSE_2022_DISPLACEMENT';
     applyScenario(SYSTEMS[scenarioParam] ? scenarioParam : 'KCSE_2022_DISPLACEMENT');
 
@@ -1514,11 +1520,13 @@ const EnergyEngine = (() => {
     }
   }
 
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && !rafId && isEnergyActivelyAnimating()) {
-      wakeSimulationLoop();
-    }
-  });
+  if (typeof document !== 'undefined') {
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && !rafId && isEnergyActivelyAnimating()) {
+        wakeSimulationLoop();
+      }
+    });
+  }
 
   // ──────────────────────────────────────────────
   // 1. HIGH-PRECISION APPARATUS RIG DIAGRAM
@@ -2756,6 +2764,10 @@ const EnergyEngine = (() => {
   }
 
   function loadSampleData() {
+    if (studyMode === 'exam') {
+      alert('Pre-filled sample data is disabled during official examination sessions.');
+      return;
+    }
     playBeep(800, 0.08);
     const id = currentScenario.id;
     studentPlottedPoints = [];
@@ -3221,6 +3233,12 @@ const EnergyEngine = (() => {
           question: 'q1',
           score: Math.min(15.0, score)
         }, '*');
+        window.parent.postMessage({
+          type: 'VLK_Q_SCORED',
+          qNum: 1,
+          score: Math.min(15.0, score),
+          details: { totalScore: Math.min(15.0, score) }
+        }, '*');
       }
 
       if (assignmentId) {
@@ -3272,23 +3290,28 @@ const EnergyEngine = (() => {
   // ============================================================
   function setStudyMode(mode) {
     studyMode = mode;
-    document.getElementById('btnModePractice')?.classList.toggle('active', mode === 'practice');
-    document.getElementById('btnModeExam')?.classList.toggle('active', mode === 'exam');
+    if (typeof document !== 'undefined') {
+      document.getElementById('btnModePractice')?.classList.toggle('active', mode === 'practice');
+      document.getElementById('btnModeExam')?.classList.toggle('active', mode === 'exam');
 
-    const proctorBanner = document.getElementById('enExamProctorBanner');
-    if (proctorBanner) proctorBanner.style.display = (mode === 'exam') ? 'flex' : 'none';
+      const proctorBanner = document.getElementById('enExamProctorBanner');
+      if (proctorBanner) proctorBanner.style.display = (mode === 'exam') ? 'flex' : 'none';
+    }
 
     if (mode === 'exam') {
       startExamTimer();
     } else {
       clearInterval(examTimerInterval);
     }
-    updateLiveReadouts();
+    if (typeof document !== 'undefined') {
+      updateLiveReadouts();
+    }
   }
 
   function startExamTimer() {
     examTimeRemaining = 1200;
     clearInterval(examTimerInterval);
+    if (typeof document === 'undefined') return;
     examTimerInterval = setInterval(() => {
       examTimeRemaining--;
       const mins = Math.floor(examTimeRemaining / 60);
@@ -3439,6 +3462,7 @@ const EnergyEngine = (() => {
 
   return {
     init,
+    SYSTEMS,
     applyScenario,
     getCurrentScenario,
     getStudentPlottedPoints,
@@ -3485,6 +3509,8 @@ if (typeof module !== 'undefined' && module.exports) {
 }
 
 // Auto-boot on DOM ready
-document.addEventListener('DOMContentLoaded', () => {
-  EnergyEngine.init();
-});
+if (typeof document !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', () => {
+    EnergyEngine.init();
+  });
+}

@@ -254,7 +254,7 @@
     </nav>
 
     <!-- KNEC Examination Sub-Bar -->
-    <div class="knec-exam-subbar" style="display:flex !important; align-items:center !important; justify-content:space-between !important; flex-wrap:nowrap !important; overflow-x:auto !important; white-space:nowrap !important; gap:12px !important; padding:6px 18px !important; border-top:1px solid var(--card-border) !important; background:var(--card-bg) !important;" aria-label="Examination Details">
+    <div class="knec-exam-subbar" id="knecSubbar" style="display:flex !important; align-items:center !important; justify-content:space-between !important; flex-wrap:nowrap !important; overflow-x:auto !important; white-space:nowrap !important; gap:12px !important; padding:6px 18px !important; border-top:1px solid var(--card-border) !important; background:var(--card-bg) !important;" aria-label="Examination Details">
       <div class="knec-candidate-meta" style="display:flex !important; align-items:center !important; gap:10px !important; flex-wrap:nowrap !important; white-space:nowrap !important; flex-shrink:0 !important;">
         <span class="knec-tag-pill">KNEC PAPER 233/3</span>
         <span class="knec-q-badge">QUESTION 2 (15 MARKS)</span>
@@ -859,7 +859,8 @@
   <script src="/shared/theme.js"></script>
   <script src="/shared/api.js"></script>
   <script src="/shared/chemical-safety.js"></script>
-  <script src="/shared/knec-grading.js"></script>
+  <script defer src="/shared/knec-grading.js"></script>
+  <script defer src="/shared/knec-pedagogy.js"></script>
   <script src="/shared/page-transitions.js"></script>
   <script src="/shared/brilliant-ui.js"></script>
   <script src="/shared/tutorial-engine.js"></script>
